@@ -107,7 +107,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
         {/* Cover */}
-        <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600" />
+        <div className="h-32 bg-linear-to-r from-indigo-500 to-purple-600" />
 
         <div className="px-6 pb-6">
           <div className="flex items-end justify-between -mt-12 mb-4">

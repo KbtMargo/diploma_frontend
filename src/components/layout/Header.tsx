@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { notificationsService } from '@/services/notifications.service';
 import { Bell, Menu, X, Briefcase, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { ROUTES } from '@/lib/constants';
@@ -21,6 +22,16 @@ export default function Header() {
     toast.success('До побачення!');
     router.push(ROUTES.LOGIN);
   };
+
+  const [unreadCount, setUnreadCount] = useState(0);
+
+useEffect(() => {
+  if (isAuthenticated) {
+    notificationsService.getUnreadCount()
+      .then(count => setUnreadCount(count))
+      .catch(() => {});
+  }
+}, [isAuthenticated]);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -59,10 +70,14 @@ export default function Header() {
             {isAuthenticated && user ? (
               <>
                 {/* Notifications */}
-                <button className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                  <Bell size={20} />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
+               <Link href="/notifications" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </Link>
 
                 {/* User menu */}
                 <div className="relative">
