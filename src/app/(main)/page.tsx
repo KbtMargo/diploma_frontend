@@ -279,7 +279,7 @@ const fetchData = async () => {
                 <div className="bg-indigo-600 text-white p-1.5 rounded-lg">
                   <Briefcase size={16} />
                 </div>
-                <span className="font-bold text-white">JobPlatform</span>
+                <span className="font-bold text-white">StartWay</span>
               </div>
               <p className="text-sm">Платформа пошуку роботи та стажувань для молоді</p>
             </div>
@@ -307,7 +307,7 @@ const fetchData = async () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 text-center text-sm">
-            <p>© 2026 JobPlatform. Всі права захищені.</p>
+            <p>© 2026 StartWay. Всі права захищені.</p>
           </div>
         </div>
       </footer>

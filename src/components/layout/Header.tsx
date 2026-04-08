@@ -42,7 +42,7 @@ useEffect(() => {
             <div className="bg-indigo-600 text-white p-2 rounded-lg">
               <Briefcase size={20} />
             </div>
-            <span className="font-bold text-xl text-gray-900">JobPlatform</span>
+            <span className="font-bold text-xl text-gray-900">StartWay</span>
           </Link>
 
           {/* Nav links */}
