@@ -10,6 +10,7 @@ import { ROUTES } from '@/lib/constants';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { getInitials } from '@/lib/utils';
+import { MessageSquare } from 'lucide-react';
 
 export default function Header() {
   const router = useRouter();
@@ -78,6 +79,10 @@ useEffect(() => {
                   </span>
                 )}
               </Link>
+              <Link href="/chat" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+              <MessageSquare size={20} />
+             </Link>
+
 
                 {/* User menu */}
                 <div className="relative">

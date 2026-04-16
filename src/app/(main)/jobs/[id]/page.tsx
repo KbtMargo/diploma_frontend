@@ -179,6 +179,15 @@ export default function JobDetailPage() {
           {showApplyForm && (
             <div className="bg-white rounded-2xl p-6 border border-indigo-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Подати заявку</h2>
+              {isAuthenticated && user?.role === 'job_seeker' && job.employer && (
+              <button
+                onClick={() => router.push(`/chat?userId=${job.employer?.id}`)}
+                className="w-full py-3 rounded-lg font-medium transition-colors mt-2 border border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+              >
+                Написати роботодавцю
+              </button>
+            )}
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -8,7 +8,21 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatRelativeDate(date: string | Date): string {
-  return formatDistanceToNow(new Date(date), { addSuffix: true, locale: uk });
+  if (!date) return '—';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '—';
+  
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  
+  if (diffSec < 0) return 'щойно'; // ← додати для від'ємних значень
+  if (diffSec < 10) return 'щойно';
+  if (diffSec < 60) return `${diffSec} сек тому`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} хв тому`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} год тому`;
+  
+  return format(d, 'dd.MM.yyyy HH:mm', { locale: uk });
 }
 
 export function formatDate(date: string | Date): string {

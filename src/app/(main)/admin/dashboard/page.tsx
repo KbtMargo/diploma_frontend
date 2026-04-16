@@ -851,7 +851,7 @@ const TABS = [
                   {log.user?.firstName} {log.user?.lastName}
                 </td>
                 <td className="px-6 py-3 text-sm text-gray-500">
-                  {log.resource || '—'}
+                {log.entityType ? `${log.entityType} #${log.entityId?.slice(0, 8)}` : '—'}
                 </td>
                 <td className="px-6 py-3 text-xs text-gray-400 font-mono">
                   {log.ipAddress || '—'}

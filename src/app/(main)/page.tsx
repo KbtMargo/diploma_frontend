@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Job } from '@/types';
 import { ROUTES, JOB_TYPES } from '@/lib/constants';
 import api from '@/lib/axios';
+import { formatSalary } from '@/lib/utils';
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,10 +33,6 @@ const fetchData = async () => {
     e.preventDefault();
     router.push(`${ROUTES.JOBS}?search=${search}`);
   };
-
-  function formatSalary(salaryMin: number | undefined, salaryMax: number | undefined, salaryCurrency: string | undefined): import("react").ReactNode {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div>
