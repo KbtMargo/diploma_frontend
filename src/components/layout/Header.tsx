@@ -7,9 +7,9 @@ import { notificationsService } from '@/services/notifications.service';
 import { Bell, Menu, X, Briefcase, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { ROUTES } from '@/lib/constants';
-import { getInitials } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
+import { getInitials } from '@/lib/utils';
 
 export default function Header() {
   const router = useRouter();

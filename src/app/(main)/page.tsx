@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Briefcase, Users, Building, ArrowRight, Star, TrendingUp, Globe, Shield } from 'lucide-react';
+import { Search, MapPin, Briefcase, Users, ArrowRight, TrendingUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Job, Company } from '@/types';
+import { Job } from '@/types';
 import { ROUTES, JOB_TYPES } from '@/lib/constants';
-import { formatSalary, formatRelativeDate } from '@/lib/utils';
 import api from '@/lib/axios';
 
 export default function HomePage() {
@@ -33,6 +32,10 @@ const fetchData = async () => {
     e.preventDefault();
     router.push(`${ROUTES.JOBS}?search=${search}`);
   };
+
+  function formatSalary(salaryMin: number | undefined, salaryMax: number | undefined, salaryCurrency: string | undefined): import("react").ReactNode {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div>
