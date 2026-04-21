@@ -14,8 +14,9 @@ export const notificationsService = {
   },
 
   async getUnreadCount(): Promise<number> {
-    const response = await api.get<{ count: number }>('/notifications/unread-count');
-    return response.data.count;
+    const response = await api.get('/notifications/unread-count');
+    const data = response.data;
+    return typeof data === 'number' ? data : (data?.count ?? 0);
   },
 
   async markAsRead(id: string) {

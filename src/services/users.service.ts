@@ -31,6 +31,15 @@ export const usersService = {
     return response.data;
   },
 
+  async uploadResumeFile(file: File) {
+    const formData = new FormData();
+    formData.append('resume', file);
+    const response = await api.post('/users/resume-file', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
   async getStatistics() {
     const response = await api.get('/users/statistics');
     return response.data;

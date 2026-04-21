@@ -1,3 +1,15 @@
+export interface Company {
+  id: string;
+  name?: string;
+  logoUrl?: string;
+  description?: string;
+  website?: string;
+  industry?: string;
+  size?: string;
+  country?: string;
+  city?: string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -10,6 +22,7 @@ export interface User {
   country?: string;
   city?: string;
   summary?: string;
+  dateOfBirth?: string;
   isActive: boolean;
   isEmailVerified: boolean;
   skills?: Skill[];
@@ -19,6 +32,7 @@ export interface User {
   education?: Education[];
   workExperience?: WorkExperience[];
   portfolio?: Portfolio[];
+  company?: Company;
   createdAt: string;
 }
 

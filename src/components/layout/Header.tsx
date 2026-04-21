@@ -2,15 +2,13 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { notificationsService } from '@/services/notifications.service';
-import { Bell, Menu, X, Briefcase, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, Menu, X, Briefcase, User, LogOut, ChevronDown, MessageSquare } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useSocketContext } from '@/contexts/SocketContext';
 import { ROUTES } from '@/lib/constants';
 import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import { getInitials } from '@/lib/utils';
-import { MessageSquare } from 'lucide-react';
 
 export default function Header() {
   const router = useRouter();
@@ -24,15 +22,7 @@ export default function Header() {
     router.push(ROUTES.LOGIN);
   };
 
-  const [unreadCount, setUnreadCount] = useState(0);
-
-useEffect(() => {
-  if (isAuthenticated) {
-    notificationsService.getUnreadCount()
-      .then(count => setUnreadCount(count))
-      .catch(() => {});
-  }
-}, [isAuthenticated]);
+  const { chatUnread, notifUnread } = useSocketContext();
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -70,18 +60,25 @@ useEffect(() => {
           <div className="flex items-center gap-3">
             {isAuthenticated && user ? (
               <>
-                {/* Notifications */}
-               <Link href="/notifications" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                <Bell size={20} />
-                {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <Link href="/chat" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-              <MessageSquare size={20} />
-             </Link>
+                {/* Notifications bell */}
+                <Link href="/notifications" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                  <Bell size={20} />
+                  {notifUnread > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center leading-none">
+                      {notifUnread > 9 ? '9+' : notifUnread}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Chat */}
+                <Link href="/chat" className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                  <MessageSquare size={20} />
+                  {chatUnread > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-indigo-500 text-white text-xs rounded-full flex items-center justify-center leading-none">
+                      {chatUnread > 9 ? '9+' : chatUnread}
+                    </span>
+                  )}
+                </Link>
 
 
                 {/* User menu */}

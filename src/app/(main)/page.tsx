@@ -2,28 +2,60 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Briefcase, Users, ArrowRight, TrendingUp } from 'lucide-react';
+import { Search, MapPin, Briefcase, Users, ArrowRight, TrendingUp, Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Job } from '@/types';
 import { ROUTES, JOB_TYPES } from '@/lib/constants';
 import api from '@/lib/axios';
 import { formatSalary } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
+import { jobsService } from '@/services/jobs.service';
+import toast from 'react-hot-toast';
 
 export default function HomePage() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
   const [search, setSearch] = useState('');
   const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
   const [stats, setStats] = useState({ jobs: 0, companies: 0, users: 0 });
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => { fetchData(); }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!isAuthenticated) return;
+    jobsService.getSavedJobs(1, 100).then(data => {
+      setSavedIds(new Set<string>((data.data || []).map((j: Job) => j.id)));
+    }).catch(() => {});
+  }, [isAuthenticated]);
+
+  const toggleSave = async (e: React.MouseEvent, jobId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) { toast.error('Увійдіть, щоб зберігати вакансії'); return; }
+    const isSaved = savedIds.has(jobId);
+    setSavedIds(prev => { const n = new Set(prev); isSaved ? n.delete(jobId) : n.add(jobId); return n; });
+    try {
+      isSaved ? await jobsService.unsaveJob(jobId) : await jobsService.saveJob(jobId);
+      toast.success(isSaved ? 'Видалено зі збережених' : 'Додано до збережених');
+    } catch {
+      setSavedIds(prev => { const n = new Set(prev); isSaved ? n.add(jobId) : n.delete(jobId); return n; });
+      toast.error('Помилка');
+    }
+  };
 
 const fetchData = async () => {
   try {
-    const allJobs = await api.get('/jobs?limit=6');
-    setFeaturedJobs(allJobs.data.data || []);
-    setStats(s => ({ ...s, jobs: allJobs.data.meta?.total || 0 }));
+    const [jobsRes, companiesRes] = await Promise.all([
+      api.get('/jobs?limit=6'),
+      api.get('/companies?limit=1').catch(() => ({ data: { meta: { total: 0 } } })),
+    ]);
+    setFeaturedJobs(jobsRes.data.data || []);
+    setStats({
+      jobs: jobsRes.data.meta?.total || 0,
+      companies: companiesRes.data.meta?.total || 0,
+      users: 0,
+    });
   } catch (error) {
     console.error(error);
   }
@@ -90,8 +122,8 @@ const fetchData = async () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: '10,000+', label: 'Вакансій' },
-              { value: '500+', label: 'Компаній' },
+              { value: stats.jobs > 0 ? `${stats.jobs.toLocaleString()}` : '—', label: 'Вакансій' },
+              { value: stats.companies > 0 ? `${stats.companies.toLocaleString()}` : '—', label: 'Компаній' },
               { value: '50,000+', label: 'Шукачів роботи' },
               { value: '30+', label: 'Країн' },
             ].map(stat => (
@@ -134,11 +166,20 @@ const fetchData = async () => {
                       <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
                         <Briefcase size={18} className="text-indigo-600" />
                       </div>
-                      {job.isUrgent && (
-                        <span className="bg-red-100 text-red-600 text-xs font-medium px-2 py-0.5 rounded-full">
-                          Терміново
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {job.isUrgent && (
+                          <span className="bg-red-100 text-red-600 text-xs font-medium px-2 py-0.5 rounded-full">
+                            Терміново
+                          </span>
+                        )}
+                        <button
+                          onClick={(e) => toggleSave(e, job.id)}
+                          className={`p-1.5 rounded-lg transition-colors ${savedIds.has(job.id) ? 'text-red-500 hover:text-red-600' : 'text-gray-300 hover:text-red-400'}`}
+                          title={savedIds.has(job.id) ? 'Видалити зі збережених' : 'Зберегти'}
+                        >
+                          <Heart size={16} fill={savedIds.has(job.id) ? 'currentColor' : 'none'} />
+                        </button>
+                      </div>
                     </div>
                     <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors mb-1">
                       {job.title}
@@ -237,7 +278,7 @@ const fetchData = async () => {
                 <div className={`w-16 h-16 bg-${item.color}-100 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
                   <item.icon size={28} className={`text-${item.color}-600`} />
                 </div>
-                <div className="text-4xl font-bold text-gray-100 mb-2">{item.step}</div>
+                <div className="text-4xl font-bold text-gray-200 mb-2">{item.step}</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-gray-500">{item.desc}</p>
               </div>

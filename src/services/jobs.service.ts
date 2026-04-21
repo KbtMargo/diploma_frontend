@@ -27,6 +27,26 @@ export const jobsService = {
     const response = await api.put(`/jobs/${id}/status`, { status });
     return response.data;
   },
+
+  async getSavedJobs(page = 1, limit = 10) {
+    const response = await api.get(`/jobs/saved?page=${page}&limit=${limit}`);
+    return response.data;
+  },
+
+  async saveJob(id: string) {
+    const response = await api.post(`/jobs/${id}/save`);
+    return response.data;
+  },
+
+  async unsaveJob(id: string) {
+    const response = await api.delete(`/jobs/${id}/save`);
+    return response.data;
+  },
+
+  async checkIfSaved(id: string) {
+    const response = await api.get(`/jobs/${id}/saved`);
+    return response.data as { isSaved: boolean };
+  },
 };
 
 async function getEmployerId(): Promise<string> {
