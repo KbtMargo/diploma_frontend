@@ -1,4 +1,4 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+export const API_URL = typeof window !== 'undefined' ? '/api-proxy' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
 
 export const ROUTES = {
   HOME: '/',
@@ -53,6 +53,28 @@ export const WORK_FORMATS = [
   { value: 'hybrid', label: 'Гібрид' },
 ];
 
+export const JOB_CATEGORIES = [
+  { value: 'it', label: 'IT та розробка' },
+  { value: 'design', label: 'Дизайн' },
+  { value: 'marketing', label: 'Маркетинг' },
+  { value: 'finance', label: 'Фінанси' },
+  { value: 'education', label: 'Освіта' },
+  { value: 'medicine', label: 'Медицина' },
+  { value: 'law', label: 'Юриспруденція' },
+  { value: 'logistics', label: 'Логістика' },
+  { value: 'sales', label: 'Продажі' },
+  { value: 'hr', label: 'HR та рекрутинг' },
+];
+
+export const JOB_LANGUAGES = [
+  { value: 'ukrainian', label: 'Українська' },
+  { value: 'english', label: 'Англійська' },
+  { value: 'polish', label: 'Польська' },
+  { value: 'german', label: 'Німецька' },
+  { value: 'french', label: 'Французька' },
+  { value: 'spanish', label: 'Іспанська' },
+];
+
 export const COMPANY_SIZES = [
   { value: '1-10', label: '1-10 співробітників' },
   { value: '11-50', label: '11-50 співробітників' },
@@ -60,6 +82,12 @@ export const COMPANY_SIZES = [
   { value: '201-500', label: '201-500 співробітників' },
   { value: '500+', label: '500+ співробітників' },
 ];
+
+export const USER_ROLES = {
+  JOB_SEEKER: 'job_seeker',
+  EMPLOYER: 'employer',
+  ADMIN: 'admin',
+} as const;
 
 export const APPLICATION_STATUSES: Record<string, { label: string; color: string }> = {
   pending: { label: 'Очікує', color: 'gray' },

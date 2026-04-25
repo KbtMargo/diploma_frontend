@@ -1,15 +1,3 @@
-export interface Company {
-  id: string;
-  name?: string;
-  logoUrl?: string;
-  description?: string;
-  website?: string;
-  industry?: string;
-  size?: string;
-  country?: string;
-  city?: string;
-}
-
 export interface User {
   id: string;
   email: string;
@@ -74,6 +62,7 @@ export interface Job {
   isUrgent?: boolean;
   views?: number;
   applicationsCount?: number;
+  requiredLanguages?: string[];
   employer?: User;
   requiredSkills?: Skill[];
   createdAt: string;
@@ -163,6 +152,7 @@ export interface Portfolio {
   description: string;
   url?: string;
   fileUrl?: string;
+  fileType?: string;
 }
 
 export interface PaginatedResponse<T> {

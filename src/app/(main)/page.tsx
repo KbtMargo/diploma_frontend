@@ -8,41 +8,16 @@ import { Job } from '@/types';
 import { ROUTES, JOB_TYPES } from '@/lib/constants';
 import api from '@/lib/axios';
 import { formatSalary } from '@/lib/utils';
-import { useAuthStore } from '@/store/authStore';
-import { jobsService } from '@/services/jobs.service';
-import toast from 'react-hot-toast';
+import { useSavedJobs } from '@/lib/hooks/useSavedJobs';
 
 export default function HomePage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { savedIds, toggleSave } = useSavedJobs();
   const [search, setSearch] = useState('');
   const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
   const [stats, setStats] = useState({ jobs: 0, companies: 0, users: 0 });
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => { fetchData(); }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    jobsService.getSavedJobs(1, 100).then(data => {
-      setSavedIds(new Set<string>((data.data || []).map((j: Job) => j.id)));
-    }).catch(() => {});
-  }, [isAuthenticated]);
-
-  const toggleSave = async (e: React.MouseEvent, jobId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isAuthenticated) { toast.error('Увійдіть, щоб зберігати вакансії'); return; }
-    const isSaved = savedIds.has(jobId);
-    setSavedIds(prev => { const n = new Set(prev); isSaved ? n.delete(jobId) : n.add(jobId); return n; });
-    try {
-      isSaved ? await jobsService.unsaveJob(jobId) : await jobsService.saveJob(jobId);
-      toast.success(isSaved ? 'Видалено зі збережених' : 'Додано до збережених');
-    } catch {
-      setSavedIds(prev => { const n = new Set(prev); isSaved ? n.add(jobId) : n.delete(jobId); return n; });
-      toast.error('Помилка');
-    }
-  };
 
 const fetchData = async () => {
   try {
@@ -173,7 +148,7 @@ const fetchData = async () => {
                           </span>
                         )}
                         <button
-                          onClick={(e) => toggleSave(e, job.id)}
+                          onClick={(e) => toggleSave(job.id, e)}
                           className={`p-1.5 rounded-lg transition-colors ${savedIds.has(job.id) ? 'text-red-500 hover:text-red-600' : 'text-gray-300 hover:text-red-400'}`}
                           title={savedIds.has(job.id) ? 'Видалити зі збережених' : 'Зберегти'}
                         >

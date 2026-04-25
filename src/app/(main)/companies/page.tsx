@@ -8,8 +8,13 @@ import { companiesService } from '@/services/companies.service';
 import Link from 'next/link';
 
 const INDUSTRIES = [
-  'IT', 'Фінанси', 'Освіта', 'Медицина', 'Маркетинг',
-  'Логістика', 'Виробництво', 'Торгівля', 'Будівництво', 'Інше'
+  'Інформаційні технології',
+  'IT-аутсорсинг',
+  'Стартапи та продуктова розробка',
+  'Мобільна розробка',
+  'Аналіз даних',
+  'Дизайн',
+  'DevOps & Cloud',
 ];
 
 export default function CompaniesPage() {

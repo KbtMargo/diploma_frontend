@@ -6,6 +6,7 @@ import {
   MapPin, Phone, Mail, Edit2, Save, X, Camera, Loader2, Plus, Building2, Shield,
   GraduationCap, Briefcase, Globe, Trash2, Check, Search, ExternalLink,
   Bookmark, FileText, ChevronLeft, ChevronRight, MessageCircle, Lock, Upload, Download,
+  Share2,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { usersService } from '@/services/users.service';
@@ -29,11 +30,43 @@ type WorkForm = {
   company: string; position: string; startDate: string;
   endDate: string; current: boolean; description: string; achievements: string;
 };
-type PortForm = { title: string; description: string; url: string };
+type PortForm = { title: string; description: string; url: string; fileUrl?: string; fileType?: string };
 
 const EMPTY_EDU: EduForm = { institution: '', degree: '', field: '', startDate: '', endDate: '', grade: '', description: '' };
 const EMPTY_WORK: WorkForm = { company: '', position: '', startDate: '', endDate: '', current: false, description: '', achievements: '' };
-const EMPTY_PORT: PortForm = { title: '', description: '', url: '' };
+const EMPTY_PORT: PortForm = { title: '', description: '', url: '', fileUrl: '', fileType: '' };
+
+import dynamic from 'next/dynamic';
+const PDFDownloadButton = dynamic(() => import('@/components/PDFDownloadButton'), {
+  ssr: false,
+  loading: () => null,
+});
+
+type CompletenessItem = { label: string; done: boolean; pts: number };
+
+function computeCompleteness(
+  user: any,
+  skills: any[],
+  education: any[],
+  workExperience: any[],
+  portfolio: any[],
+): { score: number; items: CompletenessItem[] } {
+  const items: CompletenessItem[] = [
+    { label: 'Фото профілю',       done: !!user?.avatarUrl,                        pts: 10 },
+    { label: 'Про себе',            done: !!user?.summary,                           pts: 10 },
+    { label: 'Навички',             done: skills.length > 0,                         pts: 15 },
+    { label: 'Освіта',              done: education.length > 0,                      pts: 15 },
+    { label: 'Досвід роботи',       done: workExperience.length > 0,                 pts: 15 },
+    { label: 'Портфоліо',           done: portfolio.length > 0,                      pts: 10 },
+    { label: 'Мови',                done: (user?.languages || []).length > 0,        pts: 5  },
+    { label: 'Бажані країни',       done: (user?.preferredCountries || []).length > 0, pts: 5 },
+    { label: 'Тип зайнятості',      done: (user?.preferredJobTypes || []).length > 0,  pts: 5 },
+    { label: 'Номер телефону',      done: !!user?.phoneNumber,                       pts: 5  },
+    { label: 'Місто та країна',     done: !!(user?.city && user?.country),           pts: 5  },
+  ];
+  const score = items.reduce((acc, i) => acc + (i.done ? i.pts : 0), 0);
+  return { score, items };
+}
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -226,6 +259,16 @@ export default function ProfilePage() {
     }
   };
 
+  const handleResumeFileDelete = async () => {
+    try {
+      await api.delete('/users/resume-file');
+      updateUser({ resumeUrl: undefined });
+      toast.success('Резюме видалено');
+    } catch {
+      toast.error('Помилка видалення резюме');
+    }
+  };
+
   const handleChangePassword = async () => {
     if (!passwordForm.oldPassword || !passwordForm.newPassword) {
       toast.error('Заповніть всі поля'); return;
@@ -396,7 +439,7 @@ export default function ProfilePage() {
   const startAddPort = () => { setPortForm(EMPTY_PORT); setEditingPortIdx(null); setShowPortForm(true); };
   const startEditPort = (idx: number) => {
     const p = portfolio[idx];
-    setPortForm({ title: p.title, description: p.description, url: p.url || '' });
+    setPortForm({ title: p.title, description: p.description, url: p.url || '', fileUrl: p.fileUrl || '', fileType: p.fileType || '' });
     setEditingPortIdx(idx);
     setShowPortForm(true);
   };
@@ -408,6 +451,8 @@ export default function ProfilePage() {
     const entry: Portfolio = {
       title: portForm.title, description: portForm.description,
       url: portForm.url || undefined,
+      fileUrl: portForm.fileUrl || undefined,
+      fileType: portForm.fileType || undefined,
     };
     const newList = editingPortIdx !== null
       ? portfolio.map((p, i) => i === editingPortIdx ? entry : p)
@@ -503,12 +548,26 @@ export default function ProfilePage() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-                >
-                  <Edit2 size={16} /> Редагувати
-                </button>
+                <>
+                  {isJobSeeker && (
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/users/${user.id}`);
+                        toast.success('Посилання скопійовано!');
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                      title="Скопіювати публічне посилання"
+                    >
+                      <Share2 size={16} /> Поділитись
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    <Edit2 size={16} /> Редагувати
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -567,6 +626,29 @@ export default function ProfilePage() {
                 )}
               </div>
               {user.summary && <p className="text-gray-600 mt-4 leading-relaxed">{user.summary}</p>}
+
+              {/* Profile completeness — job seekers only */}
+              {isJobSeeker && (() => {
+                const { score, items } = computeCompleteness(user, userSkills, education, workExperience, portfolio);
+                const missing = items.filter(i => !i.done);
+                const color = score >= 80 ? 'bg-green-500' : score >= 50 ? 'bg-yellow-400' : 'bg-red-400';
+                return (
+                  <div className="mt-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Заповненість профілю</span>
+                      <span className={`text-sm font-bold ${score >= 80 ? 'text-green-600' : score >= 50 ? 'text-yellow-600' : 'text-red-500'}`}>{score}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                      <div className={`${color} h-2 rounded-full transition-all duration-500`} style={{ width: `${score}%` }} />
+                    </div>
+                    {missing.length > 0 && (
+                      <p className="text-xs text-gray-500">
+                        Додайте: {missing.map(i => i.label).join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>
@@ -778,15 +860,25 @@ export default function ProfilePage() {
             <p className="text-sm text-gray-500 mb-4">Завантажте готове резюме у форматі PDF — роботодавці зможуть його скачати</p>
             <div className="flex items-center gap-3 flex-wrap">
               {user.resumeUrl && (
-                <a
-                  href={`${process.env.NEXT_PUBLIC_API_URL}${user.resumeUrl}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-                >
-                  <Download size={15} /> Переглянути резюме
-                </a>
+                <div className="flex items-center gap-1 border border-gray-200 rounded-lg overflow-hidden">
+                  <a
+                    href={`${process.env.NEXT_PUBLIC_API_URL}${user.resumeUrl}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    <Download size={15} /> Переглянути резюме
+                  </a>
+                  <button
+                    onClick={handleResumeFileDelete}
+                    className="px-2 py-2 text-gray-400 hover:text-red-500 hover:bg-gray-50 transition-colors border-l border-gray-200"
+                    title="Видалити резюме"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               )}
+              <PDFDownloadButton user={user} skills={userSkills} education={education} workExperience={workExperience} portfolio={portfolio} />
               <button
                 onClick={() => resumeFileRef.current?.click()}
                 disabled={resumeFileUploading}
@@ -1283,6 +1375,34 @@ export default function ProfilePage() {
                   <label className={labelCls}>Посилання</label>
                   <input value={portForm.url} onChange={e => setPortForm(f => ({ ...f, url: e.target.value }))} placeholder="https://github.com/..." className={inputCls} />
                 </div>
+                <div>
+                  <label className={labelCls}>Файл проєкту <span className="text-gray-400 font-normal">(зображення, PDF, презентація)</span></label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-indigo-400 hover:text-indigo-600 cursor-pointer transition-colors">
+                      <Upload size={14} />
+                      {portForm.fileUrl ? 'Замінити файл' : 'Завантажити файл'}
+                      <input
+                        type="file"
+                        accept="image/*,.pdf,.pptx,.zip"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const fd = new FormData();
+                          fd.append('file', file);
+                          try {
+                            const res = await api.post('/users/portfolio-file', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                            setPortForm(f => ({ ...f, fileUrl: res.data.fileUrl, fileType: res.data.fileType }));
+                            toast.success('Файл завантажено');
+                          } catch { toast.error('Помилка завантаження'); }
+                        }}
+                      />
+                    </label>
+                    {portForm.fileUrl && (
+                      <span className="text-xs text-green-600 flex items-center gap-1"><Check size={12} /> Файл додано</span>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2 mt-4">
                 <button onClick={cancelPortForm} className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
@@ -1312,11 +1432,23 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-500 mt-1 leading-relaxed">{item.description}</p>
-                  {item.url && (
-                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 text-sm hover:underline mt-2">
-                      <ExternalLink size={13} /> Переглянути
-                    </a>
-                  )}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {item.url && (
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 text-sm hover:underline">
+                        <ExternalLink size={13} /> Посилання
+                      </a>
+                    )}
+                    {item.fileUrl && (
+                      <a
+                        href={`${process.env.NEXT_PUBLIC_API_URL}${item.fileUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-emerald-600 text-sm hover:underline"
+                      >
+                        <Download size={13} /> {item.fileType === 'image' ? 'Зображення' : 'Файл'}
+                      </a>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

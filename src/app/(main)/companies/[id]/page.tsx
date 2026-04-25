@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Building, Globe, Users, Briefcase, Star, Calendar,
-  ArrowLeft, Check, Loader2, ExternalLink, MessageSquare, Plus, X,
+  ArrowLeft, Check, Loader2, ExternalLink, MessageSquare, Plus, X, MapPin,
 } from 'lucide-react';
-import { Company } from '@/types';
-import { COMPANY_SIZES } from '@/lib/constants';
+import { Company, Job } from '@/types';
+import { COMPANY_SIZES, JOB_TYPES } from '@/lib/constants';
 import { companiesService } from '@/services/companies.service';
+import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
-import { formatRelativeDate } from '@/lib/utils';
+import { formatRelativeDate, formatSalary } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -43,6 +45,8 @@ export default function CompanyDetailPage() {
 
   const [company, setCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobsTotal, setJobsTotal] = useState(0);
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewsTotal, setReviewsTotal] = useState(0);
@@ -55,7 +59,14 @@ export default function CompanyDetailPage() {
 
   useEffect(() => {
     companiesService.getCompany(id)
-      .then(setCompany)
+      .then(c => {
+        setCompany(c);
+        if (c.owner?.id) {
+          api.get<{ data: Job[]; meta: { total: number } }>(`/jobs/employer/${c.owner.id}?limit=10&status=active`)
+            .then(r => { setJobs(r.data.data || []); setJobsTotal(r.data.meta?.total || 0); })
+            .catch(() => {});
+        }
+      })
       .catch(() => router.push('/companies'))
       .finally(() => setIsLoading(false));
   }, [id]);
@@ -188,6 +199,63 @@ export default function CompanyDetailPage() {
           {company.shortDescription && <p className="text-gray-700 font-medium mb-4">{company.shortDescription}</p>}
           {company.description && <p className="text-gray-600 leading-relaxed whitespace-pre-line">{company.description}</p>}
         </div>
+      </div>
+
+      {/* Jobs section */}
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+            <Briefcase size={18} className="text-indigo-600" />
+            Вакансії компанії
+            {jobsTotal > 0 && <span className="text-gray-400 font-normal">({jobsTotal})</span>}
+          </h2>
+        </div>
+        {jobs.length === 0 ? (
+          <div className="py-10 text-center text-gray-400">
+            <Briefcase size={32} className="mx-auto mb-3 opacity-20" />
+            <p className="text-sm">Немає активних вакансій</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {jobs.map(job => (
+              <Link key={job.id} href={`/jobs/${job.id}`}>
+                <div className="px-6 py-4 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        {job.isUrgent && (
+                          <span className="bg-red-100 text-red-600 text-xs font-medium px-2 py-0.5 rounded-full">Терміново</span>
+                        )}
+                        {job.isFeatured && (
+                          <span className="bg-yellow-100 text-yellow-600 text-xs font-medium px-2 py-0.5 rounded-full">Топ</span>
+                        )}
+                      </div>
+                      <h3 className="font-medium text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
+                        {job.title}
+                      </h3>
+                      <div className="flex items-center gap-3 mt-1 flex-wrap">
+                        {job.city && (
+                          <span className="flex items-center gap-1 text-xs text-gray-500">
+                            <MapPin size={12} /> {job.city}, {job.country}
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-500">
+                          {JOB_TYPES.find(t => t.value === job.jobType)?.label}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-semibold text-indigo-600 text-sm">
+                        {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">{formatRelativeDate(job.createdAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Reviews section */}
