@@ -7,10 +7,11 @@ import {
   X, Loader2, Check, Clock,
   MessageCircle, UserCircle, Building, Copy,
   StickyNote, BarChart3, GraduationCap, MapPin,
-  LayoutList, Kanban,
+  LayoutList, Kanban, Sparkles, ChevronDown, ChevronUp,
+  ThumbsUp, ThumbsDown, AlertCircle, Trophy, Zap,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
-import { Job, Application, Company, Skill, User } from '@/types';
+import { Job, Application, AiAnalysis, Company, Skill, User } from '@/types';
 import {
   ROUTES, JOB_TYPES, EXPERIENCE_LEVELS, WORK_FORMATS,
   APPLICATION_STATUSES, COMPANY_SIZES, JOB_LANGUAGES, JOB_CATEGORIES,
@@ -68,7 +69,7 @@ export default function EmployerDashboardPage() {
   const { user, isAuthenticated } = useAuthStore();
 
   // Core
-  const [activeTab, setActiveTab] = useState<'jobs' | 'applications' | 'company' | 'candidates'>('jobs');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'applications' | 'company' | 'candidates' | 'ai'>('jobs');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,6 +117,12 @@ export default function EmployerDashboardPage() {
   const [previewLoading, setPreviewLoading] = useState(false);
   // Job analytics
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  // AI Screening
+  const [aiJobId, setAiJobId] = useState('');
+  const [analyzingIds, setAnalyzingIds] = useState<Set<string>>(new Set());
+  const [expandedAiId, setExpandedAiId] = useState<string | null>(null);
+  const [batchAnalyzingJobId, setBatchAnalyzingJobId] = useState<string | null>(null);
+  const [expandedTop5Id, setExpandedTop5Id] = useState<string | null>(null);
 
   // ─── Effects ────────────────────────────────────────────────────────────────
 
@@ -354,6 +361,48 @@ export default function EmployerDashboardPage() {
     finally { setPreviewLoading(false); }
   };
 
+  // ─── AI handlers ─────────────────────────────────────────────────────────────
+
+  const analyzeJobApplications = async (jobId: string) => {
+    setBatchAnalyzingJobId(jobId);
+    try {
+      const res = await api.post(`/ai/analyze-job/${jobId}`);
+      const { results, analyzed, failed } = res.data;
+      setApplications(prev => prev.map(app => {
+        const r = results.find((x: any) => x.applicationId === app.id);
+        if (!r) return app;
+        return {
+          ...app,
+          aiAnalysis: { score: r.score, recommendation: r.recommendation, strengths: r.strengths, gaps: r.gaps, summary: r.summary },
+          aiAnalyzedAt: r.analyzedAt,
+        };
+      }));
+      toast.success(`Проаналізовано ${analyzed} заявок${failed > 0 ? `, помилок: ${failed}` : ''}`);
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Помилка пакетного аналізу');
+    } finally {
+      setBatchAnalyzingJobId(null);
+    }
+  };
+
+  const analyzeApplication = async (applicationId: string) => {
+    setAnalyzingIds(prev => new Set(prev).add(applicationId));
+    try {
+      const res = await api.post(`/ai/analyze/${applicationId}`);
+      setApplications(prev => prev.map(a =>
+        a.id === applicationId
+          ? { ...a, aiAnalysis: res.data as AiAnalysis, aiAnalyzedAt: res.data.analyzedAt }
+          : a
+      ));
+      setExpandedAiId(applicationId);
+      toast.success('Аналіз завершено');
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Помилка AI аналізу');
+    } finally {
+      setAnalyzingIds(prev => { const s = new Set(prev); s.delete(applicationId); return s; });
+    }
+  };
+
   // ─── Derived ─────────────────────────────────────────────────────────────────
 
   const filteredApps = selectedJobId
@@ -393,6 +442,7 @@ export default function EmployerDashboardPage() {
           { key: 'jobs',        label: `Вакансії (${jobs.length})`         },
           { key: 'applications',label: `Заявки (${applications.length})`   },
           { key: 'candidates',  label: 'Пошук кандидатів'                  },
+          { key: 'ai',          label: '✦ AI Скринінг'                     },
           { key: 'company',     label: 'Компанія'                          },
         ].map(t => (
           <button
@@ -1103,6 +1153,341 @@ export default function EmployerDashboardPage() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          AI SCREENING TAB
+      ══════════════════════════════════════════════════════ */}
+      {activeTab === 'ai' && (
+        <div>
+          {/* Header */}
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-5 mb-6 flex items-start gap-4">
+            <div className="p-2.5 bg-indigo-100 rounded-xl">
+              <Sparkles size={22} className="text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">AI Скринінг кандидатів</h2>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Gemini 1.5 Flash аналізує відповідність кандидата вимогам вакансії та надає оцінку і рекомендацію.
+              </p>
+            </div>
+          </div>
+
+          {/* Job filter */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Оберіть вакансію для аналізу</label>
+            <div className="flex gap-3">
+              <select
+                value={aiJobId}
+                onChange={e => setAiJobId(e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              >
+                <option value="">— всі заявки —</option>
+                {jobs.map(j => (
+                  <option key={j.id} value={j.id}>{j.title}</option>
+                ))}
+              </select>
+              {aiJobId && (
+                <button
+                  onClick={() => analyzeJobApplications(aiJobId)}
+                  disabled={batchAnalyzingJobId === aiJobId}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors shrink-0"
+                >
+                  {batchAnalyzingJobId === aiJobId
+                    ? <><Loader2 size={14} className="animate-spin" /> Аналізую...</>
+                    : <><Zap size={14} /> Аналізувати всіх</>
+                  }
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Applications list */}
+          {(() => {
+            const aiApps = aiJobId
+              ? applications.filter(a => a.jobId === aiJobId)
+              : applications;
+
+            if (aiApps.length === 0) {
+              return (
+                <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+                  <Sparkles size={40} className="text-gray-200 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">
+                    {aiJobId ? 'Немає заявок для обраної вакансії' : 'Немає заявок'}
+                  </p>
+                </div>
+              );
+            }
+
+            const analyzedApps = aiApps
+              .filter(a => a.aiAnalysis)
+              .sort((a, b) => (b.aiAnalysis!.score) - (a.aiAnalysis!.score));
+            const top5 = analyzedApps.slice(0, 5);
+
+            const recColor: Record<string, string> = {
+              strong_yes: 'bg-green-100 text-green-700 border-green-200',
+              yes:        'bg-blue-100 text-blue-700 border-blue-200',
+              maybe:      'bg-yellow-100 text-yellow-700 border-yellow-200',
+              no:         'bg-red-100 text-red-700 border-red-200',
+            };
+            const recLabel: Record<string, string> = {
+              strong_yes: 'Рекомендую',
+              yes:        'Підходить',
+              maybe:      'Можливо',
+              no:         'Не підходить',
+            };
+            const medalColors = ['text-yellow-500', 'text-gray-400', 'text-amber-600', 'text-gray-500', 'text-gray-500'];
+
+            return (
+              <div className="space-y-6">
+                {/* Top-5 block */}
+                {aiJobId && top5.length > 0 && (
+                  <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Trophy size={18} className="text-amber-500" />
+                      <h3 className="text-sm font-semibold text-gray-800">Топ-{top5.length} кандидатів</h3>
+                      <span className="ml-auto text-xs text-gray-400">за результатами AI аналізу</span>
+                    </div>
+                    <div className="space-y-2">
+                      {top5.map((app, i) => {
+                        const c = app.applicant;
+                        if (!c) return null;
+                        const an = app.aiAnalysis!;
+                        const scoreColor = an.score >= 70 ? 'text-green-600' : an.score >= 40 ? 'text-yellow-600' : 'text-red-500';
+                        const isTop5Expanded = expandedTop5Id === app.id;
+                        return (
+                          <div key={app.id} className="bg-white rounded-xl border border-amber-100 overflow-hidden">
+                            {/* Row */}
+                            <div className="flex items-center gap-3 px-4 py-3">
+                              <span className={`text-lg font-bold w-6 text-center shrink-0 ${medalColors[i]}`}>
+                                {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
+                              </span>
+                              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 overflow-hidden">
+                                {c.avatarUrl
+                                  ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${c.avatarUrl}`} alt="" className="w-full h-full object-cover" />
+                                  : <span className="text-xs font-semibold text-indigo-600">{c.firstName[0]}{c.lastName[0]}</span>
+                                }
+                              </div>
+                              <button
+                                onClick={() => openPreview(c.id)}
+                                className="font-medium text-sm text-gray-900 hover:text-indigo-600 transition-colors flex-1 text-left truncate"
+                              >
+                                {c.firstName} {c.lastName}
+                              </button>
+                              <span className={`text-sm font-bold shrink-0 ${scoreColor}`}>{an.score}%</span>
+                              <span className={`text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ${recColor[an.recommendation] ?? ''}`}>
+                                {recLabel[an.recommendation] ?? an.recommendation}
+                              </span>
+                              <button
+                                onClick={() => setExpandedTop5Id(isTop5Expanded ? null : app.id)}
+                                className="p-1 text-gray-400 hover:text-indigo-600 transition-colors shrink-0"
+                              >
+                                {isTop5Expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                              </button>
+                            </div>
+                            {/* Inline expanded details */}
+                            {isTop5Expanded && (
+                              <div className="border-t border-amber-100 px-4 py-4 bg-amber-50/40 space-y-3">
+                                <p className="text-sm text-gray-700 leading-relaxed">{an.summary}</p>
+                                <div className="grid grid-cols-2 gap-3">
+                                  {an.strengths.length > 0 && (
+                                    <div className="bg-green-50 rounded-xl p-3">
+                                      <div className="flex items-center gap-1.5 mb-2">
+                                        <ThumbsUp size={13} className="text-green-600" />
+                                        <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Сильні сторони</span>
+                                      </div>
+                                      <ul className="space-y-1">
+                                        {an.strengths.map((s, si) => (
+                                          <li key={si} className="text-xs text-green-800 flex items-start gap-1.5">
+                                            <Check size={10} className="mt-0.5 shrink-0 text-green-500" />{s}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {an.gaps.length > 0 ? (
+                                    <div className="bg-red-50 rounded-xl p-3">
+                                      <div className="flex items-center gap-1.5 mb-2">
+                                        <ThumbsDown size={13} className="text-red-500" />
+                                        <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">Прогалини</span>
+                                      </div>
+                                      <ul className="space-y-1">
+                                        {an.gaps.map((g, gi) => (
+                                          <li key={gi} className="text-xs text-red-800 flex items-start gap-1.5">
+                                            <AlertCircle size={10} className="mt-0.5 shrink-0 text-red-400" />{g}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  ) : (
+                                    <div className="bg-green-50 rounded-xl p-3 flex items-center gap-2">
+                                      <Check size={14} className="text-green-600" />
+                                      <span className="text-xs text-green-700">Явних прогалин не виявлено</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+              <div className="space-y-3">
+                {aiApps.map(app => {
+                  const candidate = app.applicant;
+                  if (!candidate) return null;
+                  const isAnalyzing = analyzingIds.has(app.id);
+                  const analysis = app.aiAnalysis;
+                  const isExpanded = expandedAiId === app.id;
+                  const job = jobs.find(j => j.id === app.jobId);
+
+                  const recColor: Record<string, string> = {
+                    strong_yes: 'bg-green-100 text-green-700 border-green-200',
+                    yes:        'bg-blue-100 text-blue-700 border-blue-200',
+                    maybe:      'bg-yellow-100 text-yellow-700 border-yellow-200',
+                    no:         'bg-red-100 text-red-700 border-red-200',
+                  };
+                  const recLabel: Record<string, string> = {
+                    strong_yes: 'Рекомендую',
+                    yes:        'Підходить',
+                    maybe:      'Можливо',
+                    no:         'Не підходить',
+                  };
+                  const scoreColor = analysis
+                    ? analysis.score >= 70 ? 'text-green-600'
+                      : analysis.score >= 40 ? 'text-yellow-600'
+                      : 'text-red-500'
+                    : '';
+
+                  return (
+                    <div key={app.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                      {/* Row */}
+                      <div className="flex items-center gap-4 p-4">
+                        {/* Avatar */}
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 overflow-hidden">
+                          {candidate.avatarUrl
+                            ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${candidate.avatarUrl}`} alt="" className="w-full h-full object-cover" />
+                            : <span className="text-sm font-semibold text-indigo-600">
+                                {candidate.firstName[0]}{candidate.lastName[0]}
+                              </span>
+                          }
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <button
+                              onClick={() => openPreview(candidate.id)}
+                              className="font-medium text-sm text-gray-900 hover:text-indigo-600 transition-colors"
+                            >
+                              {candidate.firstName} {candidate.lastName}
+                            </button>
+                            {analysis && (
+                              <>
+                                <span className={`text-sm font-bold ${scoreColor}`}>{analysis.score}%</span>
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${recColor[analysis.recommendation] ?? ''}`}>
+                                  {recLabel[analysis.recommendation] ?? analysis.recommendation}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          {job && (
+                            <p className="text-xs text-gray-400 mt-0.5">{job.title}</p>
+                          )}
+                          {analysis && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              Проаналізовано {app.aiAnalyzedAt ? new Date(app.aiAnalyzedAt).toLocaleDateString('uk-UA') : ''}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {analysis && (
+                            <button
+                              onClick={() => setExpandedAiId(isExpanded ? null : app.id)}
+                              className="p-1.5 text-gray-400 hover:text-indigo-600 transition-colors"
+                            >
+                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => analyzeApplication(app.id)}
+                            disabled={isAnalyzing}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                              analysis
+                                ? 'border border-indigo-200 text-indigo-600 hover:bg-indigo-50'
+                                : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {isAnalyzing
+                              ? <><Loader2 size={12} className="animate-spin" /> Аналіз...</>
+                              : <><Sparkles size={12} /> {analysis ? 'Повторно' : 'Аналізувати'}</>
+                            }
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Expanded analysis */}
+                      {isExpanded && analysis && (
+                        <div className="border-t border-gray-100 px-4 py-4 bg-gray-50 space-y-3">
+                          {/* Summary */}
+                          <p className="text-sm text-gray-700 leading-relaxed">{analysis.summary}</p>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            {/* Strengths */}
+                            {analysis.strengths.length > 0 && (
+                              <div className="bg-green-50 rounded-xl p-3">
+                                <div className="flex items-center gap-1.5 mb-2">
+                                  <ThumbsUp size={13} className="text-green-600" />
+                                  <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Сильні сторони</span>
+                                </div>
+                                <ul className="space-y-1">
+                                  {analysis.strengths.map((s, i) => (
+                                    <li key={i} className="text-xs text-green-800 flex items-start gap-1.5">
+                                      <Check size={10} className="mt-0.5 shrink-0 text-green-500" />{s}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Gaps */}
+                            {analysis.gaps.length > 0 && (
+                              <div className="bg-red-50 rounded-xl p-3">
+                                <div className="flex items-center gap-1.5 mb-2">
+                                  <ThumbsDown size={13} className="text-red-500" />
+                                  <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">Прогалини</span>
+                                </div>
+                                <ul className="space-y-1">
+                                  {analysis.gaps.map((g, i) => (
+                                    <li key={i} className="text-xs text-red-800 flex items-start gap-1.5">
+                                      <AlertCircle size={10} className="mt-0.5 shrink-0 text-red-400" />{g}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {analysis.gaps.length === 0 && (
+                              <div className="bg-green-50 rounded-xl p-3 flex items-center gap-2">
+                                <Check size={14} className="text-green-600" />
+                                <span className="text-xs text-green-700">Явних прогалин не виявлено</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            );
+          })()}
         </div>
       )}
 

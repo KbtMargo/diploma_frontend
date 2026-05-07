@@ -68,6 +68,14 @@ export interface Job {
   createdAt: string;
 }
 
+export interface AiAnalysis {
+  score: number;
+  recommendation: 'strong_yes' | 'yes' | 'maybe' | 'no';
+  strengths: string[];
+  gaps: string[];
+  summary: string;
+}
+
 export interface Application {
   id: string;
   jobId: string;
@@ -79,6 +87,8 @@ export interface Application {
   availableStartDate?: string;
   employerNotes?: string;
   rating?: number;
+  aiAnalysis?: AiAnalysis | null;
+  aiAnalyzedAt?: string;
   job?: Job;
   applicant?: User;
   createdAt: string;
