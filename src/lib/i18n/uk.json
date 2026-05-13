@@ -1,0 +1,1120 @@
+{
+  "nav": {
+    "jobs": "Вакансії",
+    "companies": "Компанії",
+    "dashboard": "Кабінет",
+    "admin": "Адмін",
+    "profile": "Профіль",
+    "myApplications": "Мої заявки",
+    "logout": "Вийти",
+    "login": "Увійти",
+    "register": "Реєстрація"
+  },
+  "common": {
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "add": "Додати",
+    "search": "Пошук",
+    "back": "Назад",
+    "next": "Далі",
+    "loading": "Завантаження...",
+    "error": "Помилка",
+    "success": "Успіх",
+    "all": "Всі",
+    "notSpecified": "Не вказано",
+    "required": "Обов'язкове поле",
+    "saving": "Збереження...",
+    "uploading": "Завантаження...",
+    "withdraw": "Відкликати",
+    "message": "Написати",
+    "urgent": "Терміново",
+    "top": "Топ",
+    "paid": "Оплачуване",
+    "unpaid": "Неоплачуване",
+    "remote": "Віддалено",
+    "present": "по теперішній час",
+    "link": "Посилання",
+    "file": "Файл",
+    "image": "Зображення",
+    "details": "Деталі",
+    "share": "Поділитись"
+  },
+  "lang": {
+    "uk": "Українська",
+    "en": "English",
+    "de": "Deutsch",
+    "pl": "Polski"
+  },
+  "auth": {
+    "login": {
+      "title": "Вхід",
+      "subtitle": "Раді бачити вас знову!",
+      "email": "Email",
+      "password": "Пароль",
+      "rememberMe": "Запам'ятати мене",
+      "forgotPassword": "Забули пароль?",
+      "submit": "Увійти",
+      "submitting": "Вхід...",
+      "noAccount": "Немає акаунту?",
+      "register": "Зареєструватись",
+      "welcome": "Ласкаво просимо!",
+      "error": "Помилка входу"
+    },
+    "register": {
+      "title": "Реєстрація",
+      "subtitle": "Створіть свій акаунт",
+      "firstName": "Ім'я",
+      "lastName": "Прізвище",
+      "email": "Email",
+      "password": "Пароль",
+      "confirmPassword": "Підтвердіть пароль",
+      "jobSeeker": "Шукаю роботу",
+      "employer": "Роботодавець",
+      "submit": "Зареєструватись",
+      "submitting": "Реєстрація...",
+      "hasAccount": "Вже є акаунт?",
+      "login": "Увійти",
+      "success": "Реєстрація успішна! Перевірте email.",
+      "error": "Помилка реєстрації"
+    },
+    "forgotPassword": {
+      "title": "Забули пароль?",
+      "subtitle": "Введіть ваш email і ми надішлемо посилання для скидання паролю",
+      "email": "Email",
+      "submit": "Надіслати посилання",
+      "submitting": "Відправка...",
+      "sent": "Лист відправлено!",
+      "sentDesc": "Ми надіслали посилання для скидання паролю на",
+      "checkSpam": "Перевірте папку \"Спам\" якщо лист не прийшов протягом кількох хвилин",
+      "resend": "Надіслати ще раз",
+      "backToLogin": "Повернутись до входу",
+      "error": "Помилка відправки"
+    },
+    "resetPassword": {
+      "title": "Новий пароль",
+      "subtitle": "Введіть новий пароль для вашого акаунту",
+      "password": "Новий пароль",
+      "confirmPassword": "Підтвердіть пароль",
+      "submit": "Змінити пароль",
+      "submitting": "Збереження...",
+      "success": "Пароль успішно змінено!",
+      "backToLogin": "Повернутись до входу",
+      "invalidLink": "Посилання недійсне або застаріло"
+    },
+    "validation": {
+      "emailInvalid": "Невірний формат email",
+      "passwordMin6": "Пароль мінімум 6 символів",
+      "passwordMin8": "Пароль мінімум 8 символів",
+      "firstNameMin2": "Ім'я мінімум 2 символи",
+      "lastNameMin2": "Прізвище мінімум 2 символи",
+      "passwordsMismatch": "Паролі не співпадають"
+    },
+    "goodbye": "До побачення!"
+  },
+  "home": {
+    "badge": "Платформа пошуку роботи для молоді",
+    "hero": {
+      "title1": "Знайди роботу",
+      "title2": "своєї мрії",
+      "subtitle": "Тисячі вакансій та стажувань в Україні та за кордоном. Розпочни кар'єру вже сьогодні.",
+      "searchPlaceholder": "Посада, компанія, навичка...",
+      "search": "Знайти"
+    },
+    "stats": {
+      "jobs": "Вакансій",
+      "companies": "Компаній",
+      "jobSeekers": "Шукачів роботи",
+      "countries": "Країн"
+    },
+    "featured": {
+      "title": "Актуальні вакансії",
+      "subtitle": "Найкращі пропозиції для вас",
+      "all": "Всі вакансії",
+      "loading": "Вакансії завантажуються..."
+    },
+    "categories": {
+      "title": "Популярні категорії",
+      "subtitle": "Знайдіть роботу у своїй сфері",
+      "it": "IT та розробка",
+      "design": "Дизайн",
+      "marketing": "Маркетинг",
+      "finance": "Фінанси",
+      "education": "Освіта",
+      "medicine": "Медицина",
+      "law": "Юриспруденція",
+      "logistics": "Логістика",
+      "vacancies": "вакансій"
+    },
+    "howItWorks": {
+      "title": "Як це працює",
+      "subtitle": "Три простих кроки до роботи мрії",
+      "step1": {
+        "title": "Створіть профіль",
+        "desc": "Заповніть резюме, додайте навички та досвід роботи"
+      },
+      "step2": {
+        "title": "Знайдіть вакансію",
+        "desc": "Шукайте за фільтрами: країна, галузь, зарплата"
+      },
+      "step3": {
+        "title": "Подайте заявку",
+        "desc": "Надішліть резюме та супровідний лист роботодавцю"
+      }
+    },
+    "cta": {
+      "title": "Готові почати?",
+      "subtitle": "Зареєструйтесь безкоштовно і отримайте доступ до тисяч вакансій",
+      "register": "Зареєструватись",
+      "browse": "Переглянути вакансії"
+    },
+    "footer": {
+      "tagline": "Платформа пошуку роботи та стажувань для молоді",
+      "jobSeekers": "Пошукачам",
+      "employers": "Роботодавцям",
+      "contacts": "Контакти",
+      "copyright": "© 2026 StartWay. Всі права захищені."
+    }
+  },
+  "jobTypes": {
+    "full_time": "Повна зайнятість",
+    "part_time": "Часткова зайнятість",
+    "internship": "Стажування",
+    "remote": "Віддалено",
+    "freelance": "Фріланс",
+    "contract": "Контракт"
+  },
+  "experienceLevels": {
+    "intern": "Стажер",
+    "junior": "Junior",
+    "middle": "Middle",
+    "senior": "Senior",
+    "lead": "Lead",
+    "executive": "Executive"
+  },
+  "workFormats": {
+    "office": "Офіс",
+    "remote": "Віддалено",
+    "hybrid": "Гібрид"
+  },
+  "jobCategories": {
+    "it": "IT та розробка",
+    "design": "Дизайн",
+    "marketing": "Маркетинг",
+    "finance": "Фінанси",
+    "education": "Освіта",
+    "medicine": "Медицина",
+    "law": "Юриспруденція",
+    "logistics": "Логістика",
+    "sales": "Продажі",
+    "hr": "HR та рекрутинг"
+  },
+  "jobLanguages": {
+    "ukrainian": "Українська",
+    "english": "Англійська",
+    "polish": "Польська",
+    "german": "Німецька",
+    "french": "Французька",
+    "spanish": "Іспанська"
+  },
+  "companySizes": {
+    "1-10": "1-10 співробітників",
+    "11-50": "11-50 співробітників",
+    "51-200": "51-200 співробітників",
+    "201-500": "201-500 співробітників",
+    "500+": "500+ співробітників"
+  },
+  "jobs": {
+    "title": "Вакансії та стажування",
+    "found": "Знайдено {{count}} пропозицій",
+    "filters": {
+      "title": "Фільтри",
+      "clear": "Очистити",
+      "industry": "Галузь",
+      "jobType": "Тип зайнятості",
+      "workFormat": "Формат роботи",
+      "language": "Мова",
+      "experience": "Рівень досвіду",
+      "country": "Країна",
+      "salary": "Зарплата (USD)",
+      "internship": "Стажування",
+      "paidOnly": "Тільки оплачувані",
+      "countryPlaceholder": "Наприклад: Польща",
+      "from": "від",
+      "to": "до",
+      "toggle": "Фільтри"
+    },
+    "search": {
+      "placeholder": "Пошук вакансій...",
+      "cityPlaceholder": "Місто"
+    },
+    "notFound": {
+      "title": "Вакансій не знайдено",
+      "subtitle": "Спробуйте змінити параметри пошуку",
+      "reset": "Скинути фільтри"
+    },
+    "match": "{{score}}% збіг",
+    "save": "Зберегти",
+    "unsave": "Видалити зі збережених",
+    "pagination": {
+      "prev": "Назад",
+      "next": "Далі"
+    }
+  },
+  "applications": {
+    "title": "Мої заявки",
+    "total": "Всього {{count}} заявок",
+    "all": "Всі",
+    "empty": {
+      "title": "Заявок ще немає",
+      "subtitle": "Подайте заявку на вакансію щоб вона з'явилась тут",
+      "browse": "Переглянути вакансії"
+    },
+    "withdraw": "Відкликати",
+    "details": "Деталі",
+    "employerNote": "Коментар роботодавця:",
+    "error": {
+      "load": "Помилка завантаження заявок",
+      "withdraw": "Помилка"
+    },
+    "withdrawn": "Заявку відкликано",
+    "confirmWithdraw": "Відкликати заявку?",
+    "status": {
+      "pending": "Очікує",
+      "reviewed": "Переглянуто",
+      "shortlisted": "Відібрано",
+      "interview_scheduled": "Співбесіда",
+      "interviewed": "Проведено співбесіду",
+      "offered": "Пропозиція",
+      "accepted": "Прийнято",
+      "rejected": "Відхилено",
+      "withdrawn": "Відкликано"
+    }
+  },
+  "notifications": {
+    "title": "Сповіщення",
+    "allRead": "Всі прочитано",
+    "unreadCount": "{{count}} непрочитаних",
+    "markAllRead": "Прочитати всі",
+    "clear": "Очистити",
+    "all": "Всі",
+    "unread": "Непрочитані",
+    "empty": {
+      "all": "Сповіщень немає",
+      "unread": "Немає непрочитаних сповіщень"
+    },
+    "markRead": "Позначити як прочитане",
+    "delete": "Видалити",
+    "error": {
+      "load": "Помилка завантаження сповіщень",
+      "action": "Помилка"
+    },
+    "deleted": "Сповіщення видалено",
+    "allDeleted": "Всі сповіщення видалено",
+    "allMarkedRead": "Всі сповіщення прочитано",
+    "confirmDeleteAll": "Видалити всі сповіщення?"
+  },
+  "profile": {
+    "jobSeeker": "Шукач роботи",
+    "employer": "Роботодавець",
+    "admin": "Адміністратор",
+    "verified": "Студент верифіковано",
+    "share": "Поділитись",
+    "edit": "Редагувати",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "linkCopied": "Посилання скопійовано!",
+    "completeness": {
+      "title": "Заповненість профілю",
+      "add": "Додайте:",
+      "items": {
+        "avatar": "Фото профілю",
+        "about": "Про себе",
+        "skills": "Навички",
+        "education": "Освіта",
+        "experience": "Досвід роботи",
+        "portfolio": "Портфоліо",
+        "languages": "Мови",
+        "countries": "Бажані країни",
+        "jobTypes": "Тип зайнятості",
+        "phone": "Номер телефону",
+        "location": "Місто та країна"
+      }
+    },
+    "tabs": {
+      "profile": "Профіль",
+      "resume": "Резюме",
+      "portfolio": "Портфоліо",
+      "saved": "Збережені",
+      "applications": "Відгуки",
+      "settings": "Налаштування"
+    },
+    "fields": {
+      "firstName": "Ім'я",
+      "lastName": "Прізвище",
+      "phone": "Телефон",
+      "birthday": "Дата народження",
+      "country": "Країна",
+      "city": "Місто",
+      "about": "Про себе"
+    },
+    "languages": {
+      "title": "Мови",
+      "add": "Додати мову...",
+      "notSet": "Не вказано"
+    },
+    "countries": {
+      "title": "Бажані країни роботи",
+      "add": "Додати країну...",
+      "notSet": "Не вказано"
+    },
+    "jobTypes": {
+      "title": "Типи зайнятості",
+      "notSet": "Не вказано"
+    },
+    "skills": {
+      "title": "Навички",
+      "empty": "Навички не додано",
+      "search": "Пошук навичок...",
+      "popular": "Популярні",
+      "notFound": "Нічого не знайдено"
+    },
+    "employer": {
+      "company": "Компанія",
+      "companyDesc": "Керуйте профілем вашої компанії, вакансіями та заявками в особистому кабінеті роботодавця.",
+      "dashboard": "Кабінет роботодавця"
+    },
+    "admin": {
+      "title": "Адміністрування",
+      "desc": "Доступ до панелі адміністратора для управління користувачами, вакансіями та платформою.",
+      "panel": "Панель адміністратора"
+    },
+    "resume": {
+      "title": "PDF-резюме",
+      "desc": "Завантажте готове резюме у форматі PDF — роботодавці зможуть його скачати",
+      "view": "Переглянути резюме",
+      "replace": "Замінити резюме",
+      "upload": "Завантажити резюме",
+      "uploading": "Завантаження...",
+      "pdfOnly": "Тільки PDF, до 10 МБ",
+      "error": {
+        "load": "Помилка завантаження резюме",
+        "upload": "Помилка завантаження резюме",
+        "delete": "Помилка видалення резюме",
+        "avatar": "Помилка завантаження аватара"
+      },
+      "updated": "Резюме завантажено!",
+      "deleted": "Резюме видалено",
+      "avatarUpdated": "Аватар оновлено!"
+    },
+    "education": {
+      "title": "Освіта",
+      "add": "Додати",
+      "empty": "Освіту не додано",
+      "new": "Нова освіта",
+      "editing": "Редагування",
+      "fields": {
+        "institution": "Заклад освіти *",
+        "institutionPlaceholder": "Назва університету",
+        "degree": "Ступінь *",
+        "degreePlaceholder": "Бакалавр, Магістр...",
+        "field": "Спеціальність *",
+        "fieldPlaceholder": "Комп'ютерні науки...",
+        "grade": "Оцінка / GPA",
+        "gradePlaceholder": "4.0, відмінно...",
+        "start": "Початок *",
+        "end": "Кінець",
+        "description": "Опис",
+        "descPlaceholder": "Додаткова інформація..."
+      },
+      "requiredFields": "Заповніть обов'язкові поля"
+    },
+    "work": {
+      "title": "Досвід роботи",
+      "add": "Додати",
+      "empty": "Досвід роботи не додано",
+      "new": "Новий досвід",
+      "editing": "Редагування",
+      "current": "Поточне",
+      "currentNow": "по теперішній час",
+      "fields": {
+        "company": "Компанія *",
+        "companyPlaceholder": "Назва компанії",
+        "position": "Посада *",
+        "positionPlaceholder": "Frontend Developer...",
+        "start": "Початок *",
+        "end": "Кінець",
+        "current": "Працюю тут зараз",
+        "description": "Опис обов'язків",
+        "descPlaceholder": "Ваші обов'язки...",
+        "achievements": "Досягнення",
+        "achievementsHint": "(кожне з нового рядка)"
+      },
+      "requiredFields": "Заповніть обов'язкові поля"
+    },
+    "portfolio": {
+      "title": "Проєкти",
+      "add": "Додати проєкт",
+      "empty": "Портфоліо порожнє",
+      "new": "Новий проєкт",
+      "editing": "Редагування проєкту",
+      "fields": {
+        "name": "Назва проєкту *",
+        "namePlaceholder": "Мій проєкт",
+        "desc": "Опис *",
+        "descPlaceholder": "Коротко про проєкт, технології...",
+        "url": "Посилання",
+        "urlPlaceholder": "https://github.com/...",
+        "file": "Файл проєкту",
+        "fileHint": "(зображення, PDF, презентація)",
+        "uploadFile": "Завантажити файл",
+        "replaceFile": "Замінити файл",
+        "fileAdded": "Файл додано"
+      },
+      "requiredFields": "Заповніть обов'язкові поля",
+      "fileUploaded": "Файл завантажено",
+      "fileError": "Помилка завантаження"
+    },
+    "saved": {
+      "title": "Збережені вакансії",
+      "count": "{{count}} вакансій",
+      "empty": "Збережених вакансій немає",
+      "emptyHint": "Натискайте на серце на сторінці вакансій, щоб зберегти",
+      "removed": "Вакансію видалено зі збережених"
+    },
+    "myApplications": {
+      "title": "Мої відгуки",
+      "count": "{{count}} відгуків",
+      "empty": "Відгуків ще немає",
+      "emptyHint": "Відгукніться на вакансії на сторінці пошуку",
+      "applied": "Відгукнувся {{date}}",
+      "comment": "Коментар:",
+      "message": "Написати",
+      "withdraw": "Відкликати",
+      "withdrawn": "Відгук відкликано",
+      "withdrawError": "Помилка відкликання",
+      "appStatus": {
+        "pending": "На розгляді",
+        "reviewed": "Переглянуто",
+        "shortlisted": "Відібрано",
+        "interview_scheduled": "Запрошено",
+        "interviewed": "Співбесіда",
+        "offered": "Пропозиція",
+        "accepted": "Прийнято",
+        "rejected": "Відхилено",
+        "withdrawn": "Відкликано"
+      }
+    },
+    "settings": {
+      "password": {
+        "title": "Зміна пароля",
+        "desc": "Введіть поточний пароль і новий для його зміни",
+        "current": "Поточний пароль",
+        "new": "Новий пароль",
+        "confirm": "Підтвердіть новий пароль",
+        "submit": "Змінити пароль",
+        "minLength": "Мінімум 6 символів",
+        "changed": "Пароль змінено!",
+        "fillAll": "Заповніть всі поля",
+        "mismatch": "Паролі не збігаються",
+        "error": "Помилка зміни пароля"
+      }
+    },
+    "updated": "Профіль оновлено!",
+    "saveError": "Помилка збереження"
+  },
+  "notFound": {
+    "title": "Сторінку не знайдено",
+    "subtitle": "На жаль, такої сторінки не існує.",
+    "back": "На головну",
+    "browse": "Переглянути вакансії"
+  },
+  "chat": {
+    "messages": "Повідомлення",
+    "search": "Пошук розмов...",
+    "online": "Онлайн",
+    "connecting": "Підключення...",
+    "noConversations": "Немає розмов",
+    "noConversationsHint": "Подайте заявку на вакансію щоб розпочати спілкування",
+    "selectConversation": "Оберіть розмову",
+    "selectConversationHint": "Натисніть на розмову зліва щоб відкрити",
+    "startConversation": "Розпочніть розмову",
+    "placeholder": "Написати повідомлення... (Enter для відправки)",
+    "typing": "друкує...",
+    "justNow": "щойно",
+    "roles": {
+      "employer": "Роботодавець",
+      "job_seeker": "Шукач роботи"
+    }
+  },
+  "jobDetail": {
+    "back": "Назад до вакансій",
+    "urgent": "Терміново",
+    "top": "Топ",
+    "views": "{{count}} переглядів",
+    "deadline": "Дедлайн",
+    "type": "Тип",
+    "format": "Формат",
+    "level": "Рівень",
+    "category": "Категорія",
+    "apply": "Подати заявку",
+    "applied": "Заявку подано",
+    "appliedDesc": "Роботодавець розглядає її",
+    "save": "Зберегти вакансію",
+    "saved": "Збережено",
+    "share": "Посилання скопійовано",
+    "description": "Про вакансію",
+    "requirements": "Вимоги",
+    "responsibilities": "Обов'язки",
+    "skills": "Ключові навички",
+    "benefits": "✨ Переваги",
+    "company": {
+      "title": "Про {{name}}",
+      "noInfo": "Інформація про компанію відсутня.",
+      "viewProfile": "Переглянути профіль компанії →"
+    },
+    "similar": "Схожі вакансії",
+    "modal": {
+      "title": "Подати заявку",
+      "subtitle": "Ваш профіль буде надіслано роботодавцю",
+      "coverLetter": "Супровідний лист",
+      "optional": "(необов'язково)",
+      "placeholder": "Розкажіть чому ви підходите для цієї ролі...",
+      "cancel": "Скасувати",
+      "submit": "Надіслати заявку"
+    },
+    "error": {
+      "load": "Помилка завантаження вакансії",
+      "apply": "Помилка подачі заявки",
+      "save": "Помилка"
+    },
+    "success": {
+      "applied": "Заявку подано!",
+      "saved": "Збережено!",
+      "unsaved": "Видалено зі збережених"
+    },
+    "notFound": "Вакансію не знайдено",
+    "notFoundBack": "Повернутися до вакансій"
+  },
+  "companies": {
+    "title": "Компанії",
+    "found": "Знайдено {{count}} компаній",
+    "filters": {
+      "search": "Назва компанії...",
+      "allIndustries": "Всі галузі",
+      "size": "Розмір компанії",
+      "reset": "Скинути"
+    },
+    "empty": {
+      "title": "Компаній не знайдено",
+      "subtitle": "Спробуйте змінити параметри пошуку"
+    },
+    "verified": "Верифіковано",
+    "jobs": "вакансій",
+    "pagination": {
+      "prev": "Назад",
+      "next": "Далі"
+    },
+    "industries": {
+      "it": "Інформаційні технології",
+      "outsourcing": "IT-аутсорсинг",
+      "startups": "Стартапи та продуктова розробка",
+      "mobile": "Мобільна розробка",
+      "data": "Аналіз даних",
+      "design": "Дизайн",
+      "devops": "DevOps & Cloud"
+    }
+  },
+  "companyDetail": {
+    "back": "Назад",
+    "verified": "Верифіковано",
+    "founded": "Засновано {{year}}",
+    "jobs": "{{count}} вакансій",
+    "reviews": "{{count}} відгуків",
+    "jobsSection": "Вакансії компанії",
+    "noJobs": "Немає активних вакансій",
+    "reviewsSection": "Відгуки",
+    "writeReview": "Написати відгук",
+    "website": "Сайт",
+    "noInfo": "Інформація відсутня.",
+    "form": {
+      "title": "Ваш відгук",
+      "rating": "Загальна оцінка *",
+      "titleField": "Заголовок *",
+      "titlePlaceholder": "Коротко про враження",
+      "content": "Відгук *",
+      "contentPlaceholder": "Розкажіть про свій досвід роботи в компанії...",
+      "position": "Посада",
+      "positionPlaceholder": "Наприклад: Frontend Developer",
+      "recommend": "Рекомендую цю компанію",
+      "cancel": "Скасувати",
+      "submit": "Опублікувати"
+    },
+    "review": {
+      "recommends": "Рекомендує"
+    },
+    "noReviews": "Відгуків ще немає",
+    "beFirst": "Будьте першим!",
+    "error": {
+      "rating": "Оберіть оцінку",
+      "fields": "Заповніть заголовок і текст",
+      "review": "Помилка додавання відгуку"
+    },
+    "success": {
+      "review": "Відгук додано!"
+    },
+    "pagination": {
+      "prev": "Назад",
+      "next": "Далі"
+    }
+  },
+  "publicProfile": {
+    "back": "Назад",
+    "message": "Написати",
+    "roles": {
+      "job_seeker": "Шукач роботи",
+      "employer": "Роботодавець",
+      "admin": "Адміністратор"
+    },
+    "skills": "Навички",
+    "languages": "Мови",
+    "education": "Освіта",
+    "present": "по теперішній час",
+    "workExperience": "Досвід роботи",
+    "current": "Поточне",
+    "portfolio": "Портфоліо",
+    "view": "Переглянути"
+  },
+  "employer": {
+    "title": "Кабінет роботодавця",
+    "newJob": "Нова вакансія",
+    "tabs": {
+      "jobs": "Вакансії",
+      "applications": "Заявки",
+      "company": "Компанія",
+      "candidates": "Кандидати",
+      "ai": "AI Аналіз"
+    },
+    "stats": {
+      "jobs": "Вакансій",
+      "applications": "Заявок",
+      "views": "Переглядів"
+    },
+    "kanban": {
+      "pending": "Нові",
+      "reviewed": "Перегляд",
+      "shortlisted": "Відібрано",
+      "interview_scheduled": "Співбесіда",
+      "offered": "Оффер",
+      "rejected": "Відмова"
+    },
+    "jobs": {
+      "empty": "Вакансій ще немає",
+      "createFirst": "Створити першу вакансію",
+      "status": {
+        "active": "Активна",
+        "pending": "На модерації"
+      },
+      "applications": "заявок",
+      "views": "переглядів",
+      "deadline": "Дедлайн:",
+      "tooltips": {
+        "funnel": "Аналітика воронки",
+        "edit": "Редагувати",
+        "duplicate": "Дублювати вакансію",
+        "delete": "Видалити"
+      },
+      "funnel": {
+        "title": "Воронка заявок",
+        "views": "Перегляди",
+        "applications": "Заявки",
+        "shortlisted": "Відібрано",
+        "offer": "Оффер",
+        "conversion": "Конверсія:"
+      }
+    },
+    "applications": {
+      "allJobs": "Всі вакансії",
+      "viewList": "Список",
+      "note": "Нотатка",
+      "notePlaceholder": "Нотатка про кандидата...",
+      "notePlaceholderList": "Нотатка...",
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "dragHere": "Перетягніть сюди",
+      "empty": "Заявок ще немає",
+      "expectedSalary": "Очікувана зарплата:",
+      "profile": "Профіль",
+      "message": "Написати"
+    },
+    "company": {
+      "verified": "Верифіковано",
+      "pendingVerification": "Очікує верифікації адміністратором",
+      "edit": "Редагувати",
+      "info": {
+        "industry": "Галузь",
+        "size": "Розмір",
+        "foundedYear": "Рік заснування",
+        "website": "Сайт",
+        "shortDescription": "Короткий опис"
+      },
+      "status": {
+        "verified": "Верифіковано",
+        "active": "Активна",
+        "pending": "На розгляді"
+      },
+      "noCompany": {
+        "title": "У вас ще немає профілю компанії",
+        "desc": "Після верифікації адміністратором він з'явиться в публічному каталозі.",
+        "create": "Створити компанію"
+      },
+      "form": {
+        "editTitle": "Редагувати компанію",
+        "createTitle": "Нова компанія",
+        "name": "Назва компанії *",
+        "namePlaceholder": "Назва вашої компанії",
+        "shortDescription": "Короткий опис",
+        "shortDescPlaceholder": "Одне речення про компанію",
+        "fullDescription": "Повний опис",
+        "industry": "Галузь",
+        "industryPlaceholder": "IT, Фінанси...",
+        "foundedYear": "Рік заснування",
+        "size": "Розмір",
+        "sizePlaceholder": "Оберіть",
+        "website": "Сайт",
+        "cancel": "Скасувати",
+        "save": "Зберегти",
+        "create": "Створити"
+      }
+    },
+    "candidates": {
+      "searchPlaceholder": "Ім'я або ключові слова...",
+      "countryPlaceholder": "Країна",
+      "cityPlaceholder": "Місто",
+      "languagePlaceholder": "+ Мова",
+      "search": "Знайти",
+      "found": "Знайдено:",
+      "empty": {
+        "title": "Кандидатів не знайдено",
+        "subtitle": "Спробуйте змінити фільтри пошуку"
+      },
+      "view": "Переглянути",
+      "message": "Написати"
+    },
+    "ai": {
+      "title": "AI Скринінг кандидатів",
+      "subtitle": "Gemini 1.5 Flash аналізує відповідність кандидата вимогам вакансії та надає оцінку і рекомендацію.",
+      "selectJob": "Оберіть вакансію для аналізу",
+      "allApplications": "— всі заявки —",
+      "analyzing": "Аналізую...",
+      "analyzeAll": "Аналізувати всіх",
+      "noAppsJob": "Немає заявок для обраної вакансії",
+      "noApps": "Немає заявок",
+      "top": "Топ-{{n}} кандидатів",
+      "byAi": "за результатами AI аналізу",
+      "rec": {
+        "strong_yes": "Рекомендую",
+        "yes": "Підходить",
+        "maybe": "Можливо",
+        "no": "Не підходить"
+      },
+      "strengths": "Сильні сторони",
+      "gaps": "Прогалини",
+      "noGaps": "Явних прогалин не виявлено",
+      "analyzedAt": "Проаналізовано",
+      "analyzingShort": "Аналіз...",
+      "reanalyze": "Повторно",
+      "analyze": "Аналізувати"
+    },
+    "jobForm": {
+      "editTitle": "Редагувати вакансію",
+      "duplicateTitle": "Дублювати вакансію",
+      "createTitle": "Нова вакансія",
+      "copyMarker": "(копія)",
+      "titleLabel": "Назва вакансії *",
+      "description": "Опис *",
+      "jobType": "Тип зайнятості",
+      "experienceLevel": "Рівень досвіду",
+      "workFormat": "Формат роботи",
+      "country": "Країна",
+      "city": "Місто",
+      "cityPlaceholder": "Київ",
+      "salaryMin": "Зарплата від",
+      "salaryMax": "Зарплата до",
+      "currency": "Валюта",
+      "requirements": "Вимоги",
+      "responsibilities": "Обов'язки",
+      "benefits": "Переваги / Бенефіти",
+      "benefitsPlaceholder": "Медична страховка, гнучкий графік...",
+      "category": "Категорія",
+      "categoryPlaceholder": "Оберіть категорію",
+      "languages": "Мовні вимоги",
+      "skills": "Необхідні навички",
+      "urgent": "Термінова",
+      "remote": "Віддалена робота",
+      "negotiable": "Зарплата договірна",
+      "paidInternship": "Оплачуване стажування",
+      "stipend": "Стипендія / виплата (USD)",
+      "stipendPlaceholder": "наприклад: 300",
+      "deadline": "Дедлайн подачі заявок",
+      "cancel": "Скасувати",
+      "save": "Зберегти",
+      "create": "Створити"
+    },
+    "candidatePreview": {
+      "title": "Профіль кандидата",
+      "fullProfile": "Повний профіль",
+      "message": "Написати",
+      "skills": "Навички",
+      "languages": "Мови",
+      "experience": "Досвід роботи",
+      "education": "Освіта",
+      "current": "Зараз"
+    },
+    "toast": {
+      "statusUpdated": "Статус оновлено",
+      "statusError": "Помилка оновлення статусу",
+      "noteSaved": "Нотатку збережено",
+      "noteError": "Помилка збереження нотатки",
+      "companyCreated": "Компанію створено! Очікуйте верифікації адміністратором.",
+      "companyUpdated": "Дані компанії оновлено",
+      "jobCreated": "Вакансію створено!",
+      "jobUpdated": "Вакансію оновлено!",
+      "jobDeleted": "Вакансію видалено",
+      "jobDeleteConfirm": "Видалити вакансію?",
+      "deleteError": "Помилка видалення",
+      "loadError": "Помилка завантаження даних",
+      "candidatesError": "Помилка пошуку кандидатів",
+      "profileError": "Помилка завантаження профілю",
+      "analyzed": "Проаналізовано {{count}} заявок",
+      "analysisDone": "Аналіз завершено",
+      "analysisErrors": ", помилок: {{count}}",
+      "batchError": "Помилка пакетного аналізу",
+      "aiError": "Помилка AI аналізу",
+      "error": "Помилка"
+    }
+  },
+  "admin": {
+    "title": "Адміністративна панель",
+    "subtitle": "Керування платформою StartWay",
+    "tabs": {
+      "dashboard": "Дашборд",
+      "analytics": "Аналітика",
+      "users": "Користувачі",
+      "jobs": "Вакансії",
+      "companies": "Компанії",
+      "logs": "Аудит"
+    },
+    "updated": "Оновлено",
+    "noData": "Немає даних",
+    "error": {
+      "load": "Помилка завантаження"
+    },
+    "dashboard": {
+      "cards": {
+        "users": "Користувачів",
+        "jobs": "Вакансій",
+        "companies": "Компаній",
+        "pending": "На модерації",
+        "today": "+{{count}} сьогодні",
+        "activeJobs": "{{count}} активних",
+        "verified": "{{count}} верифіковано",
+        "pendingJobs": "вакансій чекають"
+      },
+      "quickActions": {
+        "title": "Швидкі дії",
+        "moderateJobs": "Модерувати вакансії",
+        "verifyCompanies": "Верифікувати компанії",
+        "pendingApps": "Заявки в очікуванні",
+        "totalApps": "Всього заявок"
+      }
+    },
+    "users": {
+      "search": "Пошук користувачів...",
+      "allRoles": "Всі ролі",
+      "roles": {
+        "job_seeker": "Шукач",
+        "employer": "Роботодавець",
+        "admin": "Адмін"
+      },
+      "total": "Всього:",
+      "table": {
+        "user": "Користувач",
+        "role": "Роль",
+        "status": "Статус",
+        "date": "Дата",
+        "actions": "Дії"
+      },
+      "status": {
+        "active": "Активний",
+        "blocked": "Заблокований"
+      },
+      "block": "Блок",
+      "unblock": "Розблок",
+      "slideOver": {
+        "title": "Деталі користувача",
+        "labels": {
+          "email": "Email",
+          "registered": "Зареєстровано",
+          "city": "Місто",
+          "status": "Статус",
+          "emailVerified": "Email підтверджено"
+        },
+        "yes": "Так",
+        "no": "Ні",
+        "stats": {
+          "applications": "Заявок",
+          "jobs": "Вакансій"
+        },
+        "about": "Про себе",
+        "skills": "Навички"
+      }
+    },
+    "jobs": {
+      "search": "Пошук вакансій...",
+      "allStatuses": "Всі статуси",
+      "filterStatus": {
+        "pending": "На модерації",
+        "active": "Активні",
+        "rejected": "Відхилені",
+        "inactive": "Неактивні"
+      },
+      "jobStatus": {
+        "active": "Активна",
+        "pending": "На модерації",
+        "rejected": "Відхилено"
+      },
+      "total": "Всього:",
+      "bulkApprove": "Схвалити {{count}}",
+      "table": {
+        "job": "Вакансія",
+        "employer": "Роботодавець",
+        "status": "Статус",
+        "date": "Дата",
+        "actions": "Дії"
+      },
+      "approve": "Схвалити",
+      "reject": "Відхилити",
+      "deactivate": "Деактивувати",
+      "restore": "Відновити",
+      "rejectModal": {
+        "title": "Відхилити вакансію",
+        "job": "Вакансія:",
+        "placeholder": "Вкажіть причину відхилення (необов'язково)...",
+        "cancel": "Скасувати",
+        "confirm": "Відхилити"
+      }
+    },
+    "companies": {
+      "allStatuses": "Всі статуси",
+      "filterStatus": {
+        "pending": "На розгляді",
+        "active": "Активні",
+        "verified": "Верифіковані",
+        "suspended": "Призупинені"
+      },
+      "companyStatus": {
+        "verified": "Верифіковано",
+        "active": "Активна",
+        "pending": "На розгляді",
+        "suspended": "Призупинено"
+      },
+      "total": "Всього:",
+      "table": {
+        "company": "Компанія",
+        "industry": "Галузь",
+        "status": "Статус",
+        "jobs": "Вакансій",
+        "actions": "Дії"
+      },
+      "verify": "Верифікувати",
+      "suspend": "Призупинити",
+      "suspendedLabel": "Призупинено"
+    },
+    "analytics": {
+      "registrations": "Реєстрації користувачів",
+      "jobPostings": "Публікації вакансій",
+      "topSkills": "Затребувані навички",
+      "appsByStatus": "Заявки за статусами",
+      "topCountries": "Топ країн за вакансіями",
+      "byIndustry": "Вакансії за категоріями",
+      "jobTypes": "Типи зайнятості",
+      "appDistribution": "Заявки: розподіл статусів",
+      "jobs": "Вакансій",
+      "applicationsCount": "Заявок",
+      "registrationsCount": "Реєстрацій",
+      "appStatus": {
+        "pending": "Очікують",
+        "reviewed": "Переглянуто",
+        "shortlisted": "Відібрано",
+        "interview_scheduled": "Інтерв'ю",
+        "offered": "Оффер",
+        "accepted": "Прийнято",
+        "rejected": "Відхилено",
+        "withdrawn": "Відкликано"
+      }
+    },
+    "logs": {
+      "total": "Всього записів:",
+      "empty": "Логів ще немає",
+      "table": {
+        "action": "Дія",
+        "user": "Користувач",
+        "resource": "Ресурс",
+        "time": "Час"
+      },
+      "actions": {
+        "user_created": "Реєстрація",
+        "user_updated": "Оновлення користувача",
+        "user_deleted": "Видалення користувача",
+        "user_blocked": "Блокування",
+        "job_created": "Вакансію створено",
+        "job_updated": "Вакансію оновлено",
+        "job_deleted": "Вакансію видалено",
+        "job_moderated": "Модерація вакансії",
+        "company_created": "Компанію створено",
+        "company_updated": "Компанію оновлено",
+        "company_verified": "Верифікація компанії",
+        "company_suspended": "Блокування компанії",
+        "application_reviewed": "Заявку переглянуто",
+        "settings_changed": "Налаштування змінено"
+      },
+      "entityTypes": {
+        "user": "Користувач",
+        "job": "Вакансія",
+        "company": "Компанія",
+        "application": "Заявка"
+      }
+    },
+    "countries": {
+      "ukraine": "Україна",
+      "poland": "Польща",
+      "germany": "Німеччина",
+      "usa": "США",
+      "uk": "Велика Британія"
+    },
+    "pagination": {
+      "of": "з"
+    },
+    "toast": {
+      "loadError": "Помилка завантаження",
+      "usersError": "Помилка завантаження користувачів",
+      "jobsError": "Помилка завантаження вакансій",
+      "companiesError": "Помилка завантаження компаній",
+      "analyticsError": "Помилка аналітики",
+      "logsError": "Помилка завантаження логів",
+      "userBlocked": "Користувача заблоковано",
+      "userUnblocked": "Користувача розблоковано",
+      "roleChanged": "Роль змінено",
+      "jobApproved": "Вакансію схвалено",
+      "jobRejected": "Вакансію відхилено",
+      "statusUpdated": "Статус оновлено",
+      "companyVerified": "Компанію верифіковано",
+      "companySuspended": "Компанію призупинено",
+      "bulkApproved": "Схвалено {{count}} вакансій",
+      "bulkError": "Помилка bulk approve",
+      "error": "Помилка"
+    }
+  }
+}

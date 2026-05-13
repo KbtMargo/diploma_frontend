@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Briefcase, Users, Plus, Edit2, Trash2,
@@ -11,26 +11,18 @@ import {
   ThumbsUp, ThumbsDown, AlertCircle, Trophy, Zap,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useI18n } from '@/contexts/I18nContext';
 import { Job, Application, AiAnalysis, Company, Skill, User } from '@/types';
 import {
   ROUTES, JOB_TYPES, EXPERIENCE_LEVELS, WORK_FORMATS,
-  APPLICATION_STATUSES, COMPANY_SIZES, JOB_LANGUAGES, JOB_CATEGORIES,
+  COMPANY_SIZES, JOB_LANGUAGES, JOB_CATEGORIES,
 } from '@/lib/constants';
 import { formatRelativeDate, formatSalary } from '@/lib/utils';
 import Link from 'next/link';
 import api from '@/lib/axios';
 import toast from 'react-hot-toast';
 
-// ─── Kanban config ────────────────────────────────────────────────────────────
-
-const KANBAN_COLS = [
-  { status: 'pending',             label: 'Нові',       hdr: 'bg-gray-100 text-gray-700',     col: 'bg-gray-50'    },
-  { status: 'reviewed',            label: 'Перегляд',   hdr: 'bg-blue-100 text-blue-700',     col: 'bg-blue-50'    },
-  { status: 'shortlisted',         label: 'Відібрано',  hdr: 'bg-purple-100 text-purple-700', col: 'bg-purple-50'  },
-  { status: 'interview_scheduled', label: 'Співбесіда', hdr: 'bg-yellow-100 text-yellow-700', col: 'bg-yellow-50'  },
-  { status: 'offered',             label: 'Оффер',      hdr: 'bg-green-100 text-green-700',   col: 'bg-green-50'   },
-  { status: 'rejected',            label: 'Відмова',    hdr: 'bg-red-100 text-red-700',       col: 'bg-red-50'     },
-];
+// ─── Kanban config (labels are resolved inside component via t()) ─────────────
 
 const STATUS_TO_COL: Record<string, string> = {
   pending:             'pending',
@@ -67,6 +59,16 @@ function MatchBadge({ score }: { score: number }) {
 export default function EmployerDashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
+  const { t } = useI18n();
+
+  const KANBAN_COLS = useMemo(() => [
+    { status: 'pending',             label: t('employer.kanban.pending'),              hdr: 'bg-gray-100 text-gray-700',     col: 'bg-gray-50'    },
+    { status: 'reviewed',            label: t('employer.kanban.reviewed'),             hdr: 'bg-blue-100 text-blue-700',     col: 'bg-blue-50'    },
+    { status: 'shortlisted',         label: t('employer.kanban.shortlisted'),          hdr: 'bg-purple-100 text-purple-700', col: 'bg-purple-50'  },
+    { status: 'interview_scheduled', label: t('employer.kanban.interview_scheduled'),  hdr: 'bg-yellow-100 text-yellow-700', col: 'bg-yellow-50'  },
+    { status: 'offered',             label: t('employer.kanban.offered'),              hdr: 'bg-green-100 text-green-700',   col: 'bg-green-50'   },
+    { status: 'rejected',            label: t('employer.kanban.rejected'),             hdr: 'bg-red-100 text-red-700',       col: 'bg-red-50'     },
+  ], [t]);
 
   // Core
   const [activeTab, setActiveTab] = useState<'jobs' | 'applications' | 'company' | 'candidates' | 'ai'>('jobs');
@@ -84,6 +86,7 @@ export default function EmployerDashboardPage() {
     jobType: 'full_time', experienceLevel: 'junior', workFormat: 'office',
     country: '', city: '', salaryMin: '', salaryMax: '', salaryCurrency: 'USD',
     category: '', isSalaryNegotiable: false, isRemote: false, isUrgent: false,
+    isPaid: false, stipendAmount: '',
     applicationDeadline: '', requiredLanguages: [] as string[], skillIds: [] as string[],
   });
 
@@ -155,7 +158,7 @@ export default function EmployerDashboardPage() {
         totalApplications: appsData.length,
         totalViews: jobsData.reduce((s: number, j: Job) => s + (j.views || 0), 0),
       });
-    } catch { toast.error('Помилка завантаження даних'); }
+    } catch { toast.error(t('employer.toast.loadError')); }
     finally { setIsLoading(false); }
   };
 
@@ -197,7 +200,7 @@ export default function EmployerDashboardPage() {
       const res = await api.get(`/users/candidates?${params}`);
       setCandidates(res.data.data || []);
       setCandidatesTotal(res.data.meta?.total || 0);
-    } catch { toast.error('Помилка пошуку кандидатів'); }
+    } catch { toast.error(t('employer.toast.candidatesError')); }
     finally { setCandidatesLoading(false); }
   };
 
@@ -209,10 +212,11 @@ export default function EmployerDashboardPage() {
         ...jobForm,
         salaryMin: jobForm.salaryMin ? +jobForm.salaryMin : undefined,
         salaryMax: jobForm.salaryMax ? +jobForm.salaryMax : undefined,
+        stipendAmount: jobForm.stipendAmount ? +jobForm.stipendAmount : undefined,
       });
-      toast.success('Вакансію створено!');
+      toast.success(t('employer.toast.jobCreated'));
       setShowCreateJob(false); resetJobForm(); fetchData();
-    } catch (e: any) { toast.error(e.response?.data?.message || 'Помилка'); }
+    } catch (e: any) { toast.error(e.response?.data?.message || t('employer.toast.error')); }
   };
 
   const handleUpdateJob = async () => {
@@ -222,25 +226,26 @@ export default function EmployerDashboardPage() {
         ...jobForm,
         salaryMin: jobForm.salaryMin ? +jobForm.salaryMin : undefined,
         salaryMax: jobForm.salaryMax ? +jobForm.salaryMax : undefined,
+        stipendAmount: jobForm.stipendAmount ? +jobForm.stipendAmount : undefined,
       });
-      toast.success('Вакансію оновлено!');
+      toast.success(t('employer.toast.jobUpdated'));
       setEditingJob(null); resetJobForm(); fetchData();
-    } catch (e: any) { toast.error(e.response?.data?.message || 'Помилка'); }
+    } catch (e: any) { toast.error(e.response?.data?.message || t('employer.toast.error')); }
   };
 
   const handleDeleteJob = async (id: string) => {
-    if (!confirm('Видалити вакансію?')) return;
+    if (!confirm(t('employer.toast.jobDeleteConfirm'))) return;
     try {
       await api.delete(`/jobs/${id}`);
-      toast.success('Вакансію видалено'); fetchData();
-    } catch { toast.error('Помилка видалення'); }
+      toast.success(t('employer.toast.jobDeleted')); fetchData();
+    } catch { toast.error(t('employer.toast.deleteError')); }
   };
 
   const handleDuplicateJob = (job: Job) => {
     fetchSkills();
     setEditingJob(null);
     setJobForm({
-      title: `${job.title} (копія)`,
+      title: `${job.title} ${t('employer.jobForm.copyMarker')}`,
       description: job.description || '',
       requirements: job.requirements || '',
       responsibilities: job.responsibilities || '',
@@ -257,6 +262,8 @@ export default function EmployerDashboardPage() {
       isSalaryNegotiable: job.isSalaryNegotiable || false,
       isRemote: job.isRemote || false,
       isUrgent: false,
+      isPaid: job.isPaid || false,
+      stipendAmount: job.stipendAmount?.toString() || '',
       applicationDeadline: '',
       requiredLanguages: job.requiredLanguages || [],
       skillIds: job.requiredSkills?.map(s => s.id) || [],
@@ -285,6 +292,8 @@ export default function EmployerDashboardPage() {
       isSalaryNegotiable: job.isSalaryNegotiable || false,
       isRemote: job.isRemote || false,
       isUrgent: job.isUrgent || false,
+      isPaid: job.isPaid || false,
+      stipendAmount: job.stipendAmount?.toString() || '',
       applicationDeadline: job.applicationDeadline
         ? new Date(job.applicationDeadline).toISOString().split('T')[0] : '',
       requiredLanguages: job.requiredLanguages || [],
@@ -297,6 +306,7 @@ export default function EmployerDashboardPage() {
     jobType: 'full_time', experienceLevel: 'junior', workFormat: 'office',
     country: '', city: '', salaryMin: '', salaryMax: '', salaryCurrency: 'USD',
     category: '', isSalaryNegotiable: false, isRemote: false, isUrgent: false,
+    isPaid: false, stipendAmount: '',
     applicationDeadline: '', requiredLanguages: [], skillIds: [],
   });
 
@@ -312,10 +322,10 @@ export default function EmployerDashboardPage() {
     setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: newColStatus } : a));
     try {
       await api.put(`/applications/${app.id}/status`, { status: newColStatus });
-      toast.success('Статус оновлено');
+      toast.success(t('employer.toast.statusUpdated'));
     } catch {
       setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: app.status } : a));
-      toast.error('Помилка оновлення статусу');
+      toast.error(t('employer.toast.statusError'));
     }
   };
 
@@ -326,8 +336,8 @@ export default function EmployerDashboardPage() {
     setEditingNoteId(null);
     try {
       await api.put(`/applications/${appId}/status`, { status: currentStatus, employerNotes: noteText });
-      toast.success('Нотатку збережено');
-    } catch { toast.error('Помилка збереження нотатки'); }
+      toast.success(t('employer.toast.noteSaved'));
+    } catch { toast.error(t('employer.toast.noteError')); }
   };
 
   // ─── Company handlers ─────────────────────────────────────────────────────────
@@ -335,18 +345,18 @@ export default function EmployerDashboardPage() {
   const handleCreateCompany = async () => {
     try {
       await api.post('/companies', { ...companyForm, foundedYear: companyForm.foundedYear ? +companyForm.foundedYear : undefined });
-      toast.success('Компанію створено! Очікуйте верифікації адміністратором.');
+      toast.success(t('employer.toast.companyCreated'));
       setShowCompanyForm(false); fetchMyCompany();
-    } catch (e: any) { toast.error(e.response?.data?.message || 'Помилка'); }
+    } catch (e: any) { toast.error(e.response?.data?.message || t('employer.toast.error')); }
   };
 
   const handleUpdateCompany = async () => {
     if (!myCompany) return;
     try {
       await api.put(`/companies/${myCompany.id}`, { ...companyForm, foundedYear: companyForm.foundedYear ? +companyForm.foundedYear : undefined });
-      toast.success('Дані компанії оновлено');
+      toast.success(t('employer.toast.companyUpdated'));
       setShowCompanyForm(false); fetchMyCompany();
-    } catch (e: any) { toast.error(e.response?.data?.message || 'Помилка'); }
+    } catch (e: any) { toast.error(e.response?.data?.message || t('employer.toast.error')); }
   };
 
   // ─── Candidate preview ───────────────────────────────────────────────────────
@@ -357,7 +367,7 @@ export default function EmployerDashboardPage() {
     try {
       const res = await api.get(`/users/${userId}`);
       setPreviewUser(res.data);
-    } catch { toast.error('Помилка завантаження профілю'); }
+    } catch { toast.error(t('employer.toast.profileError')); }
     finally { setPreviewLoading(false); }
   };
 
@@ -377,9 +387,9 @@ export default function EmployerDashboardPage() {
           aiAnalyzedAt: r.analyzedAt,
         };
       }));
-      toast.success(`Проаналізовано ${analyzed} заявок${failed > 0 ? `, помилок: ${failed}` : ''}`);
+      toast.success(t('employer.toast.analyzed', { count: analyzed }) + (failed > 0 ? t('employer.toast.analysisErrors', { count: failed }) : ''));
     } catch (e: any) {
-      toast.error(e.response?.data?.message || 'Помилка пакетного аналізу');
+      toast.error(e.response?.data?.message || t('employer.toast.batchError'));
     } finally {
       setBatchAnalyzingJobId(null);
     }
@@ -395,9 +405,9 @@ export default function EmployerDashboardPage() {
           : a
       ));
       setExpandedAiId(applicationId);
-      toast.success('Аналіз завершено');
+      toast.success(t('employer.toast.analysisDone'));
     } catch (e: any) {
-      toast.error(e.response?.data?.message || 'Помилка AI аналізу');
+      toast.error(e.response?.data?.message || t('employer.toast.aiError'));
     } finally {
       setAnalyzingIds(prev => { const s = new Set(prev); s.delete(applicationId); return s; });
     }
@@ -425,25 +435,25 @@ export default function EmployerDashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Кабінет роботодавця</h1>
-          <p className="text-gray-500 mt-1">Керуйте вакансіями та заявками</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('employer.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('employer.tabs.jobs')} & {t('employer.tabs.applications')}</p>
         </div>
         <button
           onClick={() => { fetchSkills(); setShowCreateJob(true); }}
           className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
         >
-          <Plus size={18} /> Нова вакансія
+          <Plus size={18} /> {t('employer.newJob')}
         </button>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 bg-white rounded-xl border border-gray-200 p-1 mb-6 w-fit">
         {[
-          { key: 'jobs',        label: `Вакансії (${jobs.length})`         },
-          { key: 'applications',label: `Заявки (${applications.length})`   },
-          { key: 'candidates',  label: 'Пошук кандидатів'                  },
-          { key: 'ai',          label: '✦ AI Скринінг'                     },
-          { key: 'company',     label: 'Компанія'                          },
+          { key: 'jobs',        label: `${t('employer.tabs.jobs')} (${jobs.length})`             },
+          { key: 'applications',label: `${t('employer.tabs.applications')} (${applications.length})` },
+          { key: 'candidates',  label: t('employer.tabs.candidates')                               },
+          { key: 'ai',          label: `✦ ${t('employer.tabs.ai')}`                               },
+          { key: 'company',     label: t('employer.tabs.company')                                  },
         ].map(t => (
           <button
             key={t.key}
@@ -465,12 +475,12 @@ export default function EmployerDashboardPage() {
           {jobs.length === 0 ? (
             <div className="bg-white rounded-2xl p-12 border border-gray-200 text-center">
               <Briefcase size={48} className="text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-500">Вакансій ще немає</h3>
+              <h3 className="text-lg font-medium text-gray-500">{t('employer.jobs.empty')}</h3>
               <button
                 onClick={() => { fetchSkills(); setShowCreateJob(true); }}
                 className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
               >
-                Створити першу вакансію
+                {t('employer.jobs.createFirst')}
               </button>
             </div>
           ) : (
@@ -494,18 +504,18 @@ export default function EmployerDashboardPage() {
                             job.status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
                                                        'bg-gray-100 text-gray-600'
                           }`}>
-                            {job.status === 'active' ? 'Активна' : job.status === 'pending' ? 'На модерації' : job.status}
+                            {job.status === 'active' ? t('employer.jobs.status.active') : job.status === 'pending' ? t('employer.jobs.status.pending') : job.status}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
                           <span>{job.city}, {job.country}</span>
                           <span>{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}</span>
-                          <span>{job.applicationsCount || 0} заявок</span>
-                          <span>{job.views || 0} переглядів</span>
+                          <span>{job.applicationsCount || 0} {t('employer.jobs.applications')}</span>
+                          <span>{job.views || 0} {t('employer.jobs.views')}</span>
                           <span>{formatRelativeDate(job.createdAt)}</span>
                           {job.applicationDeadline && (
                             <span className={new Date(job.applicationDeadline) < new Date() ? 'text-red-500' : 'text-orange-500'}>
-                              Дедлайн: {new Date(job.applicationDeadline).toLocaleDateString('uk-UA')}
+                              {t('employer.jobs.deadline')} {new Date(job.applicationDeadline).toLocaleDateString('uk-UA')}
                             </span>
                           )}
                         </div>
@@ -516,28 +526,28 @@ export default function EmployerDashboardPage() {
                         <button
                           onClick={() => setExpandedJobId(isExp ? null : job.id)}
                           className={`p-2 rounded-lg transition-colors ${isExp ? 'bg-indigo-50 text-indigo-600' : 'text-gray-400 hover:text-indigo-600 hover:bg-indigo-50'}`}
-                          title="Аналітика воронки"
+                          title={t('employer.jobs.tooltips.funnel')}
                         >
                           <BarChart3 size={16} />
                         </button>
                         <button
                           onClick={() => startEdit(job)}
                           className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="Редагувати"
+                          title={t('employer.jobs.tooltips.edit')}
                         >
                           <Edit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDuplicateJob(job)}
                           className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="Дублювати вакансію"
+                          title={t('employer.jobs.tooltips.duplicate')}
                         >
                           <Copy size={16} />
                         </button>
                         <button
                           onClick={() => handleDeleteJob(job.id)}
                           className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Видалити"
+                          title={t('employer.jobs.tooltips.delete')}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -548,13 +558,13 @@ export default function EmployerDashboardPage() {
                   {/* ── Analytics funnel ── */}
                   {isExp && (
                     <div className="px-6 pb-6 border-t border-gray-100 pt-4">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Воронка заявок</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('employer.jobs.funnel.title')}</p>
                       <div className="flex items-center gap-2 flex-wrap">
                         {[
-                          { label: 'Перегляди',  value: job.views || 0,    bg: 'bg-indigo-100',  text: 'text-indigo-700'  },
-                          { label: 'Заявки',     value: jobApps.length,    bg: 'bg-blue-100',    text: 'text-blue-700'    },
-                          { label: 'Відібрано',  value: selected,          bg: 'bg-purple-100',  text: 'text-purple-700'  },
-                          { label: 'Оффер',      value: offered,           bg: 'bg-green-100',   text: 'text-green-700'   },
+                          { label: t('employer.jobs.funnel.views'),        value: job.views || 0,    bg: 'bg-indigo-100',  text: 'text-indigo-700'  },
+                          { label: t('employer.jobs.funnel.applications'), value: jobApps.length,    bg: 'bg-blue-100',    text: 'text-blue-700'    },
+                          { label: t('employer.jobs.funnel.shortlisted'),  value: selected,          bg: 'bg-purple-100',  text: 'text-purple-700'  },
+                          { label: t('employer.jobs.funnel.offer'),        value: offered,           bg: 'bg-green-100',   text: 'text-green-700'   },
                         ].map((step, i) => (
                           <div key={i} className="flex items-center gap-2">
                             {i > 0 && <span className="text-gray-300 text-xl font-light">›</span>}
@@ -566,7 +576,7 @@ export default function EmployerDashboardPage() {
                         ))}
                         {jobApps.length > 0 && (
                           <div className="ml-4 text-sm text-gray-400">
-                            Конверсія: <span className="font-semibold text-gray-600">
+                            {t('employer.jobs.funnel.conversion')} <span className="font-semibold text-gray-600">
                               {Math.round((selected / jobApps.length) * 100)}%
                             </span>
                           </div>
@@ -593,10 +603,10 @@ export default function EmployerDashboardPage() {
               onChange={e => setSelectedJobId(e.target.value)}
               className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="">Всі вакансії</option>
+              <option value="">{t('employer.applications.allJobs')}</option>
               {jobs.map(j => <option key={j.id} value={j.id}>{j.title}</option>)}
             </select>
-            <span className="text-sm text-gray-400">{filteredApps.length} заявок</span>
+            <span className="text-sm text-gray-400">{filteredApps.length} {t('employer.tabs.applications').toLowerCase()}</span>
 
             {/* View toggle */}
             <div className="ml-auto flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
@@ -614,9 +624,9 @@ export default function EmployerDashboardPage() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   appsView === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-50'
                 }`}
-                title="Список"
+                title={t('employer.applications.viewList')}
               >
-                <LayoutList size={15} /> Список
+                <LayoutList size={15} /> {t('employer.applications.viewList')}
               </button>
             </div>
           </div>
@@ -702,7 +712,7 @@ export default function EmployerDashboardPage() {
                                 value={noteText}
                                 onChange={e => setNoteText(e.target.value)}
                                 rows={3}
-                                placeholder="Нотатка про кандидата..."
+                                placeholder={t('employer.applications.notePlaceholder')}
                                 className="w-full text-xs px-2 py-1.5 border border-indigo-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
                                 autoFocus
                               />
@@ -711,7 +721,7 @@ export default function EmployerDashboardPage() {
                                   onClick={() => handleSaveNote(app.id, app.status)}
                                   className="flex-1 text-xs py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                                 >
-                                  Зберегти
+                                  {t('employer.applications.save')}
                                 </button>
                                 <button
                                   onClick={() => setEditingNoteId(null)}
@@ -733,10 +743,10 @@ export default function EmployerDashboardPage() {
                               className={`flex items-center gap-1 text-xs transition-colors ${
                                 app.employerNotes ? 'text-amber-500 hover:text-amber-600' : 'text-gray-400 hover:text-amber-500'
                               }`}
-                              title="Нотатка"
+                              title={t('employer.applications.note')}
                             >
                               <StickyNote size={12} />
-                              <span>Нотатка</span>
+                              <span>{t('employer.applications.note')}</span>
                             </button>
                             <div className="flex gap-1">
                               {app.applicant?.id && (
@@ -744,14 +754,14 @@ export default function EmployerDashboardPage() {
                                   <Link
                                     href={`/users/${app.applicant.id}`}
                                     className="p-1 text-gray-400 hover:text-indigo-600 transition-colors"
-                                    title="Профіль"
+                                    title={t('employer.applications.profile')}
                                   >
                                     <UserCircle size={14} />
                                   </Link>
                                   <Link
                                     href={`/chat?userId=${app.applicant.id}`}
                                     className="p-1 text-gray-400 hover:text-indigo-600 transition-colors"
-                                    title="Написати"
+                                    title={t('employer.applications.message')}
                                   >
                                     <MessageCircle size={14} />
                                   </Link>
@@ -768,7 +778,7 @@ export default function EmployerDashboardPage() {
                       <div className={`flex items-center justify-center h-24 rounded-xl border-2 border-dashed transition-colors ${
                         isOver ? 'border-indigo-400 bg-indigo-50/50' : 'border-gray-200'
                       }`}>
-                        <p className="text-xs text-gray-300">Перетягніть сюди</p>
+                        <p className="text-xs text-gray-300">{t('employer.applications.dragHere')}</p>
                       </div>
                     )}
                   </div>
@@ -783,7 +793,7 @@ export default function EmployerDashboardPage() {
               {filteredApps.length === 0 ? (
                 <div className="bg-white rounded-2xl p-12 border border-gray-200 text-center">
                   <Users size={48} className="text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-500">Заявок ще немає</h3>
+                  <h3 className="text-lg font-medium text-gray-500">{t('employer.applications.empty')}</h3>
                 </div>
               ) : (
                 filteredApps.map(app => {
@@ -816,7 +826,7 @@ export default function EmployerDashboardPage() {
                           )}
                           {app.expectedSalary && (
                             <p className="text-sm text-gray-400 mt-1">
-                              Очікувана зарплата: {app.expectedSalary} {app.expectedSalaryCurrency}
+                              {t('employer.applications.expectedSalary')} {app.expectedSalary} {app.expectedSalaryCurrency}
                             </p>
                           )}
                           <p className="text-xs text-gray-400 mt-1.5">{formatRelativeDate(app.createdAt)}</p>
@@ -833,7 +843,7 @@ export default function EmployerDashboardPage() {
                                 value={noteText}
                                 onChange={e => setNoteText(e.target.value)}
                                 rows={2}
-                                placeholder="Нотатка..."
+                                placeholder={t('employer.applications.notePlaceholderList')}
                                 className="w-full text-sm px-3 py-2 border border-indigo-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
                                 autoFocus
                               />
@@ -842,13 +852,13 @@ export default function EmployerDashboardPage() {
                                   onClick={() => handleSaveNote(app.id, app.status)}
                                   className="px-3 py-1 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                                 >
-                                  Зберегти
+                                  {t('employer.applications.save')}
                                 </button>
                                 <button
                                   onClick={() => setEditingNoteId(null)}
                                   className="px-3 py-1 text-xs border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
                                 >
-                                  Скасувати
+                                  {t('employer.applications.cancel')}
                                 </button>
                               </div>
                             </div>
@@ -864,10 +874,10 @@ export default function EmployerDashboardPage() {
                               setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: newStatus } : a));
                               try {
                                 await api.put(`/applications/${app.id}/status`, { status: newStatus });
-                                toast.success('Статус оновлено');
+                                toast.success(t('employer.toast.statusUpdated'));
                               } catch {
                                 setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: app.status } : a));
-                                toast.error('Помилка');
+                                toast.error(t('employer.toast.error'));
                               }
                             }}
                             className="text-xs px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -883,7 +893,7 @@ export default function EmployerDashboardPage() {
                                 app.employerNotes ? 'border-amber-300 text-amber-600 hover:bg-amber-50' : 'border-gray-200 text-gray-500 hover:bg-gray-50'
                               }`}
                             >
-                              <StickyNote size={12} /> Нотатка
+                              <StickyNote size={12} /> {t('employer.applications.note')}
                             </button>
                             {app.applicant?.id && (
                               <>
@@ -891,13 +901,13 @@ export default function EmployerDashboardPage() {
                                   onClick={() => openPreview(app.applicant!.id)}
                                   className="flex items-center gap-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
                                 >
-                                  <UserCircle size={13} /> Профіль
+                                  <UserCircle size={13} /> {t('employer.applications.profile')}
                                 </button>
                                 <Link
                                   href={`/chat?userId=${app.applicant.id}`}
                                   className="flex items-center gap-1 px-2.5 py-1.5 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                                 >
-                                  <MessageCircle size={13} /> Написати
+                                  <MessageCircle size={13} /> {t('employer.applications.message')}
                                 </Link>
                               </>
                             )}
@@ -934,7 +944,7 @@ export default function EmployerDashboardPage() {
                       <h2 className="text-xl font-bold text-gray-900">{myCompany.name}</h2>
                       {myCompany.isVerified && (
                         <span className="bg-green-100 text-green-600 text-xs font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <Check size={10} /> Верифіковано
+                          <Check size={10} /> {t('employer.company.verified')}
                         </span>
                       )}
                     </div>
@@ -943,12 +953,12 @@ export default function EmployerDashboardPage() {
                         myCompany.status === 'verified' || myCompany.status === 'active'
                           ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
                       }`}>
-                        {myCompany.status === 'verified' ? 'Верифіковано' :
-                         myCompany.status === 'active'   ? 'Активна'      : 'На розгляді'}
+                        {myCompany.status === 'verified' ? t('employer.company.status.verified') :
+                         myCompany.status === 'active'   ? t('employer.company.status.active') : t('employer.company.status.pending')}
                       </span>
                       {myCompany.status === 'pending' && (
                         <span className="text-xs text-gray-500 flex items-center gap-1">
-                          <Clock size={12} /> Очікує верифікації адміністратором
+                          <Clock size={12} /> {t('employer.company.pendingVerification')}
                         </span>
                       )}
                     </div>
@@ -958,28 +968,28 @@ export default function EmployerDashboardPage() {
                   onClick={() => setShowCompanyForm(true)}
                   className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors"
                 >
-                  <Edit2 size={16} /> Редагувати
+                  <Edit2 size={16} /> {t('employer.company.edit')}
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {myCompany.industry && (
-                  <div><p className="text-xs text-gray-400 mb-1">Галузь</p><p className="text-sm text-gray-700">{myCompany.industry}</p></div>
+                  <div><p className="text-xs text-gray-400 mb-1">{t('employer.company.info.industry')}</p><p className="text-sm text-gray-700">{myCompany.industry}</p></div>
                 )}
                 {myCompany.size && (
-                  <div><p className="text-xs text-gray-400 mb-1">Розмір</p><p className="text-sm text-gray-700">{COMPANY_SIZES.find(s => s.value === myCompany.size)?.label || myCompany.size}</p></div>
+                  <div><p className="text-xs text-gray-400 mb-1">{t('employer.company.info.size')}</p><p className="text-sm text-gray-700">{t(`companySizes.${myCompany.size}`) || myCompany.size}</p></div>
                 )}
                 {myCompany.foundedYear && (
-                  <div><p className="text-xs text-gray-400 mb-1">Рік заснування</p><p className="text-sm text-gray-700">{myCompany.foundedYear}</p></div>
+                  <div><p className="text-xs text-gray-400 mb-1">{t('employer.company.info.foundedYear')}</p><p className="text-sm text-gray-700">{myCompany.foundedYear}</p></div>
                 )}
                 {myCompany.website && (
-                  <div><p className="text-xs text-gray-400 mb-1">Сайт</p><a href={myCompany.website} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline">{myCompany.website}</a></div>
+                  <div><p className="text-xs text-gray-400 mb-1">{t('employer.company.info.website')}</p><a href={myCompany.website} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline">{myCompany.website}</a></div>
                 )}
               </div>
 
               {myCompany.shortDescription && (
                 <div className="mt-4">
-                  <p className="text-xs text-gray-400 mb-1">Короткий опис</p>
+                  <p className="text-xs text-gray-400 mb-1">{t('employer.company.info.shortDescription')}</p>
                   <p className="text-sm text-gray-700">{myCompany.shortDescription}</p>
                 </div>
               )}
@@ -987,13 +997,13 @@ export default function EmployerDashboardPage() {
           ) : (
             <div className="bg-white rounded-2xl p-12 border border-gray-200 text-center">
               <Building size={48} className="text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-700">У вас ще немає профілю компанії</h3>
-              <p className="text-sm text-gray-400 mt-2 mb-6">Після верифікації адміністратором він з'явиться в публічному каталозі.</p>
+              <h3 className="text-lg font-medium text-gray-700">{t('employer.company.noCompany.title')}</h3>
+              <p className="text-sm text-gray-400 mt-2 mb-6">{t('employer.company.noCompany.desc')}</p>
               <button
                 onClick={() => setShowCompanyForm(true)}
                 className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors"
               >
-                <Plus size={16} className="inline mr-2" />Створити компанію
+                <Plus size={16} className="inline mr-2" />{t('employer.company.noCompany.create')}
               </button>
             </div>
           )}
@@ -1011,19 +1021,19 @@ export default function EmployerDashboardPage() {
               <input
                 value={candidateFilters.search}
                 onChange={e => setCandidateFilters(f => ({ ...f, search: e.target.value }))}
-                placeholder="Ім'я або ключові слова..."
+                placeholder={t('employer.candidates.searchPlaceholder')}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <input
                 value={candidateFilters.country}
                 onChange={e => setCandidateFilters(f => ({ ...f, country: e.target.value }))}
-                placeholder="Країна"
+                placeholder={t('employer.candidates.countryPlaceholder')}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <input
                 value={candidateFilters.city}
                 onChange={e => setCandidateFilters(f => ({ ...f, city: e.target.value }))}
-                placeholder="Місто"
+                placeholder={t('employer.candidates.cityPlaceholder')}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <select
@@ -1035,8 +1045,8 @@ export default function EmployerDashboardPage() {
                 }}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">+ Мова</option>
-                {JOB_LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+                <option value="">{t('employer.candidates.languagePlaceholder')}</option>
+                {JOB_LANGUAGES.map(l => <option key={l.value} value={l.value}>{t(`jobLanguages.${l.value}`)}</option>)}
               </select>
             </div>
 
@@ -1044,7 +1054,7 @@ export default function EmployerDashboardPage() {
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {candidateFilters.languages.map(l => (
                   <span key={l} className="flex items-center gap-1 text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
-                    {JOB_LANGUAGES.find(x => x.value === l)?.label || l}
+                    {t(`jobLanguages.${l}`) || l}
                     <button onClick={() => setCandidateFilters(f => ({ ...f, languages: f.languages.filter(x => x !== l) }))}>
                       <X size={11} />
                     </button>
@@ -1057,7 +1067,7 @@ export default function EmployerDashboardPage() {
               onClick={() => searchCandidates()}
               className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-indigo-700 transition-colors"
             >
-              Знайти
+              {t('employer.candidates.search')}
             </button>
           </div>
 
@@ -1069,14 +1079,14 @@ export default function EmployerDashboardPage() {
           ) : (
             <>
               {candidatesTotal > 0 && (
-                <p className="text-sm text-gray-500 mb-3">Знайдено: {candidatesTotal}</p>
+                <p className="text-sm text-gray-500 mb-3">{t('employer.candidates.found')} {candidatesTotal}</p>
               )}
               <div className="space-y-3">
                 {candidates.length === 0 ? (
                   <div className="bg-white rounded-2xl p-12 border border-gray-200 text-center">
                     <Users size={48} className="text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-500">Кандидатів не знайдено</h3>
-                    <p className="text-sm text-gray-400 mt-1">Спробуйте змінити фільтри пошуку</p>
+                    <h3 className="text-lg font-medium text-gray-500">{t('employer.candidates.empty.title')}</h3>
+                    <p className="text-sm text-gray-400 mt-1">{t('employer.candidates.empty.subtitle')}</p>
                   </div>
                 ) : (
                   candidates.map(candidate => (
@@ -1112,13 +1122,13 @@ export default function EmployerDashboardPage() {
                             onClick={() => openPreview(candidate.id)}
                             className="flex items-center gap-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
                           >
-                            <UserCircle size={13} /> Переглянути
+                            <UserCircle size={13} /> {t('employer.candidates.view')}
                           </button>
                           <Link
                             href={`/chat?userId=${candidate.id}`}
                             className="flex items-center gap-1 px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                           >
-                            <MessageCircle size={13} /> Написати
+                            <MessageCircle size={13} /> {t('employer.candidates.message')}
                           </Link>
                         </div>
                       </div>
@@ -1142,7 +1152,7 @@ export default function EmployerDashboardPage() {
                         <div className="flex gap-1.5 mt-2">
                           {candidate.languages.map(l => (
                             <span key={l} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                              {JOB_LANGUAGES.find(x => x.value === l)?.label || l}
+                              {t(`jobLanguages.${l}`) || l}
                             </span>
                           ))}
                         </div>
@@ -1167,23 +1177,23 @@ export default function EmployerDashboardPage() {
               <Sparkles size={22} className="text-indigo-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">AI Скринінг кандидатів</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('employer.ai.title')}</h2>
               <p className="text-sm text-gray-500 mt-0.5">
-                Gemini 1.5 Flash аналізує відповідність кандидата вимогам вакансії та надає оцінку і рекомендацію.
+                {t('employer.ai.subtitle')}
               </p>
             </div>
           </div>
 
           {/* Job filter */}
           <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Оберіть вакансію для аналізу</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('employer.ai.selectJob')}</label>
             <div className="flex gap-3">
               <select
                 value={aiJobId}
                 onChange={e => setAiJobId(e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
               >
-                <option value="">— всі заявки —</option>
+                <option value="">{t('employer.ai.allApplications')}</option>
                 {jobs.map(j => (
                   <option key={j.id} value={j.id}>{j.title}</option>
                 ))}
@@ -1195,8 +1205,8 @@ export default function EmployerDashboardPage() {
                   className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors shrink-0"
                 >
                   {batchAnalyzingJobId === aiJobId
-                    ? <><Loader2 size={14} className="animate-spin" /> Аналізую...</>
-                    : <><Zap size={14} /> Аналізувати всіх</>
+                    ? <><Loader2 size={14} className="animate-spin" /> {t('employer.ai.analyzing')}</>
+                    : <><Zap size={14} /> {t('employer.ai.analyzeAll')}</>
                   }
                 </button>
               )}
@@ -1214,7 +1224,7 @@ export default function EmployerDashboardPage() {
                 <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                   <Sparkles size={40} className="text-gray-200 mx-auto mb-3" />
                   <p className="text-gray-400 text-sm">
-                    {aiJobId ? 'Немає заявок для обраної вакансії' : 'Немає заявок'}
+                    {aiJobId ? t('employer.ai.noAppsJob') : t('employer.ai.noApps')}
                   </p>
                 </div>
               );
@@ -1232,10 +1242,10 @@ export default function EmployerDashboardPage() {
               no:         'bg-red-100 text-red-700 border-red-200',
             };
             const recLabel: Record<string, string> = {
-              strong_yes: 'Рекомендую',
-              yes:        'Підходить',
-              maybe:      'Можливо',
-              no:         'Не підходить',
+              strong_yes: t('employer.ai.rec.strong_yes'),
+              yes:        t('employer.ai.rec.yes'),
+              maybe:      t('employer.ai.rec.maybe'),
+              no:         t('employer.ai.rec.no'),
             };
             const medalColors = ['text-yellow-500', 'text-gray-400', 'text-amber-600', 'text-gray-500', 'text-gray-500'];
 
@@ -1246,8 +1256,8 @@ export default function EmployerDashboardPage() {
                   <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <Trophy size={18} className="text-amber-500" />
-                      <h3 className="text-sm font-semibold text-gray-800">Топ-{top5.length} кандидатів</h3>
-                      <span className="ml-auto text-xs text-gray-400">за результатами AI аналізу</span>
+                      <h3 className="text-sm font-semibold text-gray-800">{t('employer.ai.top', { n: String(top5.length) })}</h3>
+                      <span className="ml-auto text-xs text-gray-400">{t('employer.ai.byAi')}</span>
                     </div>
                     <div className="space-y-2">
                       {top5.map((app, i) => {
@@ -1295,7 +1305,7 @@ export default function EmployerDashboardPage() {
                                     <div className="bg-green-50 rounded-xl p-3">
                                       <div className="flex items-center gap-1.5 mb-2">
                                         <ThumbsUp size={13} className="text-green-600" />
-                                        <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Сильні сторони</span>
+                                        <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">{t('employer.ai.strengths')}</span>
                                       </div>
                                       <ul className="space-y-1">
                                         {an.strengths.map((s, si) => (
@@ -1310,7 +1320,7 @@ export default function EmployerDashboardPage() {
                                     <div className="bg-red-50 rounded-xl p-3">
                                       <div className="flex items-center gap-1.5 mb-2">
                                         <ThumbsDown size={13} className="text-red-500" />
-                                        <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">Прогалини</span>
+                                        <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">{t('employer.ai.gaps')}</span>
                                       </div>
                                       <ul className="space-y-1">
                                         {an.gaps.map((g, gi) => (
@@ -1323,7 +1333,7 @@ export default function EmployerDashboardPage() {
                                   ) : (
                                     <div className="bg-green-50 rounded-xl p-3 flex items-center gap-2">
                                       <Check size={14} className="text-green-600" />
-                                      <span className="text-xs text-green-700">Явних прогалин не виявлено</span>
+                                      <span className="text-xs text-green-700">{t('employer.ai.noGaps')}</span>
                                     </div>
                                   )}
                                 </div>
@@ -1352,10 +1362,10 @@ export default function EmployerDashboardPage() {
                     no:         'bg-red-100 text-red-700 border-red-200',
                   };
                   const recLabel: Record<string, string> = {
-                    strong_yes: 'Рекомендую',
-                    yes:        'Підходить',
-                    maybe:      'Можливо',
-                    no:         'Не підходить',
+                    strong_yes: t('employer.ai.rec.strong_yes'),
+                    yes:        t('employer.ai.rec.yes'),
+                    maybe:      t('employer.ai.rec.maybe'),
+                    no:         t('employer.ai.rec.no'),
                   };
                   const scoreColor = analysis
                     ? analysis.score >= 70 ? 'text-green-600'
@@ -1400,7 +1410,7 @@ export default function EmployerDashboardPage() {
                           )}
                           {analysis && (
                             <p className="text-xs text-gray-400 mt-0.5">
-                              Проаналізовано {app.aiAnalyzedAt ? new Date(app.aiAnalyzedAt).toLocaleDateString('uk-UA') : ''}
+                              {t('employer.ai.analyzedAt')} {app.aiAnalyzedAt ? new Date(app.aiAnalyzedAt).toLocaleDateString('uk-UA') : ''}
                             </p>
                           )}
                         </div>
@@ -1425,8 +1435,8 @@ export default function EmployerDashboardPage() {
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                           >
                             {isAnalyzing
-                              ? <><Loader2 size={12} className="animate-spin" /> Аналіз...</>
-                              : <><Sparkles size={12} /> {analysis ? 'Повторно' : 'Аналізувати'}</>
+                              ? <><Loader2 size={12} className="animate-spin" /> {t('employer.ai.analyzingShort')}</>
+                              : <><Sparkles size={12} /> {analysis ? t('employer.ai.reanalyze') : t('employer.ai.analyze')}</>
                             }
                           </button>
                         </div>
@@ -1444,7 +1454,7 @@ export default function EmployerDashboardPage() {
                               <div className="bg-green-50 rounded-xl p-3">
                                 <div className="flex items-center gap-1.5 mb-2">
                                   <ThumbsUp size={13} className="text-green-600" />
-                                  <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">Сильні сторони</span>
+                                  <span className="text-xs font-semibold text-green-700 uppercase tracking-wide">{t('employer.ai.strengths')}</span>
                                 </div>
                                 <ul className="space-y-1">
                                   {analysis.strengths.map((s, i) => (
@@ -1461,7 +1471,7 @@ export default function EmployerDashboardPage() {
                               <div className="bg-red-50 rounded-xl p-3">
                                 <div className="flex items-center gap-1.5 mb-2">
                                   <ThumbsDown size={13} className="text-red-500" />
-                                  <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">Прогалини</span>
+                                  <span className="text-xs font-semibold text-red-600 uppercase tracking-wide">{t('employer.ai.gaps')}</span>
                                 </div>
                                 <ul className="space-y-1">
                                   {analysis.gaps.map((g, i) => (
@@ -1475,7 +1485,7 @@ export default function EmployerDashboardPage() {
                             {analysis.gaps.length === 0 && (
                               <div className="bg-green-50 rounded-xl p-3 flex items-center gap-2">
                                 <Check size={14} className="text-green-600" />
-                                <span className="text-xs text-green-700">Явних прогалин не виявлено</span>
+                                <span className="text-xs text-green-700">{t('employer.ai.noGaps')}</span>
                               </div>
                             )}
                           </div>
@@ -1499,7 +1509,7 @@ export default function EmployerDashboardPage() {
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-xl font-semibold text-gray-900">
-                {myCompany ? 'Редагувати компанію' : 'Нова компанія'}
+                {myCompany ? t('employer.company.form.editTitle') : t('employer.company.form.createTitle')}
               </h2>
               <button onClick={() => setShowCompanyForm(false)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
                 <X size={20} />
@@ -1507,45 +1517,45 @@ export default function EmployerDashboardPage() {
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Назва компанії *</label>
-                <input value={companyForm.name} onChange={e => setCompanyForm(f => ({ ...f, name: e.target.value }))} placeholder="Назва вашої компанії" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.name')}</label>
+                <input value={companyForm.name} onChange={e => setCompanyForm(f => ({ ...f, name: e.target.value }))} placeholder={t('employer.company.form.namePlaceholder')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Короткий опис</label>
-                <input value={companyForm.shortDescription} onChange={e => setCompanyForm(f => ({ ...f, shortDescription: e.target.value }))} placeholder="Одне речення про компанію" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.shortDescription')}</label>
+                <input value={companyForm.shortDescription} onChange={e => setCompanyForm(f => ({ ...f, shortDescription: e.target.value }))} placeholder={t('employer.company.form.shortDescPlaceholder')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Повний опис</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.fullDescription')}</label>
                 <textarea value={companyForm.description} onChange={e => setCompanyForm(f => ({ ...f, description: e.target.value }))} rows={4} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Галузь</label>
-                  <input value={companyForm.industry} onChange={e => setCompanyForm(f => ({ ...f, industry: e.target.value }))} placeholder="IT, Фінанси..." className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.industry')}</label>
+                  <input value={companyForm.industry} onChange={e => setCompanyForm(f => ({ ...f, industry: e.target.value }))} placeholder={t('employer.company.form.industryPlaceholder')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Рік заснування</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.foundedYear')}</label>
                   <input type="number" value={companyForm.foundedYear} onChange={e => setCompanyForm(f => ({ ...f, foundedYear: e.target.value }))} placeholder="2010" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Розмір</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.size')}</label>
                   <select value={companyForm.size} onChange={e => setCompanyForm(f => ({ ...f, size: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <option value="">Оберіть</option>
-                    {COMPANY_SIZES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    <option value="">{t('employer.company.form.sizePlaceholder')}</option>
+                    {COMPANY_SIZES.map(s => <option key={s.value} value={s.value}>{t(`companySizes.${s.value}`)}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Сайт</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.company.form.website')}</label>
                   <input value={companyForm.website} onChange={e => setCompanyForm(f => ({ ...f, website: e.target.value }))} placeholder="https://example.com" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
               </div>
             </div>
             <div className="flex gap-3 p-6 border-t border-gray-100">
-              <button onClick={() => setShowCompanyForm(false)} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Скасувати</button>
+              <button onClick={() => setShowCompanyForm(false)} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">{t('employer.company.form.cancel')}</button>
               <button onClick={myCompany ? handleUpdateCompany : handleCreateCompany} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                {myCompany ? 'Зберегти' : 'Створити'}
+                {myCompany ? t('employer.company.form.save') : t('employer.company.form.create')}
               </button>
             </div>
           </div>
@@ -1560,7 +1570,7 @@ export default function EmployerDashboardPage() {
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-xl font-semibold text-gray-900">
-                {editingJob ? 'Редагувати вакансію' : showCreateJob && jobForm.title.includes('(копія)') ? 'Дублювати вакансію' : 'Нова вакансія'}
+                {editingJob ? t('employer.jobForm.editTitle') : showCreateJob && jobForm.title.includes(t('employer.jobForm.copyMarker')) ? t('employer.jobForm.duplicateTitle') : t('employer.jobForm.createTitle')}
               </h2>
               <button onClick={() => { setShowCreateJob(false); setEditingJob(null); resetJobForm(); }} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
                 <X size={20} />
@@ -1569,58 +1579,58 @@ export default function EmployerDashboardPage() {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Назва вакансії *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.titleLabel')}</label>
                 <input value={jobForm.title} onChange={e => setJobForm(f => ({ ...f, title: e.target.value }))} placeholder="Junior JavaScript Developer" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Опис *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.description')}</label>
                 <textarea value={jobForm.description} onChange={e => setJobForm(f => ({ ...f, description: e.target.value }))} rows={4} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Тип зайнятості</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.jobType')}</label>
                   <select value={jobForm.jobType} onChange={e => setJobForm(f => ({ ...f, jobType: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    {JOB_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    {JOB_TYPES.map(jt => <option key={jt.value} value={jt.value}>{t(`jobTypes.${jt.value}`)}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Рівень досвіду</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.experienceLevel')}</label>
                   <select value={jobForm.experienceLevel} onChange={e => setJobForm(f => ({ ...f, experienceLevel: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    {EXPERIENCE_LEVELS.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+                    {EXPERIENCE_LEVELS.map(lvl => <option key={lvl.value} value={lvl.value}>{t(`experienceLevels.${lvl.value}`)}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Формат роботи</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.workFormat')}</label>
                   <select value={jobForm.workFormat} onChange={e => setJobForm(f => ({ ...f, workFormat: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    {WORK_FORMATS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+                    {WORK_FORMATS.map(fmt => <option key={fmt.value} value={fmt.value}>{t(`workFormats.${fmt.value}`)}</option>)}
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Країна</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.country')}</label>
                   <input value={jobForm.country} onChange={e => setJobForm(f => ({ ...f, country: e.target.value }))} placeholder="Ukraine" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Місто</label>
-                  <input value={jobForm.city} onChange={e => setJobForm(f => ({ ...f, city: e.target.value }))} placeholder="Київ" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.city')}</label>
+                  <input value={jobForm.city} onChange={e => setJobForm(f => ({ ...f, city: e.target.value }))} placeholder={t('employer.jobForm.cityPlaceholder')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Зарплата від</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.salaryMin')}</label>
                   <input type="number" value={jobForm.salaryMin} onChange={e => setJobForm(f => ({ ...f, salaryMin: e.target.value }))} placeholder="1000" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Зарплата до</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.salaryMax')}</label>
                   <input type="number" value={jobForm.salaryMax} onChange={e => setJobForm(f => ({ ...f, salaryMax: e.target.value }))} placeholder="2000" className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Валюта</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.currency')}</label>
                   <select value={jobForm.salaryCurrency} onChange={e => setJobForm(f => ({ ...f, salaryCurrency: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
@@ -1630,30 +1640,30 @@ export default function EmployerDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Вимоги</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.requirements')}</label>
                 <textarea value={jobForm.requirements} onChange={e => setJobForm(f => ({ ...f, requirements: e.target.value }))} rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Обов'язки</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.responsibilities')}</label>
                 <textarea value={jobForm.responsibilities} onChange={e => setJobForm(f => ({ ...f, responsibilities: e.target.value }))} rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Переваги / Бенефіти</label>
-                <textarea value={jobForm.benefits} onChange={e => setJobForm(f => ({ ...f, benefits: e.target.value }))} rows={2} placeholder="Медична страховка, гнучкий графік..." className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.benefits')}</label>
+                <textarea value={jobForm.benefits} onChange={e => setJobForm(f => ({ ...f, benefits: e.target.value }))} rows={2} placeholder={t('employer.jobForm.benefitsPlaceholder')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Категорія</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.category')}</label>
                 <select value={jobForm.category} onChange={e => setJobForm(f => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                  <option value="">Оберіть категорію</option>
-                  {JOB_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  <option value="">{t('employer.jobForm.categoryPlaceholder')}</option>
+                  {JOB_CATEGORIES.map(c => <option key={c.value} value={c.value}>{t(`jobCategories.${c.value}`)}</option>)}
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Мовні вимоги</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('employer.jobForm.languages')}</label>
                 <div className="flex flex-wrap gap-2">
                   {JOB_LANGUAGES.map(lang => (
                     <label key={lang.value} className="flex items-center gap-1.5 cursor-pointer">
@@ -1668,7 +1678,7 @@ export default function EmployerDashboardPage() {
                         }))}
                         className="rounded"
                       />
-                      <span className="text-sm text-gray-700">{lang.label}</span>
+                      <span className="text-sm text-gray-700">{t(`jobLanguages.${lang.value}`)}</span>
                     </label>
                   ))}
                 </div>
@@ -1676,7 +1686,7 @@ export default function EmployerDashboardPage() {
 
               {availableSkills.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Необхідні навички</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('employer.jobForm.skills')}</label>
                   <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2">
                     {availableSkills.map(skill => (
                       <label key={skill.id} className="flex items-center gap-1.5 cursor-pointer">
@@ -1698,23 +1708,42 @@ export default function EmployerDashboardPage() {
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={jobForm.isUrgent} onChange={e => setJobForm(f => ({ ...f, isUrgent: e.target.checked }))} className="rounded" />
-                  <span className="text-sm text-gray-700">Термінова</span>
+                  <span className="text-sm text-gray-700">{t('employer.jobForm.urgent')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={jobForm.isRemote} onChange={e => setJobForm(f => ({ ...f, isRemote: e.target.checked }))} className="rounded" />
-                  <span className="text-sm text-gray-700">Віддалена робота</span>
+                  <span className="text-sm text-gray-700">{t('employer.jobForm.remote')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={jobForm.isSalaryNegotiable} onChange={e => setJobForm(f => ({ ...f, isSalaryNegotiable: e.target.checked }))} className="rounded" />
-                  <span className="text-sm text-gray-700">Зарплата договірна</span>
+                  <span className="text-sm text-gray-700">{t('employer.jobForm.negotiable')}</span>
                 </label>
+                {jobForm.jobType === 'internship' && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={jobForm.isPaid} onChange={e => setJobForm(f => ({ ...f, isPaid: e.target.checked }))} className="rounded" />
+                    <span className="text-sm text-gray-700">{t('employer.jobForm.paidInternship')}</span>
+                  </label>
+                )}
               </div>
+              {jobForm.jobType === 'internship' && jobForm.isPaid && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.stipend')}</label>
+                  <input
+                    type="number"
+                    value={jobForm.stipendAmount}
+                    onChange={e => setJobForm(f => ({ ...f, stipendAmount: e.target.value }))}
+                    placeholder={t('employer.jobForm.stipendPlaceholder')}
+                    min={0}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                  />
+                </div>
+              )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Дедлайн подачі заявок</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('employer.jobForm.deadline')}</label>
                 <input
                   type="date"
                   value={jobForm.applicationDeadline}
@@ -1726,9 +1755,9 @@ export default function EmployerDashboardPage() {
             </div>
 
             <div className="flex gap-3 p-6 border-t border-gray-100">
-              <button onClick={() => { setShowCreateJob(false); setEditingJob(null); resetJobForm(); }} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Скасувати</button>
+              <button onClick={() => { setShowCreateJob(false); setEditingJob(null); resetJobForm(); }} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">{t('employer.jobForm.cancel')}</button>
               <button onClick={editingJob ? handleUpdateJob : handleCreateJob} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                {editingJob ? 'Зберегти' : 'Створити'}
+                {editingJob ? t('employer.jobForm.save') : t('employer.jobForm.create')}
               </button>
             </div>
           </div>
@@ -1750,7 +1779,7 @@ export default function EmployerDashboardPage() {
           <div className="relative w-full max-w-md bg-white h-full overflow-y-auto shadow-2xl flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-              <h2 className="text-lg font-semibold text-gray-900">Профіль кандидата</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('employer.candidatePreview.title')}</h2>
               <button
                 onClick={() => { setPreviewUser(null); setPreviewLoading(false); }}
                 className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -1801,13 +1830,13 @@ export default function EmployerDashboardPage() {
                       href={`/users/${previewUser.id}`}
                       className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
                     >
-                      <UserCircle size={15} /> Повний профіль
+                      <UserCircle size={15} /> {t('employer.candidatePreview.fullProfile')}
                     </Link>
                     <Link
                       href={`/chat?userId=${previewUser.id}`}
                       className="flex items-center gap-1.5 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
-                      <MessageCircle size={15} /> Написати
+                      <MessageCircle size={15} /> {t('employer.candidatePreview.message')}
                     </Link>
                   </div>
                 </div>
@@ -1815,7 +1844,7 @@ export default function EmployerDashboardPage() {
                 {/* Skills */}
                 {previewUser.skills && previewUser.skills.length > 0 && (
                   <div className="px-6 py-4 border-b border-gray-100">
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Навички</h4>
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('employer.candidatePreview.skills')}</h4>
                     <div className="flex flex-wrap gap-1.5">
                       {previewUser.skills.map(skill => (
                         <span key={skill.id} className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-medium">
@@ -1829,11 +1858,11 @@ export default function EmployerDashboardPage() {
                 {/* Languages */}
                 {previewUser.languages && previewUser.languages.length > 0 && (
                   <div className="px-6 py-4 border-b border-gray-100">
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Мови</h4>
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('employer.candidatePreview.languages')}</h4>
                     <div className="flex flex-wrap gap-1.5">
                       {previewUser.languages.map(l => (
                         <span key={l} className="text-xs bg-green-50 text-green-700 px-2.5 py-1 rounded-full font-medium">
-                          {JOB_LANGUAGES.find(x => x.value === l)?.label || l}
+                          {t(`jobLanguages.${l}`) || l}
                         </span>
                       ))}
                     </div>
@@ -1844,7 +1873,7 @@ export default function EmployerDashboardPage() {
                 {(previewUser as any).workExperience?.length > 0 && (
                   <div className="px-6 py-4 border-b border-gray-100">
                     <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <Briefcase size={13} /> Досвід роботи
+                      <Briefcase size={13} /> {t('employer.candidatePreview.experience')}
                     </h4>
                     <div className="space-y-3">
                       {(previewUser as any).workExperience.map((exp: any, i: number) => (
@@ -1854,7 +1883,7 @@ export default function EmployerDashboardPage() {
                           <p className="text-xs text-gray-400 mt-0.5">
                             {exp.startDate ? new Date(exp.startDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
                             {' – '}
-                            {exp.current ? 'Зараз' : exp.endDate ? new Date(exp.endDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
+                            {exp.current ? t('employer.candidatePreview.current') : exp.endDate ? new Date(exp.endDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
                           </p>
                           {exp.description && (
                             <p className="text-xs text-gray-500 mt-1 line-clamp-2">{exp.description}</p>
@@ -1869,7 +1898,7 @@ export default function EmployerDashboardPage() {
                 {(previewUser as any).education?.length > 0 && (
                   <div className="px-6 py-4">
                     <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <GraduationCap size={13} /> Освіта
+                      <GraduationCap size={13} /> {t('employer.candidatePreview.education')}
                     </h4>
                     <div className="space-y-3">
                       {(previewUser as any).education.map((edu: any, i: number) => (

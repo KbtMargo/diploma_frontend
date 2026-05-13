@@ -3,6 +3,7 @@ import { Inter, Geist } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import AuthProvider from '@/components/common/AuthProvider';
+import { I18nProvider } from '@/contexts/I18nContext';
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -18,10 +19,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="uk" className={cn("font-sans", geist.variable)}>
     <body className={inter.className}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-        <Toaster position="top-right" />
+        <I18nProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+          <Toaster position="top-right" />
+        </I18nProvider>
       </body>
     </html>
   );

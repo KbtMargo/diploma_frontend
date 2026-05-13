@@ -11,19 +11,20 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/auth.service';
 import { ROUTES } from '@/lib/constants';
-
-const loginSchema = z.object({
-  email: z.string().email('Невірний формат email'),
-  password: z.string().min(6, 'Пароль мінімум 6 символів'),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
+  const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const loginSchema = z.object({
+    email: z.string().email(t('auth.validation.emailInvalid')),
+    password: z.string().min(6, t('auth.validation.passwordMin6')),
+  });
+  type LoginForm = z.infer<typeof loginSchema>;
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -34,7 +35,7 @@ export default function LoginPage() {
     try {
       const response = await authService.login(data);
       setAuth(response.user, response.accessToken, response.refreshToken);
-      toast.success('Ласкаво просимо!');
+      toast.success(t('auth.login.welcome'));
 
       if (response.user.role === 'admin') {
         router.push(ROUTES.ADMIN.DASHBOARD);
@@ -44,7 +45,7 @@ export default function LoginPage() {
         router.push(ROUTES.JOBS);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Помилка входу');
+      toast.error(error.response?.data?.message || t('auth.login.error'));
     } finally {
       setIsLoading(false);
     }
@@ -54,14 +55,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Вхід</h1>
-          <p className="text-gray-500 mt-2">Раді бачити вас знову!</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('auth.login.title')}</h1>
+          <p className="text-gray-500 mt-2">{t('auth.login.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              {t('auth.login.email')}
             </label>
             <input
               {...register('email')}
@@ -76,7 +77,7 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Пароль
+              {t('auth.login.password')}
             </label>
             <div className="relative">
               <input
@@ -101,13 +102,13 @@ export default function LoginPage() {
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" className="rounded" />
-              <span className="text-sm text-gray-600">Запам'ятати мене</span>
+              <span className="text-sm text-gray-600">{t('auth.login.rememberMe')}</span>
             </label>
             <Link
               href={ROUTES.FORGOT_PASSWORD}
               className="text-sm text-indigo-600 hover:text-indigo-800"
             >
-              Забули пароль?
+              {t('auth.login.forgotPassword')}
             </Link>
           </div>
 
@@ -119,18 +120,18 @@ export default function LoginPage() {
             {isLoading ? (
               <>
                 <Loader2 size={20} className="animate-spin" />
-                Вхід...
+                {t('auth.login.submitting')}
               </>
             ) : (
-              'Увійти'
+              t('auth.login.submit')
             )}
           </button>
         </form>
 
         <p className="text-center text-gray-500 mt-6">
-          Немає акаунту?{' '}
+          {t('auth.login.noAccount')}{' '}
           <Link href={ROUTES.REGISTER} className="text-indigo-600 hover:text-indigo-800 font-medium">
-            Зареєструватись
+            {t('auth.login.register')}
           </Link>
         </p>
       </div>

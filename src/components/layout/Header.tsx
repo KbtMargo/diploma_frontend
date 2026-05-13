@@ -7,18 +7,21 @@ import { Bell, Menu, X, Briefcase, User, LogOut, ChevronDown, MessageSquare } fr
 import { useAuthStore } from '@/store/authStore';
 import { useSocketContext } from '@/contexts/SocketContext';
 import { ROUTES } from '@/lib/constants';
+import { useI18n } from '@/contexts/I18nContext';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import toast from 'react-hot-toast';
 import { getInitials } from '@/lib/utils';
 
 export default function Header() {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuthStore();
+  const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
-    toast.success('До побачення!');
+    toast.success(t('auth.goodbye'));
     router.push(ROUTES.LOGIN);
   };
 
@@ -39,25 +42,27 @@ export default function Header() {
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href={ROUTES.JOBS} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
-              Вакансії
+              {t('nav.jobs')}
             </Link>
             <Link href={ROUTES.COMPANIES} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
-              Компанії
+              {t('nav.companies')}
             </Link>
             {user?.role === 'employer' && (
               <Link href={ROUTES.EMPLOYER.DASHBOARD} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
-                Кабінет
+                {t('nav.dashboard')}
               </Link>
             )}
             {user?.role === 'admin' && (
               <Link href={ROUTES.ADMIN.DASHBOARD} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
-                Адмін
+                {t('nav.admin')}
               </Link>
             )}
           </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+
             {isAuthenticated && user ? (
               <>
                 {/* Notifications bell */}
@@ -79,7 +84,6 @@ export default function Header() {
                     </span>
                   )}
                 </Link>
-
 
                 {/* User menu */}
                 <div className="relative">
@@ -108,7 +112,7 @@ export default function Header() {
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <User size={16} />
-                        Профіль
+                        {t('nav.profile')}
                       </Link>
                       <Link
                         href={ROUTES.APPLICATIONS}
@@ -116,7 +120,7 @@ export default function Header() {
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <Briefcase size={16} />
-                        Мої заявки
+                        {t('nav.myApplications')}
                       </Link>
                       <hr className="my-1" />
                       <button
@@ -124,7 +128,7 @@ export default function Header() {
                         className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
                       >
                         <LogOut size={16} />
-                        Вийти
+                        {t('nav.logout')}
                       </button>
                     </div>
                   )}
@@ -136,13 +140,13 @@ export default function Header() {
                   href={ROUTES.LOGIN}
                   className="text-gray-600 hover:text-indigo-600 font-medium px-4 py-2 transition-colors"
                 >
-                  Увійти
+                  {t('nav.login')}
                 </Link>
                 <Link
                   href={ROUTES.REGISTER}
                   className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
                 >
-                  Реєстрація
+                  {t('nav.register')}
                 </Link>
               </div>
             )}
@@ -162,10 +166,10 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-gray-100">
             <nav className="flex flex-col gap-2">
               <Link href={ROUTES.JOBS} className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                Вакансії
+                {t('nav.jobs')}
               </Link>
               <Link href={ROUTES.COMPANIES} className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                Компанії
+                {t('nav.companies')}
               </Link>
             </nav>
           </div>

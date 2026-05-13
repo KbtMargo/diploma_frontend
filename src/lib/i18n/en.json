@@ -1,0 +1,1120 @@
+{
+  "nav": {
+    "jobs": "Jobs",
+    "companies": "Companies",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "profile": "Profile",
+    "myApplications": "My Applications",
+    "logout": "Logout",
+    "login": "Sign In",
+    "register": "Sign Up"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "all": "All",
+    "notSpecified": "Not specified",
+    "required": "Required field",
+    "saving": "Saving...",
+    "uploading": "Uploading...",
+    "withdraw": "Withdraw",
+    "message": "Message",
+    "urgent": "Urgent",
+    "top": "Top",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "remote": "Remote",
+    "present": "Present",
+    "link": "Link",
+    "file": "File",
+    "image": "Image",
+    "details": "Details",
+    "share": "Share"
+  },
+  "lang": {
+    "uk": "Українська",
+    "en": "English",
+    "de": "Deutsch",
+    "pl": "Polski"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back!",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "No account?",
+      "register": "Sign Up",
+      "welcome": "Welcome back!",
+      "error": "Login error"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join StartWay today",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "jobSeeker": "Looking for work",
+      "employer": "Employer",
+      "submit": "Create Account",
+      "submitting": "Creating...",
+      "hasAccount": "Already have an account?",
+      "login": "Sign In",
+      "success": "Registration successful! Please check your email.",
+      "error": "Registration error"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "submitting": "Sending...",
+      "sent": "Email sent!",
+      "sentDesc": "We've sent a password reset link to",
+      "checkSpam": "Check your spam folder if you don't receive the email within a few minutes",
+      "resend": "Resend",
+      "backToLogin": "Back to Sign In",
+      "error": "Failed to send email"
+    },
+    "resetPassword": {
+      "title": "New Password",
+      "subtitle": "Enter a new password for your account",
+      "password": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Change Password",
+      "submitting": "Saving...",
+      "success": "Password changed successfully!",
+      "backToLogin": "Back to Sign In",
+      "invalidLink": "Link is invalid or expired"
+    },
+    "validation": {
+      "emailInvalid": "Invalid email format",
+      "passwordMin6": "Password must be at least 6 characters",
+      "passwordMin8": "Password must be at least 8 characters",
+      "firstNameMin2": "First name must be at least 2 characters",
+      "lastNameMin2": "Last name must be at least 2 characters",
+      "passwordsMismatch": "Passwords do not match"
+    },
+    "goodbye": "Goodbye!"
+  },
+  "home": {
+    "badge": "Job search platform for youth",
+    "hero": {
+      "title1": "Find your",
+      "title2": "dream job",
+      "subtitle": "Thousands of jobs and internships in Ukraine and abroad. Start your career today.",
+      "searchPlaceholder": "Job title, company, skill...",
+      "search": "Search"
+    },
+    "stats": {
+      "jobs": "Jobs",
+      "companies": "Companies",
+      "jobSeekers": "Job Seekers",
+      "countries": "Countries"
+    },
+    "featured": {
+      "title": "Featured Jobs",
+      "subtitle": "The best opportunities for you",
+      "all": "All Jobs",
+      "loading": "Loading jobs..."
+    },
+    "categories": {
+      "title": "Popular Categories",
+      "subtitle": "Find work in your field",
+      "it": "IT & Development",
+      "design": "Design",
+      "marketing": "Marketing",
+      "finance": "Finance",
+      "education": "Education",
+      "medicine": "Medicine",
+      "law": "Law",
+      "logistics": "Logistics",
+      "vacancies": "vacancies"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Three simple steps to your dream job",
+      "step1": {
+        "title": "Create a Profile",
+        "desc": "Fill in your resume, add skills and work experience"
+      },
+      "step2": {
+        "title": "Find a Job",
+        "desc": "Search by filters: country, industry, salary"
+      },
+      "step3": {
+        "title": "Apply",
+        "desc": "Send your resume and cover letter to the employer"
+      }
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "subtitle": "Sign up for free and get access to thousands of jobs",
+      "register": "Sign Up",
+      "browse": "Browse Jobs"
+    },
+    "footer": {
+      "tagline": "Job and internship search platform for youth",
+      "jobSeekers": "Job Seekers",
+      "employers": "Employers",
+      "contacts": "Contacts",
+      "copyright": "© 2026 StartWay. All rights reserved."
+    }
+  },
+  "jobTypes": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "internship": "Internship",
+    "remote": "Remote",
+    "freelance": "Freelance",
+    "contract": "Contract"
+  },
+  "experienceLevels": {
+    "intern": "Intern",
+    "junior": "Junior",
+    "middle": "Middle",
+    "senior": "Senior",
+    "lead": "Lead",
+    "executive": "Executive"
+  },
+  "workFormats": {
+    "office": "Office",
+    "remote": "Remote",
+    "hybrid": "Hybrid"
+  },
+  "jobCategories": {
+    "it": "IT & Development",
+    "design": "Design",
+    "marketing": "Marketing",
+    "finance": "Finance",
+    "education": "Education",
+    "medicine": "Medicine",
+    "law": "Law",
+    "logistics": "Logistics",
+    "sales": "Sales",
+    "hr": "HR & Recruiting"
+  },
+  "jobLanguages": {
+    "ukrainian": "Ukrainian",
+    "english": "English",
+    "polish": "Polish",
+    "german": "German",
+    "french": "French",
+    "spanish": "Spanish"
+  },
+  "companySizes": {
+    "1-10": "1-10 employees",
+    "11-50": "11-50 employees",
+    "51-200": "51-200 employees",
+    "201-500": "201-500 employees",
+    "500+": "500+ employees"
+  },
+  "jobs": {
+    "title": "Jobs & Internships",
+    "found": "Found {{count}} listings",
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "industry": "Industry",
+      "jobType": "Employment Type",
+      "workFormat": "Work Format",
+      "language": "Language",
+      "experience": "Experience Level",
+      "country": "Country",
+      "salary": "Salary (USD)",
+      "internship": "Internship",
+      "paidOnly": "Paid only",
+      "countryPlaceholder": "E.g.: Germany",
+      "from": "from",
+      "to": "to",
+      "toggle": "Filters"
+    },
+    "search": {
+      "placeholder": "Search jobs...",
+      "cityPlaceholder": "City"
+    },
+    "notFound": {
+      "title": "No jobs found",
+      "subtitle": "Try changing your search parameters",
+      "reset": "Reset filters"
+    },
+    "match": "{{score}}% match",
+    "save": "Save",
+    "unsave": "Remove from saved",
+    "pagination": {
+      "prev": "Back",
+      "next": "Next"
+    }
+  },
+  "applications": {
+    "title": "My Applications",
+    "total": "Total {{count}} applications",
+    "all": "All",
+    "empty": {
+      "title": "No applications yet",
+      "subtitle": "Apply for a job to see it here",
+      "browse": "Browse Jobs"
+    },
+    "withdraw": "Withdraw",
+    "details": "Details",
+    "employerNote": "Employer note:",
+    "error": {
+      "load": "Failed to load applications",
+      "withdraw": "Error"
+    },
+    "withdrawn": "Application withdrawn",
+    "confirmWithdraw": "Withdraw application?",
+    "status": {
+      "pending": "Pending",
+      "reviewed": "Reviewed",
+      "shortlisted": "Shortlisted",
+      "interview_scheduled": "Interview",
+      "interviewed": "Interviewed",
+      "offered": "Offer",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "allRead": "All read",
+    "unreadCount": "{{count}} unread",
+    "markAllRead": "Mark all as read",
+    "clear": "Clear all",
+    "all": "All",
+    "unread": "Unread",
+    "empty": {
+      "all": "No notifications",
+      "unread": "No unread notifications"
+    },
+    "markRead": "Mark as read",
+    "delete": "Delete",
+    "error": {
+      "load": "Failed to load notifications",
+      "action": "Error"
+    },
+    "deleted": "Notification deleted",
+    "allDeleted": "All notifications deleted",
+    "allMarkedRead": "All notifications marked as read",
+    "confirmDeleteAll": "Delete all notifications?"
+  },
+  "profile": {
+    "jobSeeker": "Job Seeker",
+    "employer": "Employer",
+    "admin": "Administrator",
+    "verified": "Student verified",
+    "share": "Share",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "linkCopied": "Link copied!",
+    "completeness": {
+      "title": "Profile completeness",
+      "add": "Add:",
+      "items": {
+        "avatar": "Profile photo",
+        "about": "About me",
+        "skills": "Skills",
+        "education": "Education",
+        "experience": "Work experience",
+        "portfolio": "Portfolio",
+        "languages": "Languages",
+        "countries": "Preferred countries",
+        "jobTypes": "Employment type",
+        "phone": "Phone number",
+        "location": "City and country"
+      }
+    },
+    "tabs": {
+      "profile": "Profile",
+      "resume": "Resume",
+      "portfolio": "Portfolio",
+      "saved": "Saved",
+      "applications": "Applications",
+      "settings": "Settings"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "birthday": "Date of Birth",
+      "country": "Country",
+      "city": "City",
+      "about": "About me"
+    },
+    "languages": {
+      "title": "Languages",
+      "add": "Add language...",
+      "notSet": "Not specified"
+    },
+    "countries": {
+      "title": "Preferred work countries",
+      "add": "Add country...",
+      "notSet": "Not specified"
+    },
+    "jobTypes": {
+      "title": "Employment Types",
+      "notSet": "Not specified"
+    },
+    "skills": {
+      "title": "Skills",
+      "empty": "No skills added",
+      "search": "Search skills...",
+      "popular": "Popular",
+      "notFound": "Nothing found"
+    },
+    "employer": {
+      "company": "Company",
+      "companyDesc": "Manage your company profile, job listings, and applications in the employer dashboard.",
+      "dashboard": "Employer Dashboard"
+    },
+    "admin": {
+      "title": "Administration",
+      "desc": "Access the admin panel to manage users, jobs, and the platform.",
+      "panel": "Admin Panel"
+    },
+    "resume": {
+      "title": "PDF Resume",
+      "desc": "Upload a ready-made resume in PDF format — employers will be able to download it",
+      "view": "View Resume",
+      "replace": "Replace Resume",
+      "upload": "Upload Resume",
+      "uploading": "Uploading...",
+      "pdfOnly": "PDF only, up to 10 MB",
+      "error": {
+        "load": "Failed to load resume",
+        "upload": "Failed to upload resume",
+        "delete": "Failed to delete resume",
+        "avatar": "Failed to upload avatar"
+      },
+      "updated": "Resume uploaded!",
+      "deleted": "Resume deleted",
+      "avatarUpdated": "Avatar updated!"
+    },
+    "education": {
+      "title": "Education",
+      "add": "Add",
+      "empty": "No education added",
+      "new": "New Education",
+      "editing": "Edit",
+      "fields": {
+        "institution": "Institution *",
+        "institutionPlaceholder": "University name",
+        "degree": "Degree *",
+        "degreePlaceholder": "Bachelor's, Master's...",
+        "field": "Field of Study *",
+        "fieldPlaceholder": "Computer Science...",
+        "grade": "Grade / GPA",
+        "gradePlaceholder": "4.0, excellent...",
+        "start": "Start *",
+        "end": "End",
+        "description": "Description",
+        "descPlaceholder": "Additional information..."
+      },
+      "requiredFields": "Please fill in required fields"
+    },
+    "work": {
+      "title": "Work Experience",
+      "add": "Add",
+      "empty": "No work experience added",
+      "new": "New Experience",
+      "editing": "Edit",
+      "current": "Current",
+      "currentNow": "Present",
+      "fields": {
+        "company": "Company *",
+        "companyPlaceholder": "Company name",
+        "position": "Position *",
+        "positionPlaceholder": "Frontend Developer...",
+        "start": "Start *",
+        "end": "End",
+        "current": "I currently work here",
+        "description": "Job responsibilities",
+        "descPlaceholder": "Your responsibilities...",
+        "achievements": "Achievements",
+        "achievementsHint": "(each on a new line)"
+      },
+      "requiredFields": "Please fill in required fields"
+    },
+    "portfolio": {
+      "title": "Projects",
+      "add": "Add Project",
+      "empty": "Portfolio is empty",
+      "new": "New Project",
+      "editing": "Edit Project",
+      "fields": {
+        "name": "Project Name *",
+        "namePlaceholder": "My Project",
+        "desc": "Description *",
+        "descPlaceholder": "Brief about the project, technologies...",
+        "url": "Link",
+        "urlPlaceholder": "https://github.com/...",
+        "file": "Project File",
+        "fileHint": "(image, PDF, presentation)",
+        "uploadFile": "Upload File",
+        "replaceFile": "Replace File",
+        "fileAdded": "File added"
+      },
+      "requiredFields": "Please fill in required fields",
+      "fileUploaded": "File uploaded",
+      "fileError": "Upload error"
+    },
+    "saved": {
+      "title": "Saved Jobs",
+      "count": "{{count}} jobs",
+      "empty": "No saved jobs",
+      "emptyHint": "Click the heart icon on job listings to save them",
+      "removed": "Job removed from saved"
+    },
+    "myApplications": {
+      "title": "My Applications",
+      "count": "{{count}} applications",
+      "empty": "No applications yet",
+      "emptyHint": "Apply for jobs on the search page",
+      "applied": "Applied {{date}}",
+      "comment": "Note:",
+      "message": "Message",
+      "withdraw": "Withdraw",
+      "withdrawn": "Application withdrawn",
+      "withdrawError": "Withdrawal error",
+      "appStatus": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "shortlisted": "Shortlisted",
+        "interview_scheduled": "Invited",
+        "interviewed": "Interviewed",
+        "offered": "Offer",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "withdrawn": "Withdrawn"
+      }
+    },
+    "settings": {
+      "password": {
+        "title": "Change Password",
+        "desc": "Enter your current password and a new one to change it",
+        "current": "Current Password",
+        "new": "New Password",
+        "confirm": "Confirm New Password",
+        "submit": "Change Password",
+        "minLength": "Minimum 6 characters",
+        "changed": "Password changed!",
+        "fillAll": "Please fill in all fields",
+        "mismatch": "Passwords do not match",
+        "error": "Failed to change password"
+      }
+    },
+    "updated": "Profile updated!",
+    "saveError": "Failed to save"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "subtitle": "Sorry, this page does not exist.",
+    "back": "Go Home",
+    "browse": "Browse Jobs"
+  },
+  "chat": {
+    "messages": "Messages",
+    "search": "Search conversations...",
+    "online": "Online",
+    "connecting": "Connecting...",
+    "noConversations": "No conversations",
+    "noConversationsHint": "Apply for a job to start chatting",
+    "selectConversation": "Select a conversation",
+    "selectConversationHint": "Click a conversation on the left to open it",
+    "startConversation": "Start a conversation",
+    "placeholder": "Write a message... (Enter to send)",
+    "typing": "typing...",
+    "justNow": "just now",
+    "roles": {
+      "employer": "Employer",
+      "job_seeker": "Job Seeker"
+    }
+  },
+  "jobDetail": {
+    "back": "Back to Jobs",
+    "urgent": "Urgent",
+    "top": "Top",
+    "views": "{{count}} views",
+    "deadline": "Deadline",
+    "type": "Type",
+    "format": "Format",
+    "level": "Level",
+    "category": "Category",
+    "apply": "Apply",
+    "applied": "Application Submitted",
+    "appliedDesc": "Employer is reviewing it",
+    "save": "Save Job",
+    "saved": "Saved",
+    "share": "Link copied",
+    "description": "About the Position",
+    "requirements": "Requirements",
+    "responsibilities": "Responsibilities",
+    "skills": "Key Skills",
+    "benefits": "✨ Benefits",
+    "company": {
+      "title": "About {{name}}",
+      "noInfo": "No company information available.",
+      "viewProfile": "View company profile →"
+    },
+    "similar": "Similar Jobs",
+    "modal": {
+      "title": "Apply",
+      "subtitle": "Your profile will be sent to the employer",
+      "coverLetter": "Cover Letter",
+      "optional": "(optional)",
+      "placeholder": "Tell us why you're a good fit for this role...",
+      "cancel": "Cancel",
+      "submit": "Submit Application"
+    },
+    "error": {
+      "load": "Failed to load job",
+      "apply": "Failed to apply",
+      "save": "Error"
+    },
+    "success": {
+      "applied": "Application submitted!",
+      "saved": "Saved!",
+      "unsaved": "Removed from saved"
+    },
+    "notFound": "Job not found",
+    "notFoundBack": "Back to Jobs"
+  },
+  "companies": {
+    "title": "Companies",
+    "found": "Found {{count}} companies",
+    "filters": {
+      "search": "Company name...",
+      "allIndustries": "All industries",
+      "size": "Company size",
+      "reset": "Reset"
+    },
+    "empty": {
+      "title": "No companies found",
+      "subtitle": "Try changing search parameters"
+    },
+    "verified": "Verified",
+    "jobs": "jobs",
+    "pagination": {
+      "prev": "Back",
+      "next": "Next"
+    },
+    "industries": {
+      "it": "Information Technology",
+      "outsourcing": "IT Outsourcing",
+      "startups": "Startups & Product Development",
+      "mobile": "Mobile Development",
+      "data": "Data Analytics",
+      "design": "Design",
+      "devops": "DevOps & Cloud"
+    }
+  },
+  "companyDetail": {
+    "back": "Back",
+    "verified": "Verified",
+    "founded": "Founded {{year}}",
+    "jobs": "{{count}} jobs",
+    "reviews": "{{count}} reviews",
+    "jobsSection": "Company Jobs",
+    "noJobs": "No active jobs",
+    "reviewsSection": "Reviews",
+    "writeReview": "Write a Review",
+    "website": "Website",
+    "noInfo": "No information available.",
+    "form": {
+      "title": "Your Review",
+      "rating": "Overall Rating *",
+      "titleField": "Title *",
+      "titlePlaceholder": "Brief impression",
+      "content": "Review *",
+      "contentPlaceholder": "Tell about your experience working at the company...",
+      "position": "Position",
+      "positionPlaceholder": "e.g.: Frontend Developer",
+      "recommend": "I recommend this company",
+      "cancel": "Cancel",
+      "submit": "Publish"
+    },
+    "review": {
+      "recommends": "Recommends"
+    },
+    "noReviews": "No reviews yet",
+    "beFirst": "Be the first!",
+    "error": {
+      "rating": "Select a rating",
+      "fields": "Fill in title and text",
+      "review": "Error adding review"
+    },
+    "success": {
+      "review": "Review added!"
+    },
+    "pagination": {
+      "prev": "Back",
+      "next": "Next"
+    }
+  },
+  "publicProfile": {
+    "back": "Back",
+    "message": "Message",
+    "roles": {
+      "job_seeker": "Job Seeker",
+      "employer": "Employer",
+      "admin": "Administrator"
+    },
+    "skills": "Skills",
+    "languages": "Languages",
+    "education": "Education",
+    "present": "Present",
+    "workExperience": "Work Experience",
+    "current": "Current",
+    "portfolio": "Portfolio",
+    "view": "View"
+  },
+  "employer": {
+    "title": "Employer Dashboard",
+    "newJob": "New Job",
+    "tabs": {
+      "jobs": "Jobs",
+      "applications": "Applications",
+      "company": "Company",
+      "candidates": "Candidates",
+      "ai": "AI Analysis"
+    },
+    "stats": {
+      "jobs": "Jobs",
+      "applications": "Applications",
+      "views": "Views"
+    },
+    "kanban": {
+      "pending": "New",
+      "reviewed": "Review",
+      "shortlisted": "Shortlisted",
+      "interview_scheduled": "Interview",
+      "offered": "Offer",
+      "rejected": "Rejected"
+    },
+    "jobs": {
+      "empty": "No jobs yet",
+      "createFirst": "Create your first job",
+      "status": {
+        "active": "Active",
+        "pending": "Pending review"
+      },
+      "applications": "applications",
+      "views": "views",
+      "deadline": "Deadline:",
+      "tooltips": {
+        "funnel": "Application funnel",
+        "edit": "Edit",
+        "duplicate": "Duplicate job",
+        "delete": "Delete"
+      },
+      "funnel": {
+        "title": "Application Funnel",
+        "views": "Views",
+        "applications": "Applications",
+        "shortlisted": "Shortlisted",
+        "offer": "Offer",
+        "conversion": "Conversion:"
+      }
+    },
+    "applications": {
+      "allJobs": "All Jobs",
+      "viewList": "List",
+      "note": "Note",
+      "notePlaceholder": "Note about candidate...",
+      "notePlaceholderList": "Note...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "dragHere": "Drop here",
+      "empty": "No applications yet",
+      "expectedSalary": "Expected salary:",
+      "profile": "Profile",
+      "message": "Message"
+    },
+    "company": {
+      "verified": "Verified",
+      "pendingVerification": "Awaiting admin verification",
+      "edit": "Edit",
+      "info": {
+        "industry": "Industry",
+        "size": "Size",
+        "foundedYear": "Founded",
+        "website": "Website",
+        "shortDescription": "Short description"
+      },
+      "status": {
+        "verified": "Verified",
+        "active": "Active",
+        "pending": "Pending"
+      },
+      "noCompany": {
+        "title": "You don't have a company profile yet",
+        "desc": "After admin verification it will appear in the public directory.",
+        "create": "Create Company"
+      },
+      "form": {
+        "editTitle": "Edit Company",
+        "createTitle": "New Company",
+        "name": "Company Name *",
+        "namePlaceholder": "Your company name",
+        "shortDescription": "Short Description",
+        "shortDescPlaceholder": "One sentence about the company",
+        "fullDescription": "Full Description",
+        "industry": "Industry",
+        "industryPlaceholder": "IT, Finance...",
+        "foundedYear": "Founded Year",
+        "size": "Size",
+        "sizePlaceholder": "Select",
+        "website": "Website",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create"
+      }
+    },
+    "candidates": {
+      "searchPlaceholder": "Name or keywords...",
+      "countryPlaceholder": "Country",
+      "cityPlaceholder": "City",
+      "languagePlaceholder": "+ Language",
+      "search": "Search",
+      "found": "Found:",
+      "empty": {
+        "title": "No candidates found",
+        "subtitle": "Try changing the search filters"
+      },
+      "view": "View",
+      "message": "Message"
+    },
+    "ai": {
+      "title": "AI Candidate Screening",
+      "subtitle": "Gemini 1.5 Flash analyzes candidate fit for the job requirements and provides a score and recommendation.",
+      "selectJob": "Select a job to analyze",
+      "allApplications": "— all applications —",
+      "analyzing": "Analyzing...",
+      "analyzeAll": "Analyze All",
+      "noAppsJob": "No applications for the selected job",
+      "noApps": "No applications",
+      "top": "Top {{n}} candidates",
+      "byAi": "by AI analysis results",
+      "rec": {
+        "strong_yes": "Highly recommended",
+        "yes": "Good fit",
+        "maybe": "Maybe",
+        "no": "Not a fit"
+      },
+      "strengths": "Strengths",
+      "gaps": "Gaps",
+      "noGaps": "No obvious gaps found",
+      "analyzedAt": "Analyzed",
+      "analyzingShort": "Analyzing...",
+      "reanalyze": "Re-analyze",
+      "analyze": "Analyze"
+    },
+    "jobForm": {
+      "editTitle": "Edit Job",
+      "duplicateTitle": "Duplicate Job",
+      "createTitle": "New Job",
+      "copyMarker": "(copy)",
+      "titleLabel": "Job Title *",
+      "description": "Description *",
+      "jobType": "Employment Type",
+      "experienceLevel": "Experience Level",
+      "workFormat": "Work Format",
+      "country": "Country",
+      "city": "City",
+      "cityPlaceholder": "Kyiv",
+      "salaryMin": "Salary from",
+      "salaryMax": "Salary to",
+      "currency": "Currency",
+      "requirements": "Requirements",
+      "responsibilities": "Responsibilities",
+      "benefits": "Benefits / Perks",
+      "benefitsPlaceholder": "Health insurance, flexible schedule...",
+      "category": "Category",
+      "categoryPlaceholder": "Select category",
+      "languages": "Language Requirements",
+      "skills": "Required Skills",
+      "urgent": "Urgent",
+      "remote": "Remote work",
+      "negotiable": "Salary negotiable",
+      "paidInternship": "Paid internship",
+      "stipend": "Stipend / payment (USD)",
+      "stipendPlaceholder": "e.g.: 300",
+      "deadline": "Application deadline",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create"
+    },
+    "candidatePreview": {
+      "title": "Candidate Profile",
+      "fullProfile": "Full Profile",
+      "message": "Message",
+      "skills": "Skills",
+      "languages": "Languages",
+      "experience": "Work Experience",
+      "education": "Education",
+      "current": "Present"
+    },
+    "toast": {
+      "statusUpdated": "Status updated",
+      "statusError": "Failed to update status",
+      "noteSaved": "Note saved",
+      "noteError": "Failed to save note",
+      "companyCreated": "Company created! Awaiting admin verification.",
+      "companyUpdated": "Company data updated",
+      "jobCreated": "Job created!",
+      "jobUpdated": "Job updated!",
+      "jobDeleted": "Job deleted",
+      "jobDeleteConfirm": "Delete this job?",
+      "deleteError": "Delete error",
+      "loadError": "Failed to load data",
+      "candidatesError": "Failed to search candidates",
+      "profileError": "Failed to load profile",
+      "analyzed": "Analyzed {{count}} applications",
+      "analysisDone": "Analysis complete",
+      "analysisErrors": ", errors: {{count}}",
+      "batchError": "Batch analysis error",
+      "aiError": "AI analysis error",
+      "error": "Error"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "StartWay Platform Management",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "analytics": "Analytics",
+      "users": "Users",
+      "jobs": "Jobs",
+      "companies": "Companies",
+      "logs": "Audit"
+    },
+    "updated": "Updated",
+    "noData": "No data",
+    "error": {
+      "load": "Failed to load"
+    },
+    "dashboard": {
+      "cards": {
+        "users": "Users",
+        "jobs": "Jobs",
+        "companies": "Companies",
+        "pending": "Pending Review",
+        "today": "+{{count}} today",
+        "activeJobs": "{{count}} active",
+        "verified": "{{count}} verified",
+        "pendingJobs": "jobs waiting"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "moderateJobs": "Moderate Jobs",
+        "verifyCompanies": "Verify Companies",
+        "pendingApps": "Pending Applications",
+        "totalApps": "Total Applications"
+      }
+    },
+    "users": {
+      "search": "Search users...",
+      "allRoles": "All roles",
+      "roles": {
+        "job_seeker": "Job Seeker",
+        "employer": "Employer",
+        "admin": "Admin"
+      },
+      "total": "Total:",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "blocked": "Blocked"
+      },
+      "block": "Block",
+      "unblock": "Unblock",
+      "slideOver": {
+        "title": "User Details",
+        "labels": {
+          "email": "Email",
+          "registered": "Registered",
+          "city": "City",
+          "status": "Status",
+          "emailVerified": "Email verified"
+        },
+        "yes": "Yes",
+        "no": "No",
+        "stats": {
+          "applications": "Applications",
+          "jobs": "Jobs"
+        },
+        "about": "About",
+        "skills": "Skills"
+      }
+    },
+    "jobs": {
+      "search": "Search jobs...",
+      "allStatuses": "All statuses",
+      "filterStatus": {
+        "pending": "Pending review",
+        "active": "Active",
+        "rejected": "Rejected",
+        "inactive": "Inactive"
+      },
+      "jobStatus": {
+        "active": "Active",
+        "pending": "Pending review",
+        "rejected": "Rejected"
+      },
+      "total": "Total:",
+      "bulkApprove": "Approve {{count}}",
+      "table": {
+        "job": "Job",
+        "employer": "Employer",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "approve": "Approve",
+      "reject": "Reject",
+      "deactivate": "Deactivate",
+      "restore": "Restore",
+      "rejectModal": {
+        "title": "Reject Job",
+        "job": "Job:",
+        "placeholder": "Enter rejection reason (optional)...",
+        "cancel": "Cancel",
+        "confirm": "Reject"
+      }
+    },
+    "companies": {
+      "allStatuses": "All statuses",
+      "filterStatus": {
+        "pending": "Pending",
+        "active": "Active",
+        "verified": "Verified",
+        "suspended": "Suspended"
+      },
+      "companyStatus": {
+        "verified": "Verified",
+        "active": "Active",
+        "pending": "Pending",
+        "suspended": "Suspended"
+      },
+      "total": "Total:",
+      "table": {
+        "company": "Company",
+        "industry": "Industry",
+        "status": "Status",
+        "jobs": "Jobs",
+        "actions": "Actions"
+      },
+      "verify": "Verify",
+      "suspend": "Suspend",
+      "suspendedLabel": "Suspended"
+    },
+    "analytics": {
+      "registrations": "User Registrations",
+      "jobPostings": "Job Postings",
+      "topSkills": "In-demand Skills",
+      "appsByStatus": "Applications by Status",
+      "topCountries": "Top Countries by Jobs",
+      "byIndustry": "Jobs by Category",
+      "jobTypes": "Employment Types",
+      "appDistribution": "Applications: Status Distribution",
+      "jobs": "Jobs",
+      "applicationsCount": "Applications",
+      "registrationsCount": "Registrations",
+      "appStatus": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "shortlisted": "Shortlisted",
+        "interview_scheduled": "Interview",
+        "offered": "Offered",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "withdrawn": "Withdrawn"
+      }
+    },
+    "logs": {
+      "total": "Total records:",
+      "empty": "No logs yet",
+      "table": {
+        "action": "Action",
+        "user": "User",
+        "resource": "Resource",
+        "time": "Time"
+      },
+      "actions": {
+        "user_created": "User registered",
+        "user_updated": "User updated",
+        "user_deleted": "User deleted",
+        "user_blocked": "User blocked",
+        "job_created": "Job created",
+        "job_updated": "Job updated",
+        "job_deleted": "Job deleted",
+        "job_moderated": "Job moderated",
+        "company_created": "Company created",
+        "company_updated": "Company updated",
+        "company_verified": "Company verified",
+        "company_suspended": "Company suspended",
+        "application_reviewed": "Application reviewed",
+        "settings_changed": "Settings changed"
+      },
+      "entityTypes": {
+        "user": "User",
+        "job": "Job",
+        "company": "Company",
+        "application": "Application"
+      }
+    },
+    "countries": {
+      "ukraine": "Ukraine",
+      "poland": "Poland",
+      "germany": "Germany",
+      "usa": "USA",
+      "uk": "United Kingdom"
+    },
+    "pagination": {
+      "of": "of"
+    },
+    "toast": {
+      "loadError": "Failed to load",
+      "usersError": "Failed to load users",
+      "jobsError": "Failed to load jobs",
+      "companiesError": "Failed to load companies",
+      "analyticsError": "Analytics error",
+      "logsError": "Failed to load logs",
+      "userBlocked": "User blocked",
+      "userUnblocked": "User unblocked",
+      "roleChanged": "Role changed",
+      "jobApproved": "Job approved",
+      "jobRejected": "Job rejected",
+      "statusUpdated": "Status updated",
+      "companyVerified": "Company verified",
+      "companySuspended": "Company suspended",
+      "bulkApproved": "Approved {{count}} jobs",
+      "bulkError": "Bulk approve error",
+      "error": "Error"
+    }
+  }
+}

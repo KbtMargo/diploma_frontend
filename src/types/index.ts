@@ -13,6 +13,7 @@ export interface User {
   dateOfBirth?: string;
   isActive: boolean;
   isEmailVerified: boolean;
+  isStudentVerified?: boolean;
   skills?: Skill[];
   languages?: string[];
   preferredCountries?: string[];
@@ -60,6 +61,8 @@ export interface Job {
   tags?: string[];
   isFeatured?: boolean;
   isUrgent?: boolean;
+  isPaid?: boolean;
+  stipendAmount?: number;
   views?: number;
   applicationsCount?: number;
   requiredLanguages?: string[];

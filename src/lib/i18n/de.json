@@ -1,0 +1,1120 @@
+{
+  "nav": {
+    "jobs": "Stellenangebote",
+    "companies": "Unternehmen",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "profile": "Profil",
+    "myApplications": "Meine Bewerbungen",
+    "logout": "Abmelden",
+    "login": "Anmelden",
+    "register": "Registrieren"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "all": "Alle",
+    "notSpecified": "Nicht angegeben",
+    "required": "Pflichtfeld",
+    "saving": "Speichern...",
+    "uploading": "Hochladen...",
+    "withdraw": "Zurückziehen",
+    "message": "Nachricht",
+    "urgent": "Dringend",
+    "top": "Top",
+    "paid": "Bezahlt",
+    "unpaid": "Unbezahlt",
+    "remote": "Remote",
+    "present": "Heute",
+    "link": "Link",
+    "file": "Datei",
+    "image": "Bild",
+    "details": "Details",
+    "share": "Teilen"
+  },
+  "lang": {
+    "uk": "Українська",
+    "en": "English",
+    "de": "Deutsch",
+    "pl": "Polski"
+  },
+  "auth": {
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Willkommen zurück!",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "rememberMe": "Angemeldet bleiben",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "submitting": "Anmelden...",
+      "noAccount": "Kein Konto?",
+      "register": "Registrieren",
+      "welcome": "Willkommen zurück!",
+      "error": "Anmeldefehler"
+    },
+    "register": {
+      "title": "Registrieren",
+      "subtitle": "Erstellen Sie Ihr Konto",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "jobSeeker": "Ich suche Arbeit",
+      "employer": "Arbeitgeber",
+      "submit": "Konto erstellen",
+      "submitting": "Registrieren...",
+      "hasAccount": "Bereits ein Konto?",
+      "login": "Anmelden",
+      "success": "Registrierung erfolgreich! Bitte überprüfen Sie Ihre E-Mail.",
+      "error": "Registrierungsfehler"
+    },
+    "forgotPassword": {
+      "title": "Passwort vergessen?",
+      "subtitle": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Reset-Link",
+      "email": "E-Mail",
+      "submit": "Reset-Link senden",
+      "submitting": "Senden...",
+      "sent": "E-Mail gesendet!",
+      "sentDesc": "Wir haben einen Passwort-Reset-Link gesendet an",
+      "checkSpam": "Bitte überprüfen Sie Ihren Spam-Ordner, falls die E-Mail nicht angekommen ist",
+      "resend": "Erneut senden",
+      "backToLogin": "Zurück zur Anmeldung",
+      "error": "Fehler beim Senden"
+    },
+    "resetPassword": {
+      "title": "Neues Passwort",
+      "subtitle": "Geben Sie ein neues Passwort für Ihr Konto ein",
+      "password": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Passwort ändern",
+      "submitting": "Speichern...",
+      "success": "Passwort erfolgreich geändert!",
+      "backToLogin": "Zurück zur Anmeldung",
+      "invalidLink": "Der Link ist ungültig oder abgelaufen"
+    },
+    "validation": {
+      "emailInvalid": "Ungültiges E-Mail-Format",
+      "passwordMin6": "Passwort muss mindestens 6 Zeichen haben",
+      "passwordMin8": "Passwort muss mindestens 8 Zeichen haben",
+      "firstNameMin2": "Vorname muss mindestens 2 Zeichen haben",
+      "lastNameMin2": "Nachname muss mindestens 2 Zeichen haben",
+      "passwordsMismatch": "Passwörter stimmen nicht überein"
+    },
+    "goodbye": "Auf Wiedersehen!"
+  },
+  "home": {
+    "badge": "Jobsuchplattform für Jugendliche",
+    "hero": {
+      "title1": "Finden Sie Ihren",
+      "title2": "Traumjob",
+      "subtitle": "Tausende von Jobs und Praktika in der Ukraine und im Ausland. Starten Sie Ihre Karriere noch heute.",
+      "searchPlaceholder": "Stelle, Unternehmen, Fähigkeit...",
+      "search": "Suchen"
+    },
+    "stats": {
+      "jobs": "Stellen",
+      "companies": "Unternehmen",
+      "jobSeekers": "Bewerber",
+      "countries": "Länder"
+    },
+    "featured": {
+      "title": "Aktuelle Stellen",
+      "subtitle": "Die besten Angebote für Sie",
+      "all": "Alle Stellen",
+      "loading": "Stellen werden geladen..."
+    },
+    "categories": {
+      "title": "Beliebte Kategorien",
+      "subtitle": "Finden Sie Arbeit in Ihrem Bereich",
+      "it": "IT & Entwicklung",
+      "design": "Design",
+      "marketing": "Marketing",
+      "finance": "Finanzen",
+      "education": "Bildung",
+      "medicine": "Medizin",
+      "law": "Recht",
+      "logistics": "Logistik",
+      "vacancies": "Stellen"
+    },
+    "howItWorks": {
+      "title": "So funktioniert es",
+      "subtitle": "Drei einfache Schritte zu Ihrem Traumjob",
+      "step1": {
+        "title": "Profil erstellen",
+        "desc": "Lebenslauf ausfüllen, Fähigkeiten und Berufserfahrung hinzufügen"
+      },
+      "step2": {
+        "title": "Job finden",
+        "desc": "Nach Filtern suchen: Land, Branche, Gehalt"
+      },
+      "step3": {
+        "title": "Bewerben",
+        "desc": "Lebenslauf und Anschreiben an den Arbeitgeber senden"
+      }
+    },
+    "cta": {
+      "title": "Bereit anzufangen?",
+      "subtitle": "Registrieren Sie sich kostenlos und erhalten Sie Zugang zu Tausenden von Stellen",
+      "register": "Jetzt registrieren",
+      "browse": "Stellen durchsuchen"
+    },
+    "footer": {
+      "tagline": "Job- und Praktikumssuchplattform für Jugendliche",
+      "jobSeekers": "Bewerber",
+      "employers": "Arbeitgeber",
+      "contacts": "Kontakt",
+      "copyright": "© 2026 StartWay. Alle Rechte vorbehalten."
+    }
+  },
+  "jobTypes": {
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "internship": "Praktikum",
+    "remote": "Remote",
+    "freelance": "Freiberuflich",
+    "contract": "Vertrag"
+  },
+  "experienceLevels": {
+    "intern": "Praktikant",
+    "junior": "Junior",
+    "middle": "Middle",
+    "senior": "Senior",
+    "lead": "Lead",
+    "executive": "Executive"
+  },
+  "workFormats": {
+    "office": "Büro",
+    "remote": "Remote",
+    "hybrid": "Hybrid"
+  },
+  "jobCategories": {
+    "it": "IT & Entwicklung",
+    "design": "Design",
+    "marketing": "Marketing",
+    "finance": "Finanzen",
+    "education": "Bildung",
+    "medicine": "Medizin",
+    "law": "Recht",
+    "logistics": "Logistik",
+    "sales": "Vertrieb",
+    "hr": "HR & Recruiting"
+  },
+  "jobLanguages": {
+    "ukrainian": "Ukrainisch",
+    "english": "Englisch",
+    "polish": "Polnisch",
+    "german": "Deutsch",
+    "french": "Französisch",
+    "spanish": "Spanisch"
+  },
+  "companySizes": {
+    "1-10": "1-10 Mitarbeiter",
+    "11-50": "11-50 Mitarbeiter",
+    "51-200": "51-200 Mitarbeiter",
+    "201-500": "201-500 Mitarbeiter",
+    "500+": "500+ Mitarbeiter"
+  },
+  "jobs": {
+    "title": "Stellen & Praktika",
+    "found": "{{count}} Angebote gefunden",
+    "filters": {
+      "title": "Filter",
+      "clear": "Zurücksetzen",
+      "industry": "Branche",
+      "jobType": "Beschäftigungsart",
+      "workFormat": "Arbeitsformat",
+      "language": "Sprache",
+      "experience": "Erfahrungslevel",
+      "country": "Land",
+      "salary": "Gehalt (USD)",
+      "internship": "Praktikum",
+      "paidOnly": "Nur bezahlt",
+      "countryPlaceholder": "Z.B.: Deutschland",
+      "from": "von",
+      "to": "bis",
+      "toggle": "Filter"
+    },
+    "search": {
+      "placeholder": "Stellen suchen...",
+      "cityPlaceholder": "Stadt"
+    },
+    "notFound": {
+      "title": "Keine Stellen gefunden",
+      "subtitle": "Versuchen Sie, die Suchparameter zu ändern",
+      "reset": "Filter zurücksetzen"
+    },
+    "match": "{{score}}% Übereinstimmung",
+    "save": "Speichern",
+    "unsave": "Aus Gespeicherten entfernen",
+    "pagination": {
+      "prev": "Zurück",
+      "next": "Weiter"
+    }
+  },
+  "applications": {
+    "title": "Meine Bewerbungen",
+    "total": "Insgesamt {{count}} Bewerbungen",
+    "all": "Alle",
+    "empty": {
+      "title": "Noch keine Bewerbungen",
+      "subtitle": "Bewerben Sie sich auf eine Stelle, damit sie hier erscheint",
+      "browse": "Stellen durchsuchen"
+    },
+    "withdraw": "Zurückziehen",
+    "details": "Details",
+    "employerNote": "Kommentar des Arbeitgebers:",
+    "error": {
+      "load": "Fehler beim Laden der Bewerbungen",
+      "withdraw": "Fehler"
+    },
+    "withdrawn": "Bewerbung zurückgezogen",
+    "confirmWithdraw": "Bewerbung zurückziehen?",
+    "status": {
+      "pending": "Ausstehend",
+      "reviewed": "Geprüft",
+      "shortlisted": "Ausgewählt",
+      "interview_scheduled": "Vorstellungsgespräch",
+      "interviewed": "Beworben",
+      "offered": "Angebot",
+      "accepted": "Angenommen",
+      "rejected": "Abgelehnt",
+      "withdrawn": "Zurückgezogen"
+    }
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "allRead": "Alle gelesen",
+    "unreadCount": "{{count}} ungelesen",
+    "markAllRead": "Alle als gelesen markieren",
+    "clear": "Alle löschen",
+    "all": "Alle",
+    "unread": "Ungelesen",
+    "empty": {
+      "all": "Keine Benachrichtigungen",
+      "unread": "Keine ungelesenen Benachrichtigungen"
+    },
+    "markRead": "Als gelesen markieren",
+    "delete": "Löschen",
+    "error": {
+      "load": "Fehler beim Laden der Benachrichtigungen",
+      "action": "Fehler"
+    },
+    "deleted": "Benachrichtigung gelöscht",
+    "allDeleted": "Alle Benachrichtigungen gelöscht",
+    "allMarkedRead": "Alle Benachrichtigungen als gelesen markiert",
+    "confirmDeleteAll": "Alle Benachrichtigungen löschen?"
+  },
+  "profile": {
+    "jobSeeker": "Jobsuchender",
+    "employer": "Arbeitgeber",
+    "admin": "Administrator",
+    "verified": "Student verifiziert",
+    "share": "Teilen",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "linkCopied": "Link kopiert!",
+    "completeness": {
+      "title": "Profilstatus",
+      "add": "Hinzufügen:",
+      "items": {
+        "avatar": "Profilfoto",
+        "about": "Über mich",
+        "skills": "Fähigkeiten",
+        "education": "Ausbildung",
+        "experience": "Berufserfahrung",
+        "portfolio": "Portfolio",
+        "languages": "Sprachen",
+        "countries": "Bevorzugte Länder",
+        "jobTypes": "Beschäftigungsart",
+        "phone": "Telefonnummer",
+        "location": "Stadt und Land"
+      }
+    },
+    "tabs": {
+      "profile": "Profil",
+      "resume": "Lebenslauf",
+      "portfolio": "Portfolio",
+      "saved": "Gespeichert",
+      "applications": "Bewerbungen",
+      "settings": "Einstellungen"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "phone": "Telefon",
+      "birthday": "Geburtsdatum",
+      "country": "Land",
+      "city": "Stadt",
+      "about": "Über mich"
+    },
+    "languages": {
+      "title": "Sprachen",
+      "add": "Sprache hinzufügen...",
+      "notSet": "Nicht angegeben"
+    },
+    "countries": {
+      "title": "Bevorzugte Arbeitsländer",
+      "add": "Land hinzufügen...",
+      "notSet": "Nicht angegeben"
+    },
+    "jobTypes": {
+      "title": "Beschäftigungsarten",
+      "notSet": "Nicht angegeben"
+    },
+    "skills": {
+      "title": "Fähigkeiten",
+      "empty": "Keine Fähigkeiten hinzugefügt",
+      "search": "Fähigkeiten suchen...",
+      "popular": "Beliebt",
+      "notFound": "Nichts gefunden"
+    },
+    "employer": {
+      "company": "Unternehmen",
+      "companyDesc": "Verwalten Sie Ihr Unternehmensprofil, Stellenangebote und Bewerbungen im Arbeitgeber-Dashboard.",
+      "dashboard": "Arbeitgeber-Dashboard"
+    },
+    "admin": {
+      "title": "Administration",
+      "desc": "Zugang zum Admin-Panel zur Verwaltung von Benutzern, Stellen und der Plattform.",
+      "panel": "Admin-Panel"
+    },
+    "resume": {
+      "title": "PDF-Lebenslauf",
+      "desc": "Laden Sie einen fertigen Lebenslauf im PDF-Format hoch — Arbeitgeber können ihn herunterladen",
+      "view": "Lebenslauf ansehen",
+      "replace": "Lebenslauf ersetzen",
+      "upload": "Lebenslauf hochladen",
+      "uploading": "Hochladen...",
+      "pdfOnly": "Nur PDF, bis zu 10 MB",
+      "error": {
+        "load": "Fehler beim Laden des Lebenslaufs",
+        "upload": "Fehler beim Hochladen",
+        "delete": "Fehler beim Löschen",
+        "avatar": "Fehler beim Hochladen des Avatars"
+      },
+      "updated": "Lebenslauf hochgeladen!",
+      "deleted": "Lebenslauf gelöscht",
+      "avatarUpdated": "Avatar aktualisiert!"
+    },
+    "education": {
+      "title": "Ausbildung",
+      "add": "Hinzufügen",
+      "empty": "Keine Ausbildung hinzugefügt",
+      "new": "Neue Ausbildung",
+      "editing": "Bearbeiten",
+      "fields": {
+        "institution": "Bildungseinrichtung *",
+        "institutionPlaceholder": "Universitätsname",
+        "degree": "Abschluss *",
+        "degreePlaceholder": "Bachelor, Master...",
+        "field": "Studiengang *",
+        "fieldPlaceholder": "Informatik...",
+        "grade": "Note / GPA",
+        "gradePlaceholder": "4.0, sehr gut...",
+        "start": "Beginn *",
+        "end": "Ende",
+        "description": "Beschreibung",
+        "descPlaceholder": "Weitere Informationen..."
+      },
+      "requiredFields": "Bitte füllen Sie die Pflichtfelder aus"
+    },
+    "work": {
+      "title": "Berufserfahrung",
+      "add": "Hinzufügen",
+      "empty": "Keine Berufserfahrung hinzugefügt",
+      "new": "Neue Erfahrung",
+      "editing": "Bearbeiten",
+      "current": "Aktuell",
+      "currentNow": "Heute",
+      "fields": {
+        "company": "Unternehmen *",
+        "companyPlaceholder": "Unternehmensname",
+        "position": "Position *",
+        "positionPlaceholder": "Frontend Developer...",
+        "start": "Beginn *",
+        "end": "Ende",
+        "current": "Ich arbeite hier derzeit",
+        "description": "Aufgaben",
+        "descPlaceholder": "Ihre Aufgaben...",
+        "achievements": "Errungenschaften",
+        "achievementsHint": "(jede in einer neuen Zeile)"
+      },
+      "requiredFields": "Bitte füllen Sie die Pflichtfelder aus"
+    },
+    "portfolio": {
+      "title": "Projekte",
+      "add": "Projekt hinzufügen",
+      "empty": "Portfolio ist leer",
+      "new": "Neues Projekt",
+      "editing": "Projekt bearbeiten",
+      "fields": {
+        "name": "Projektname *",
+        "namePlaceholder": "Mein Projekt",
+        "desc": "Beschreibung *",
+        "descPlaceholder": "Kurz über das Projekt, Technologien...",
+        "url": "Link",
+        "urlPlaceholder": "https://github.com/...",
+        "file": "Projektdatei",
+        "fileHint": "(Bild, PDF, Präsentation)",
+        "uploadFile": "Datei hochladen",
+        "replaceFile": "Datei ersetzen",
+        "fileAdded": "Datei hinzugefügt"
+      },
+      "requiredFields": "Bitte füllen Sie die Pflichtfelder aus",
+      "fileUploaded": "Datei hochgeladen",
+      "fileError": "Upload-Fehler"
+    },
+    "saved": {
+      "title": "Gespeicherte Stellen",
+      "count": "{{count}} Stellen",
+      "empty": "Keine gespeicherten Stellen",
+      "emptyHint": "Klicken Sie auf das Herz bei den Stellenangeboten zum Speichern",
+      "removed": "Stelle aus Gespeicherten entfernt"
+    },
+    "myApplications": {
+      "title": "Meine Bewerbungen",
+      "count": "{{count}} Bewerbungen",
+      "empty": "Noch keine Bewerbungen",
+      "emptyHint": "Bewerben Sie sich auf Stellen auf der Suchseite",
+      "applied": "Beworben am {{date}}",
+      "comment": "Kommentar:",
+      "message": "Nachricht",
+      "withdraw": "Zurückziehen",
+      "withdrawn": "Bewerbung zurückgezogen",
+      "withdrawError": "Fehler beim Zurückziehen",
+      "appStatus": {
+        "pending": "Ausstehend",
+        "reviewed": "Geprüft",
+        "shortlisted": "Ausgewählt",
+        "interview_scheduled": "Eingeladen",
+        "interviewed": "Vorstellungsgespräch",
+        "offered": "Angebot",
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt",
+        "withdrawn": "Zurückgezogen"
+      }
+    },
+    "settings": {
+      "password": {
+        "title": "Passwort ändern",
+        "desc": "Geben Sie Ihr aktuelles und neues Passwort ein",
+        "current": "Aktuelles Passwort",
+        "new": "Neues Passwort",
+        "confirm": "Neues Passwort bestätigen",
+        "submit": "Passwort ändern",
+        "minLength": "Mindestens 6 Zeichen",
+        "changed": "Passwort geändert!",
+        "fillAll": "Bitte alle Felder ausfüllen",
+        "mismatch": "Passwörter stimmen nicht überein",
+        "error": "Fehler beim Ändern des Passworts"
+      }
+    },
+    "updated": "Profil aktualisiert!",
+    "saveError": "Fehler beim Speichern"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "subtitle": "Diese Seite existiert leider nicht.",
+    "back": "Zur Startseite",
+    "browse": "Stellen durchsuchen"
+  },
+  "chat": {
+    "messages": "Nachrichten",
+    "search": "Gespräche suchen...",
+    "online": "Online",
+    "connecting": "Verbindung wird hergestellt...",
+    "noConversations": "Keine Gespräche",
+    "noConversationsHint": "Bewerben Sie sich auf eine Stelle, um ein Gespräch zu beginnen",
+    "selectConversation": "Gespräch auswählen",
+    "selectConversationHint": "Klicken Sie auf ein Gespräch links, um es zu öffnen",
+    "startConversation": "Gespräch beginnen",
+    "placeholder": "Nachricht schreiben... (Enter zum Senden)",
+    "typing": "schreibt...",
+    "justNow": "gerade eben",
+    "roles": {
+      "employer": "Arbeitgeber",
+      "job_seeker": "Jobsuchender"
+    }
+  },
+  "jobDetail": {
+    "back": "Zurück zu Stellen",
+    "urgent": "Dringend",
+    "top": "Top",
+    "views": "{{count}} Aufrufe",
+    "deadline": "Frist",
+    "type": "Typ",
+    "format": "Format",
+    "level": "Level",
+    "category": "Kategorie",
+    "apply": "Bewerben",
+    "applied": "Bewerbung eingereicht",
+    "appliedDesc": "Arbeitgeber prüft sie",
+    "save": "Stelle speichern",
+    "saved": "Gespeichert",
+    "share": "Link kopiert",
+    "description": "Über die Stelle",
+    "requirements": "Anforderungen",
+    "responsibilities": "Aufgaben",
+    "skills": "Schlüsselkompetenzen",
+    "benefits": "✨ Vorteile",
+    "company": {
+      "title": "Über {{name}}",
+      "noInfo": "Keine Unternehmensinformationen vorhanden.",
+      "viewProfile": "Unternehmensprofil anzeigen →"
+    },
+    "similar": "Ähnliche Stellen",
+    "modal": {
+      "title": "Bewerben",
+      "subtitle": "Ihr Profil wird an den Arbeitgeber gesendet",
+      "coverLetter": "Anschreiben",
+      "optional": "(optional)",
+      "placeholder": "Erklären Sie, warum Sie für diese Stelle geeignet sind...",
+      "cancel": "Abbrechen",
+      "submit": "Bewerbung absenden"
+    },
+    "error": {
+      "load": "Fehler beim Laden der Stelle",
+      "apply": "Bewerbungsfehler",
+      "save": "Fehler"
+    },
+    "success": {
+      "applied": "Bewerbung eingereicht!",
+      "saved": "Gespeichert!",
+      "unsaved": "Aus Gespeicherten entfernt"
+    },
+    "notFound": "Stelle nicht gefunden",
+    "notFoundBack": "Zurück zu Stellen"
+  },
+  "companies": {
+    "title": "Unternehmen",
+    "found": "{{count}} Unternehmen gefunden",
+    "filters": {
+      "search": "Unternehmensname...",
+      "allIndustries": "Alle Branchen",
+      "size": "Unternehmensgröße",
+      "reset": "Zurücksetzen"
+    },
+    "empty": {
+      "title": "Keine Unternehmen gefunden",
+      "subtitle": "Versuchen Sie, die Suchparameter zu ändern"
+    },
+    "verified": "Verifiziert",
+    "jobs": "Stellen",
+    "pagination": {
+      "prev": "Zurück",
+      "next": "Weiter"
+    },
+    "industries": {
+      "it": "Informationstechnologie",
+      "outsourcing": "IT-Outsourcing",
+      "startups": "Startups & Produktentwicklung",
+      "mobile": "Mobile Entwicklung",
+      "data": "Datenanalyse",
+      "design": "Design",
+      "devops": "DevOps & Cloud"
+    }
+  },
+  "companyDetail": {
+    "back": "Zurück",
+    "verified": "Verifiziert",
+    "founded": "Gegründet {{year}}",
+    "jobs": "{{count}} Stellen",
+    "reviews": "{{count}} Bewertungen",
+    "jobsSection": "Stellen des Unternehmens",
+    "noJobs": "Keine aktiven Stellen",
+    "reviewsSection": "Bewertungen",
+    "writeReview": "Bewertung schreiben",
+    "website": "Webseite",
+    "noInfo": "Keine Informationen verfügbar.",
+    "form": {
+      "title": "Ihre Bewertung",
+      "rating": "Gesamtbewertung *",
+      "titleField": "Titel *",
+      "titlePlaceholder": "Kurzer Eindruck",
+      "content": "Bewertung *",
+      "contentPlaceholder": "Erzählen Sie von Ihrer Erfahrung im Unternehmen...",
+      "position": "Position",
+      "positionPlaceholder": "z.B.: Frontend Developer",
+      "recommend": "Ich empfehle dieses Unternehmen",
+      "cancel": "Abbrechen",
+      "submit": "Veröffentlichen"
+    },
+    "review": {
+      "recommends": "Empfiehlt"
+    },
+    "noReviews": "Noch keine Bewertungen",
+    "beFirst": "Seien Sie der Erste!",
+    "error": {
+      "rating": "Bewertung auswählen",
+      "fields": "Titel und Text ausfüllen",
+      "review": "Fehler beim Hinzufügen der Bewertung"
+    },
+    "success": {
+      "review": "Bewertung hinzugefügt!"
+    },
+    "pagination": {
+      "prev": "Zurück",
+      "next": "Weiter"
+    }
+  },
+  "publicProfile": {
+    "back": "Zurück",
+    "message": "Nachricht",
+    "roles": {
+      "job_seeker": "Jobsuchender",
+      "employer": "Arbeitgeber",
+      "admin": "Administrator"
+    },
+    "skills": "Fähigkeiten",
+    "languages": "Sprachen",
+    "education": "Ausbildung",
+    "present": "Gegenwart",
+    "workExperience": "Berufserfahrung",
+    "current": "Aktuell",
+    "portfolio": "Portfolio",
+    "view": "Anzeigen"
+  },
+  "employer": {
+    "title": "Arbeitgeber-Dashboard",
+    "newJob": "Neue Stelle",
+    "tabs": {
+      "jobs": "Stellen",
+      "applications": "Bewerbungen",
+      "company": "Unternehmen",
+      "candidates": "Kandidaten",
+      "ai": "KI-Analyse"
+    },
+    "stats": {
+      "jobs": "Stellen",
+      "applications": "Bewerbungen",
+      "views": "Aufrufe"
+    },
+    "kanban": {
+      "pending": "Neu",
+      "reviewed": "Prüfung",
+      "shortlisted": "Vorauswahl",
+      "interview_scheduled": "Interview",
+      "offered": "Angebot",
+      "rejected": "Abgelehnt"
+    },
+    "jobs": {
+      "empty": "Noch keine Stellen",
+      "createFirst": "Erste Stelle erstellen",
+      "status": {
+        "active": "Aktiv",
+        "pending": "In Prüfung"
+      },
+      "applications": "Bewerbungen",
+      "views": "Aufrufe",
+      "deadline": "Frist:",
+      "tooltips": {
+        "funnel": "Bewerbungstrichter",
+        "edit": "Bearbeiten",
+        "duplicate": "Stelle duplizieren",
+        "delete": "Löschen"
+      },
+      "funnel": {
+        "title": "Bewerbungstrichter",
+        "views": "Aufrufe",
+        "applications": "Bewerbungen",
+        "shortlisted": "Vorauswahl",
+        "offer": "Angebot",
+        "conversion": "Konversion:"
+      }
+    },
+    "applications": {
+      "allJobs": "Alle Stellen",
+      "viewList": "Liste",
+      "note": "Notiz",
+      "notePlaceholder": "Notiz zum Kandidaten...",
+      "notePlaceholderList": "Notiz...",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "dragHere": "Hierher ziehen",
+      "empty": "Noch keine Bewerbungen",
+      "expectedSalary": "Erwartetes Gehalt:",
+      "profile": "Profil",
+      "message": "Nachricht"
+    },
+    "company": {
+      "verified": "Verifiziert",
+      "pendingVerification": "Wartet auf Admin-Verifizierung",
+      "edit": "Bearbeiten",
+      "info": {
+        "industry": "Branche",
+        "size": "Größe",
+        "foundedYear": "Gegründet",
+        "website": "Webseite",
+        "shortDescription": "Kurzbeschreibung"
+      },
+      "status": {
+        "verified": "Verifiziert",
+        "active": "Aktiv",
+        "pending": "Ausstehend"
+      },
+      "noCompany": {
+        "title": "Sie haben noch kein Unternehmensprofil",
+        "desc": "Nach der Admin-Verifizierung erscheint es im öffentlichen Verzeichnis.",
+        "create": "Unternehmen erstellen"
+      },
+      "form": {
+        "editTitle": "Unternehmen bearbeiten",
+        "createTitle": "Neues Unternehmen",
+        "name": "Unternehmensname *",
+        "namePlaceholder": "Ihr Unternehmensname",
+        "shortDescription": "Kurzbeschreibung",
+        "shortDescPlaceholder": "Ein Satz über das Unternehmen",
+        "fullDescription": "Vollständige Beschreibung",
+        "industry": "Branche",
+        "industryPlaceholder": "IT, Finanzen...",
+        "foundedYear": "Gründungsjahr",
+        "size": "Größe",
+        "sizePlaceholder": "Auswählen",
+        "website": "Webseite",
+        "cancel": "Abbrechen",
+        "save": "Speichern",
+        "create": "Erstellen"
+      }
+    },
+    "candidates": {
+      "searchPlaceholder": "Name oder Schlüsselwörter...",
+      "countryPlaceholder": "Land",
+      "cityPlaceholder": "Stadt",
+      "languagePlaceholder": "+ Sprache",
+      "search": "Suchen",
+      "found": "Gefunden:",
+      "empty": {
+        "title": "Keine Kandidaten gefunden",
+        "subtitle": "Versuchen Sie, die Suchfilter zu ändern"
+      },
+      "view": "Anzeigen",
+      "message": "Nachricht"
+    },
+    "ai": {
+      "title": "KI-Kandidatenscreening",
+      "subtitle": "Gemini 1.5 Flash analysiert die Eignung des Kandidaten für die Stellenanforderungen.",
+      "selectJob": "Stelle zur Analyse auswählen",
+      "allApplications": "— alle Bewerbungen —",
+      "analyzing": "Analysiere...",
+      "analyzeAll": "Alle analysieren",
+      "noAppsJob": "Keine Bewerbungen für die ausgewählte Stelle",
+      "noApps": "Keine Bewerbungen",
+      "top": "Top {{n}} Kandidaten",
+      "byAi": "nach KI-Analyseergebnissen",
+      "rec": {
+        "strong_yes": "Sehr empfohlen",
+        "yes": "Geeignet",
+        "maybe": "Vielleicht",
+        "no": "Nicht geeignet"
+      },
+      "strengths": "Stärken",
+      "gaps": "Lücken",
+      "noGaps": "Keine offensichtlichen Lücken gefunden",
+      "analyzedAt": "Analysiert",
+      "analyzingShort": "Analysiere...",
+      "reanalyze": "Erneut analysieren",
+      "analyze": "Analysieren"
+    },
+    "jobForm": {
+      "editTitle": "Stelle bearbeiten",
+      "duplicateTitle": "Stelle duplizieren",
+      "createTitle": "Neue Stelle",
+      "copyMarker": "(Kopie)",
+      "titleLabel": "Stellenbezeichnung *",
+      "description": "Beschreibung *",
+      "jobType": "Beschäftigungsart",
+      "experienceLevel": "Erfahrungsstufe",
+      "workFormat": "Arbeitsformat",
+      "country": "Land",
+      "city": "Stadt",
+      "cityPlaceholder": "Kyiv",
+      "salaryMin": "Gehalt ab",
+      "salaryMax": "Gehalt bis",
+      "currency": "Währung",
+      "requirements": "Anforderungen",
+      "responsibilities": "Aufgaben",
+      "benefits": "Vorteile / Benefits",
+      "benefitsPlaceholder": "Krankenversicherung, flexibler Zeitplan...",
+      "category": "Kategorie",
+      "categoryPlaceholder": "Kategorie auswählen",
+      "languages": "Sprachanforderungen",
+      "skills": "Erforderliche Fähigkeiten",
+      "urgent": "Dringend",
+      "remote": "Fernarbeit",
+      "negotiable": "Gehalt verhandelbar",
+      "paidInternship": "Bezahltes Praktikum",
+      "stipend": "Stipendium / Zahlung (USD)",
+      "stipendPlaceholder": "z.B.: 300",
+      "deadline": "Bewerbungsfrist",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "create": "Erstellen"
+    },
+    "candidatePreview": {
+      "title": "Kandidatenprofil",
+      "fullProfile": "Vollständiges Profil",
+      "message": "Nachricht",
+      "skills": "Fähigkeiten",
+      "languages": "Sprachen",
+      "experience": "Berufserfahrung",
+      "education": "Ausbildung",
+      "current": "Aktuell"
+    },
+    "toast": {
+      "statusUpdated": "Status aktualisiert",
+      "statusError": "Status konnte nicht aktualisiert werden",
+      "noteSaved": "Notiz gespeichert",
+      "noteError": "Notiz konnte nicht gespeichert werden",
+      "companyCreated": "Unternehmen erstellt! Warten auf Admin-Verifizierung.",
+      "companyUpdated": "Unternehmensdaten aktualisiert",
+      "jobCreated": "Stelle erstellt!",
+      "jobUpdated": "Stelle aktualisiert!",
+      "jobDeleted": "Stelle gelöscht",
+      "jobDeleteConfirm": "Diese Stelle löschen?",
+      "deleteError": "Löschfehler",
+      "loadError": "Daten konnten nicht geladen werden",
+      "candidatesError": "Kandidatensuche fehlgeschlagen",
+      "profileError": "Profil konnte nicht geladen werden",
+      "analyzed": "{{count}} Bewerbungen analysiert",
+      "analysisDone": "Analyse abgeschlossen",
+      "analysisErrors": ", Fehler: {{count}}",
+      "batchError": "Batch-Analysefehler",
+      "aiError": "KI-Analysefehler",
+      "error": "Fehler"
+    }
+  },
+  "admin": {
+    "title": "Admin-Panel",
+    "subtitle": "StartWay Plattformverwaltung",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "analytics": "Analytik",
+      "users": "Benutzer",
+      "jobs": "Stellen",
+      "companies": "Unternehmen",
+      "logs": "Audit"
+    },
+    "updated": "Aktualisiert",
+    "noData": "Keine Daten",
+    "error": {
+      "load": "Ladefehler"
+    },
+    "dashboard": {
+      "cards": {
+        "users": "Benutzer",
+        "jobs": "Stellen",
+        "companies": "Unternehmen",
+        "pending": "In Prüfung",
+        "today": "+{{count}} heute",
+        "activeJobs": "{{count}} aktiv",
+        "verified": "{{count}} verifiziert",
+        "pendingJobs": "Stellen warten"
+      },
+      "quickActions": {
+        "title": "Schnellaktionen",
+        "moderateJobs": "Stellen moderieren",
+        "verifyCompanies": "Unternehmen verifizieren",
+        "pendingApps": "Ausstehende Bewerbungen",
+        "totalApps": "Bewerbungen gesamt"
+      }
+    },
+    "users": {
+      "search": "Benutzer suchen...",
+      "allRoles": "Alle Rollen",
+      "roles": {
+        "job_seeker": "Jobsuchender",
+        "employer": "Arbeitgeber",
+        "admin": "Admin"
+      },
+      "total": "Gesamt:",
+      "table": {
+        "user": "Benutzer",
+        "role": "Rolle",
+        "status": "Status",
+        "date": "Datum",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "active": "Aktiv",
+        "blocked": "Gesperrt"
+      },
+      "block": "Sperren",
+      "unblock": "Entsperren",
+      "slideOver": {
+        "title": "Benutzerdetails",
+        "labels": {
+          "email": "E-Mail",
+          "registered": "Registriert",
+          "city": "Stadt",
+          "status": "Status",
+          "emailVerified": "E-Mail verifiziert"
+        },
+        "yes": "Ja",
+        "no": "Nein",
+        "stats": {
+          "applications": "Bewerbungen",
+          "jobs": "Stellen"
+        },
+        "about": "Über mich",
+        "skills": "Fähigkeiten"
+      }
+    },
+    "jobs": {
+      "search": "Stellen suchen...",
+      "allStatuses": "Alle Status",
+      "filterStatus": {
+        "pending": "In Prüfung",
+        "active": "Aktiv",
+        "rejected": "Abgelehnt",
+        "inactive": "Inaktiv"
+      },
+      "jobStatus": {
+        "active": "Aktiv",
+        "pending": "In Prüfung",
+        "rejected": "Abgelehnt"
+      },
+      "total": "Gesamt:",
+      "bulkApprove": "{{count}} genehmigen",
+      "table": {
+        "job": "Stelle",
+        "employer": "Arbeitgeber",
+        "status": "Status",
+        "date": "Datum",
+        "actions": "Aktionen"
+      },
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "deactivate": "Deaktivieren",
+      "restore": "Wiederherstellen",
+      "rejectModal": {
+        "title": "Stelle ablehnen",
+        "job": "Stelle:",
+        "placeholder": "Ablehnungsgrund eingeben (optional)...",
+        "cancel": "Abbrechen",
+        "confirm": "Ablehnen"
+      }
+    },
+    "companies": {
+      "allStatuses": "Alle Status",
+      "filterStatus": {
+        "pending": "Ausstehend",
+        "active": "Aktiv",
+        "verified": "Verifiziert",
+        "suspended": "Gesperrt"
+      },
+      "companyStatus": {
+        "verified": "Verifiziert",
+        "active": "Aktiv",
+        "pending": "Ausstehend",
+        "suspended": "Gesperrt"
+      },
+      "total": "Gesamt:",
+      "table": {
+        "company": "Unternehmen",
+        "industry": "Branche",
+        "status": "Status",
+        "jobs": "Stellen",
+        "actions": "Aktionen"
+      },
+      "verify": "Verifizieren",
+      "suspend": "Sperren",
+      "suspendedLabel": "Gesperrt"
+    },
+    "analytics": {
+      "registrations": "Benutzerregistrierungen",
+      "jobPostings": "Stellenveröffentlichungen",
+      "topSkills": "Gefragte Fähigkeiten",
+      "appsByStatus": "Bewerbungen nach Status",
+      "topCountries": "Top-Länder nach Stellen",
+      "byIndustry": "Stellen nach Kategorie",
+      "jobTypes": "Beschäftigungsarten",
+      "appDistribution": "Bewerbungen: Statusverteilung",
+      "jobs": "Stellen",
+      "applicationsCount": "Bewerbungen",
+      "registrationsCount": "Registrierungen",
+      "appStatus": {
+        "pending": "Ausstehend",
+        "reviewed": "Geprüft",
+        "shortlisted": "Vorgemerkt",
+        "interview_scheduled": "Interview",
+        "offered": "Angeboten",
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt",
+        "withdrawn": "Zurückgezogen"
+      }
+    },
+    "logs": {
+      "total": "Datensätze gesamt:",
+      "empty": "Noch keine Protokolle",
+      "table": {
+        "action": "Aktion",
+        "user": "Benutzer",
+        "resource": "Ressource",
+        "time": "Zeit"
+      },
+      "actions": {
+        "user_created": "Registrierung",
+        "user_updated": "Benutzer aktualisiert",
+        "user_deleted": "Benutzer gelöscht",
+        "user_blocked": "Benutzer gesperrt",
+        "job_created": "Stelle erstellt",
+        "job_updated": "Stelle aktualisiert",
+        "job_deleted": "Stelle gelöscht",
+        "job_moderated": "Stelle moderiert",
+        "company_created": "Unternehmen erstellt",
+        "company_updated": "Unternehmen aktualisiert",
+        "company_verified": "Unternehmen verifiziert",
+        "company_suspended": "Unternehmen gesperrt",
+        "application_reviewed": "Bewerbung geprüft",
+        "settings_changed": "Einstellungen geändert"
+      },
+      "entityTypes": {
+        "user": "Benutzer",
+        "job": "Stelle",
+        "company": "Unternehmen",
+        "application": "Bewerbung"
+      }
+    },
+    "countries": {
+      "ukraine": "Ukraine",
+      "poland": "Polen",
+      "germany": "Deutschland",
+      "usa": "USA",
+      "uk": "Großbritannien"
+    },
+    "pagination": {
+      "of": "von"
+    },
+    "toast": {
+      "loadError": "Ladefehler",
+      "usersError": "Benutzer konnten nicht geladen werden",
+      "jobsError": "Stellen konnten nicht geladen werden",
+      "companiesError": "Unternehmen konnten nicht geladen werden",
+      "analyticsError": "Analysefehler",
+      "logsError": "Protokolle konnten nicht geladen werden",
+      "userBlocked": "Benutzer gesperrt",
+      "userUnblocked": "Benutzer entsperrt",
+      "roleChanged": "Rolle geändert",
+      "jobApproved": "Stelle genehmigt",
+      "jobRejected": "Stelle abgelehnt",
+      "statusUpdated": "Status aktualisiert",
+      "companyVerified": "Unternehmen verifiziert",
+      "companySuspended": "Unternehmen gesperrt",
+      "bulkApproved": "{{count}} Stellen genehmigt",
+      "bulkError": "Massengenehmigungsfehler",
+      "error": "Fehler"
+    }
+  }
+}

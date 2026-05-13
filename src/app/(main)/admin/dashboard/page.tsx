@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import api from '@/lib/axios';
 import { User, Job, Company, PaginatedResponse } from '@/types';
+import { useI18n } from '@/contexts/I18nContext';
+import { useAutoTranslate } from '@/hooks/useAutoTranslate';
+import { translateToUk } from '@/lib/translate';
 import toast from 'react-hot-toast';
 import { formatRelativeDate } from '@/lib/utils';
 import {
@@ -22,24 +25,37 @@ import {
 
 type Tab = 'dashboard' | 'users' | 'jobs' | 'companies' | 'analytics' | 'logs';
 
-const JOB_TYPE_LABELS: Record<string, string> = {
-  full_time: 'Повна', part_time: 'Часткова', internship: 'Стажування',
-  remote: 'Віддалено', freelance: 'Фріланс', contract: 'Контракт',
-};
-const ROLE_LABELS: Record<string, string> = {
-  job_seeker: 'Шукачі', employer: 'Роботодавці', admin: 'Адміни',
-};
-const APP_STATUS_LABELS: Record<string, string> = {
-  pending: 'Очікують', reviewed: 'Переглянуто', shortlisted: 'Відібрано',
-  interview_scheduled: 'Інтерв\'ю', offered: 'Оффер', accepted: 'Прийнято',
-  rejected: 'Відхилено', withdrawn: 'Відкликано',
-};
 const CHART_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
+
+const INDUSTRY_KEY_MAP: Record<string, string> = {
+  'Інформаційні технології': 'companies.industries.it',
+  'IT-аутсорсинг': 'companies.industries.outsourcing',
+  'Стартапи та продуктова розробка': 'companies.industries.startups',
+  'Мобільна розробка': 'companies.industries.mobile',
+  'Аналіз даних': 'companies.industries.data',
+  'Дизайн': 'companies.industries.design',
+  'DevOps & Cloud': 'companies.industries.devops',
+};
+
+const COUNTRY_KEY_MAP: Record<string, string> = {
+  'Україна': 'countries.ukraine',
+  'Ukraine': 'countries.ukraine',
+  'Польща': 'countries.poland',
+  'Poland': 'countries.poland',
+  'Польша': 'countries.poland',
+  'Німеччина': 'countries.germany',
+  'Germany': 'countries.germany',
+  'США': 'countries.usa',
+  'USA': 'countries.usa',
+  'Велика Британія': 'countries.uk',
+  'United Kingdom': 'countries.uk',
+};
 
 // ─── Rejection modal ──────────────────────────────────────────────────────────
 function RejectModal({
   job, onClose, onConfirm,
 }: { job: Job; onClose: () => void; onConfirm: (reason: string) => void }) {
+  const { t } = useI18n();
   const [reason, setReason] = useState('');
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -47,29 +63,29 @@ function RejectModal({
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
             <AlertTriangle size={18} className="text-red-500" />
-            Відхилити вакансію
+            {t('admin.jobs.rejectModal.title')}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={18} />
           </button>
         </div>
-        <p className="text-sm text-gray-500 mb-1">Вакансія: <span className="font-medium text-gray-800">{job.title}</span></p>
+        <p className="text-sm text-gray-500 mb-1">{t('admin.jobs.rejectModal.job')} <span className="font-medium text-gray-800">{job.title}</span></p>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Вкажіть причину відхилення (необов'язково)..."
+          placeholder={t('admin.jobs.rejectModal.placeholder')}
           rows={4}
           className="w-full mt-3 px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-400"
         />
         <div className="flex gap-3 mt-4">
           <button onClick={onClose} className="flex-1 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-            Скасувати
+            {t('admin.jobs.rejectModal.cancel')}
           </button>
           <button
             onClick={() => onConfirm(reason)}
             className="flex-1 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors"
           >
-            Відхилити
+            {t('admin.jobs.rejectModal.confirm')}
           </button>
         </div>
       </div>
@@ -79,6 +95,7 @@ function RejectModal({
 
 // ─── User slide-over ──────────────────────────────────────────────────────────
 function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
+  const { t } = useI18n();
   const [details, setDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -95,7 +112,7 @@ function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
       <div className="relative w-full max-w-md bg-white h-full shadow-2xl overflow-y-auto flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
-          <h3 className="font-semibold text-gray-900">Деталі користувача</h3>
+          <h3 className="font-semibold text-gray-900">{t('admin.users.slideOver.title')}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
         </div>
 
@@ -117,25 +134,25 @@ function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
                   user.role === 'employer' ? 'bg-purple-100 text-purple-700' :
                   'bg-blue-100 text-blue-700'
                 }`}>
-                  {ROLE_LABELS[user.role] || user.role}
+                  {t(`admin.users.roles.${user.role}`) || user.role}
                 </span>
               </div>
             </div>
 
             {/* Info rows */}
             <div className="space-y-3">
-              <InfoRow icon={<Mail size={14} />} label="Email" value={user.email} />
-              <InfoRow icon={<Calendar size={14} />} label="Зареєстровано" value={formatRelativeDate(user.createdAt)} />
-              {user.country && <InfoRow icon={<MapPin size={14} />} label="Місто" value={`${user.city || ''}, ${user.country}`} />}
+              <InfoRow icon={<Mail size={14} />} label={t('admin.users.slideOver.labels.email')} value={user.email} />
+              <InfoRow icon={<Calendar size={14} />} label={t('admin.users.slideOver.labels.registered')} value={formatRelativeDate(user.createdAt)} />
+              {user.country && <InfoRow icon={<MapPin size={14} />} label={t('admin.users.slideOver.labels.city')} value={`${user.city || ''}, ${user.country}`} />}
               <InfoRow
                 icon={user.isActive ? <CheckCircle size={14} className="text-green-500" /> : <XCircle size={14} className="text-red-500" />}
-                label="Статус"
-                value={user.isActive ? 'Активний' : 'Заблокований'}
+                label={t('admin.users.slideOver.labels.status')}
+                value={user.isActive ? t('admin.users.status.active') : t('admin.users.status.blocked')}
               />
               <InfoRow
                 icon={<CheckCircle size={14} className={user.isEmailVerified ? 'text-green-500' : 'text-gray-400'} />}
-                label="Email підтверджено"
-                value={user.isEmailVerified ? 'Так' : 'Ні'}
+                label={t('admin.users.slideOver.labels.emailVerified')}
+                value={user.isEmailVerified ? t('admin.users.slideOver.yes') : t('admin.users.slideOver.no')}
               />
             </div>
 
@@ -143,7 +160,7 @@ function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
             {details?.skills?.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-gray-500 uppercase mb-2 flex items-center gap-1">
-                  <Award size={12} /> Навички
+                  <Award size={12} /> {t('admin.users.slideOver.skills')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {details.skills.map((s: any) => (
@@ -157,14 +174,14 @@ function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-3">
-              <StatMini label="Заявок" value={details?.applications?.length ?? 0} color="blue" />
-              <StatMini label="Вакансій" value={details?.jobs?.length ?? 0} color="purple" />
+              <StatMini label={t('admin.users.slideOver.stats.applications')} value={details?.applications?.length ?? 0} color="blue" />
+              <StatMini label={t('admin.users.slideOver.stats.jobs')} value={details?.jobs?.length ?? 0} color="purple" />
             </div>
 
             {/* Summary */}
             {details?.summary && (
               <div>
-                <p className="text-xs font-medium text-gray-500 uppercase mb-1">Про себе</p>
+                <p className="text-xs font-medium text-gray-500 uppercase mb-1">{t('admin.users.slideOver.about')}</p>
                 <p className="text-sm text-gray-600 leading-relaxed">{details.summary}</p>
               </div>
             )}
@@ -198,12 +215,13 @@ function StatMini({ label, value, color }: { label: string; value: number; color
 function Pagination({ page, total, limit, onChange }: {
   page: number; total: number; limit: number; onChange: (p: number) => void;
 }) {
+  const { t } = useI18n();
   const totalPages = Math.ceil(total / limit);
   if (totalPages <= 1) return null;
   return (
     <div className="flex items-center justify-between bg-white rounded-2xl border border-gray-200 px-6 py-3">
       <p className="text-sm text-gray-500">
-        {(page - 1) * limit + 1}–{Math.min(page * limit, total)} з {total}
+        {(page - 1) * limit + 1}–{Math.min(page * limit, total)} {t('admin.pagination.of')} {total}
       </p>
       <div className="flex gap-2">
         <button onClick={() => onChange(page - 1)} disabled={page === 1}
@@ -223,6 +241,7 @@ function Pagination({ page, total, limit, onChange }: {
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
   const router = useRouter();
+  const { t, locale } = useI18n();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -290,9 +309,9 @@ export default function AdminDashboardPage() {
 
   // Tab-driven fetches
   useEffect(() => { if (activeTab === 'users') fetchUsers(); }, [activeTab, usersPage, usersSearch, usersRole]);
-  useEffect(() => { if (activeTab === 'jobs') { setSelectedJobIds(new Set()); fetchJobs(); } }, [activeTab, jobsPage, jobsSearch, jobsStatusFilter]);
+  useEffect(() => { if (activeTab === 'jobs') { setSelectedJobIds(new Set()); fetchJobs(); } }, [activeTab, jobsPage, jobsSearch, jobsStatusFilter, locale]);
   useEffect(() => { if (activeTab === 'companies') fetchCompanies(); }, [activeTab, companiesPage, companiesStatusFilter]);
-  useEffect(() => { if (activeTab === 'analytics') fetchAnalytics(); }, [activeTab]);
+  useEffect(() => { if (activeTab === 'analytics') fetchAnalytics(); }, [activeTab, locale]);
   useEffect(() => { if (activeTab === 'logs') fetchLogs(); }, [activeTab, logsPage]);
 
   // ── Fetchers ────────────────────────────────────────────────────────────────
@@ -315,7 +334,7 @@ export default function AdminDashboardPage() {
       });
       setLastRefreshed(new Date());
     } catch {
-      if (!silent) toast.error('Помилка завантаження');
+      if (!silent) toast.error(t('admin.toast.loadError'));
     } finally {
       if (!silent) setIsLoading(false);
     }
@@ -330,7 +349,7 @@ export default function AdminDashboardPage() {
       const res = await api.get<PaginatedResponse<User>>(`/admin/users?${params}`);
       setUsers(res.data.data);
       setUsersTotal(res.data.meta.total);
-    } catch { toast.error('Помилка завантаження користувачів'); }
+    } catch { toast.error(t('admin.toast.usersError')); }
     finally { setIsLoading(false); }
   };
 
@@ -338,12 +357,15 @@ export default function AdminDashboardPage() {
     setIsLoading(true);
     try {
       const params = new URLSearchParams({ page: String(jobsPage), limit: '10' });
-      if (jobsSearch) params.append('search', jobsSearch);
+      if (jobsSearch) {
+        const translatedSearch = await translateToUk(jobsSearch, locale);
+        params.append('search', translatedSearch);
+      }
       if (jobsStatusFilter) params.append('status', jobsStatusFilter);
       const res = await api.get<PaginatedResponse<Job>>(`/admin/jobs?${params}`);
       setJobs(res.data.data);
       setJobsTotal(res.data.meta.total);
-    } catch { toast.error('Помилка завантаження вакансій'); }
+    } catch { toast.error(t('admin.toast.jobsError')); }
     finally { setIsLoading(false); }
   };
 
@@ -355,7 +377,7 @@ export default function AdminDashboardPage() {
       const res = await api.get<PaginatedResponse<Company>>(`/admin/companies?${params}`);
       setCompanies(res.data.data);
       setCompaniesTotal(res.data.meta.total);
-    } catch { toast.error('Помилка завантаження компаній'); }
+    } catch { toast.error(t('admin.toast.companiesError')); }
     finally { setIsLoading(false); }
   };
 
@@ -380,17 +402,17 @@ export default function AdminDashboardPage() {
       }));
 
       const appsByStatus = (a.applicationsByStatus ?? []).map((r: any) => ({
-        name: APP_STATUS_LABELS[r.status] ?? r.status,
+        name: t(`admin.analytics.appStatus.${r.status}`) || r.status,
         value: Number(r.count),
       }));
 
       const topCountries = (a.topCountries ?? []).map((r: any) => ({
-        name: r.country,
+        name: COUNTRY_KEY_MAP[r.country] ? t(COUNTRY_KEY_MAP[r.country]) : r.country,
         value: Number(r.count),
       }));
 
       const topIndustries = (a.topIndustries ?? []).map((r: any) => ({
-        name: r.industry,
+        name: INDUSTRY_KEY_MAP[r.industry] ? t(INDUSTRY_KEY_MAP[r.industry]) : r.industry,
         value: Number(r.count),
       }));
 
@@ -400,7 +422,7 @@ export default function AdminDashboardPage() {
       }));
 
       setAnalyticsData({ userGrowth, jobPostings, appsByStatus, topCountries, topIndustries, topSkills });
-    } catch { toast.error('Помилка аналітики'); }
+    } catch { toast.error(t('admin.toast.analyticsError')); }
     finally { setIsLoading(false); }
   };
 
@@ -410,7 +432,7 @@ export default function AdminDashboardPage() {
       const res = await api.get(`/admin/audit-logs?page=${logsPage}&limit=20`);
       setAuditLogs(res.data.data ?? []);
       setLogsTotal(res.data.meta?.total ?? 0);
-    } catch { toast.error('Помилка завантаження логів'); }
+    } catch { toast.error(t('admin.toast.logsError')); }
     finally { setIsLoading(false); }
   };
 
@@ -418,52 +440,52 @@ export default function AdminDashboardPage() {
   const handleBlockUser = async (id: string, isActive: boolean) => {
     try {
       await api.put(`/admin/users/${id}/${isActive ? 'block' : 'unblock'}`);
-      toast.success(isActive ? 'Користувача заблоковано' : 'Користувача розблоковано');
+      toast.success(isActive ? t('admin.toast.userBlocked') : t('admin.toast.userUnblocked'));
       fetchUsers();
-    } catch { toast.error('Помилка'); }
+    } catch { toast.error(t('admin.toast.error')); }
   };
 
   const handleChangeRole = async (id: string, role: string) => {
     try {
       await api.put(`/admin/users/${id}/role`, { role });
-      toast.success('Роль змінено');
+      toast.success(t('admin.toast.roleChanged'));
       fetchUsers();
-    } catch { toast.error('Помилка'); }
+    } catch { toast.error(t('admin.toast.error')); }
   };
 
   const handleModerateJob = async (id: string, status: string, reason = '') => {
     try {
       await api.put(`/admin/jobs/${id}/moderate`, { status, reason: reason || undefined });
-      toast.success(status === 'active' ? 'Вакансію схвалено' : status === 'rejected' ? 'Вакансію відхилено' : 'Статус оновлено');
+      toast.success(status === 'active' ? t('admin.toast.jobApproved') : status === 'rejected' ? t('admin.toast.jobRejected') : t('admin.toast.statusUpdated'));
       setRejectTarget(null);
       fetchJobs();
-    } catch { toast.error('Помилка'); }
+    } catch { toast.error(t('admin.toast.error')); }
   };
 
   const handleBulkApprove = async () => {
     if (selectedJobIds.size === 0) return;
     try {
       await Promise.all([...selectedJobIds].map((id) => api.put(`/admin/jobs/${id}/moderate`, { status: 'active' })));
-      toast.success(`Схвалено ${selectedJobIds.size} вакансій`);
+      toast.success(t('admin.toast.bulkApproved', { count: selectedJobIds.size }));
       setSelectedJobIds(new Set());
       fetchJobs();
-    } catch { toast.error('Помилка bulk approve'); }
+    } catch { toast.error(t('admin.toast.bulkError')); }
   };
 
   const handleVerifyCompany = async (id: string) => {
     try {
       await api.post(`/admin/companies/${id}/verify`);
-      toast.success('Компанію верифіковано');
+      toast.success(t('admin.toast.companyVerified'));
       fetchCompanies();
-    } catch { toast.error('Помилка'); }
+    } catch { toast.error(t('admin.toast.error')); }
   };
 
   const handleSuspendCompany = async (id: string) => {
     try {
       await api.put(`/admin/companies/${id}/suspend`);
-      toast.success('Компанію призупинено');
+      toast.success(t('admin.toast.companySuspended'));
       fetchCompanies();
-    } catch { toast.error('Помилка'); }
+    } catch { toast.error(t('admin.toast.error')); }
   };
 
   const toggleJobSelect = (id: string) => {
@@ -484,12 +506,12 @@ export default function AdminDashboardPage() {
 
   // ── Tabs config ──────────────────────────────────────────────────────────────
   const TABS = [
-    { id: 'dashboard', label: 'Дашборд', icon: BarChart3 },
-    { id: 'analytics', label: 'Аналітика', icon: TrendingUp },
-    { id: 'users', label: 'Користувачі', icon: Users },
-    { id: 'jobs', label: 'Вакансії', icon: Briefcase },
-    { id: 'companies', label: 'Компанії', icon: Building },
-    { id: 'logs', label: 'Аудит', icon: Activity },
+    { id: 'dashboard', label: t('admin.tabs.dashboard'), icon: BarChart3 },
+    { id: 'analytics', label: t('admin.tabs.analytics'), icon: TrendingUp },
+    { id: 'users', label: t('admin.tabs.users'), icon: Users },
+    { id: 'jobs', label: t('admin.tabs.jobs'), icon: Briefcase },
+    { id: 'companies', label: t('admin.tabs.companies'), icon: Building },
+    { id: 'logs', label: t('admin.tabs.logs'), icon: Activity },
   ];
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -515,14 +537,14 @@ export default function AdminDashboardPage() {
               <Shield size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Адміністративна панель</h1>
-              <p className="text-xs text-gray-500">Керування платформою StartWay</p>
+              <h1 className="text-xl font-bold text-gray-900">{t('admin.title')}</h1>
+              <p className="text-xs text-gray-500">{t('admin.subtitle')}</p>
             </div>
           </div>
           {lastRefreshed && activeTab === 'dashboard' && (
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <RefreshCw size={12} />
-              Оновлено {lastRefreshed.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+              {t('admin.updated')} {lastRefreshed.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
             </div>
           )}
         </div>
@@ -560,10 +582,10 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: 'Користувачів', value: stats.totalUsers, icon: Users, color: 'blue', sub: `+${stats.newUsersToday} сьогодні`, badge: stats.newUsersToday },
-                { label: 'Вакансій', value: stats.totalJobs, icon: Briefcase, color: 'indigo', sub: `${stats.activeJobs} активних` },
-                { label: 'Компаній', value: stats.totalCompanies, icon: Building, color: 'purple', sub: `${stats.verifiedCompanies} верифіковано` },
-                { label: 'На модерації', value: stats.pendingJobs, icon: Clock, color: 'yellow', sub: 'вакансій чекають' },
+                { label: t('admin.dashboard.cards.users'), value: stats.totalUsers, icon: Users, color: 'blue', sub: t('admin.dashboard.cards.today', { count: stats.newUsersToday }), badge: stats.newUsersToday },
+                { label: t('admin.dashboard.cards.jobs'), value: stats.totalJobs, icon: Briefcase, color: 'indigo', sub: t('admin.dashboard.cards.activeJobs', { count: stats.activeJobs }) },
+                { label: t('admin.dashboard.cards.companies'), value: stats.totalCompanies, icon: Building, color: 'purple', sub: t('admin.dashboard.cards.verified', { count: stats.verifiedCompanies }) },
+                { label: t('admin.dashboard.cards.pending'), value: stats.pendingJobs, icon: Clock, color: 'yellow', sub: t('admin.dashboard.cards.pendingJobs') },
               ].map((card) => (
                 <div key={card.label} className="bg-white rounded-2xl p-6 border border-gray-200 relative overflow-hidden">
                   {card.badge && card.badge > 0 && (
@@ -587,13 +609,13 @@ export default function AdminDashboardPage() {
 
             {/* Quick actions */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <h2 className="font-semibold text-gray-900 mb-4">Швидкі дії</h2>
+              <h2 className="font-semibold text-gray-900 mb-4">{t('admin.dashboard.quickActions.title')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
-                  { label: 'Модерувати вакансії', count: stats.pendingJobs, tab: 'jobs', color: 'yellow' },
-                  { label: 'Верифікувати компанії', count: stats.pendingCompanies, tab: 'companies', color: 'purple' },
-                  { label: 'Заявки в очікуванні', count: stats.pendingApplications, tab: 'analytics', color: 'green' },
-                  { label: 'Всього заявок', count: stats.totalApplications, tab: 'analytics', color: 'indigo' },
+                  { label: t('admin.dashboard.quickActions.moderateJobs'), count: stats.pendingJobs, tab: 'jobs', color: 'yellow' },
+                  { label: t('admin.dashboard.quickActions.verifyCompanies'), count: stats.pendingCompanies, tab: 'companies', color: 'purple' },
+                  { label: t('admin.dashboard.quickActions.pendingApps'), count: stats.pendingApplications, tab: 'analytics', color: 'green' },
+                  { label: t('admin.dashboard.quickActions.totalApps'), count: stats.totalApplications, tab: 'analytics', color: 'indigo' },
                 ].map((action) => (
                   <button
                     key={action.label}
@@ -625,17 +647,17 @@ export default function AdminDashboardPage() {
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input value={usersSearch}
                   onChange={(e) => { setUsersSearch(e.target.value); setUsersPage(1); }}
-                  placeholder="Пошук користувачів..."
+                  placeholder={t('admin.users.search')}
                   className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
               <select value={usersRole} onChange={(e) => { setUsersRole(e.target.value); setUsersPage(1); }}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="">Всі ролі</option>
-                <option value="job_seeker">Шукач</option>
-                <option value="employer">Роботодавець</option>
-                <option value="admin">Адмін</option>
+                <option value="">{t('admin.users.allRoles')}</option>
+                <option value="job_seeker">{t('admin.users.roles.job_seeker')}</option>
+                <option value="employer">{t('admin.users.roles.employer')}</option>
+                <option value="admin">{t('admin.users.roles.admin')}</option>
               </select>
-              <span className="px-3 py-2 text-sm text-gray-500">Всього: {usersTotal}</span>
+              <span className="px-3 py-2 text-sm text-gray-500">{t('admin.users.total')} {usersTotal}</span>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -643,11 +665,11 @@ export default function AdminDashboardPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Користувач</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Роль</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Статус</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дата</th>
-                      <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дії</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.users.table.user')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.users.table.role')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.users.table.status')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.users.table.date')}</th>
+                      <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.users.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -671,16 +693,16 @@ export default function AdminDashboardPage() {
                               user.role === 'employer' ? 'bg-purple-50 border-purple-200 text-purple-700' :
                               'bg-blue-50 border-blue-200 text-blue-700'
                             }`}>
-                            <option value="job_seeker">Шукач</option>
-                            <option value="employer">Роботодавець</option>
-                            <option value="admin">Адмін</option>
+                            <option value="job_seeker">{t('admin.users.roles.job_seeker')}</option>
+                            <option value="employer">{t('admin.users.roles.employer')}</option>
+                            <option value="admin">{t('admin.users.roles.admin')}</option>
                           </select>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium ${
                             user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                           }`}>
-                            {user.isActive ? <><CheckCircle size={10} />Активний</> : <><XCircle size={10} />Заблокований</>}
+                            {user.isActive ? <><CheckCircle size={10} />{t('admin.users.status.active')}</> : <><XCircle size={10} />{t('admin.users.status.blocked')}</>}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-xs text-gray-400">{formatRelativeDate(user.createdAt)}</td>
@@ -689,7 +711,7 @@ export default function AdminDashboardPage() {
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               user.isActive ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'
                             }`}>
-                            {user.isActive ? <><Ban size={12} className="inline mr-1" />Блок</> : <><UserCheck size={12} className="inline mr-1" />Розблок</>}
+                            {user.isActive ? <><Ban size={12} className="inline mr-1" />{t('admin.users.block')}</> : <><UserCheck size={12} className="inline mr-1" />{t('admin.users.unblock')}</>}
                           </button>
                         </td>
                       </tr>
@@ -709,25 +731,25 @@ export default function AdminDashboardPage() {
               <div className="flex-1 min-w-48 relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input value={jobsSearch} onChange={(e) => { setJobsSearch(e.target.value); setJobsPage(1); }}
-                  placeholder="Пошук вакансій..."
+                  placeholder={t('admin.jobs.search')}
                   className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               </div>
               <select value={jobsStatusFilter} onChange={(e) => { setJobsStatusFilter(e.target.value); setJobsPage(1); }}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="">Всі статуси</option>
-                <option value="pending">На модерації</option>
-                <option value="active">Активні</option>
-                <option value="rejected">Відхилені</option>
-                <option value="inactive">Неактивні</option>
+                <option value="">{t('admin.jobs.allStatuses')}</option>
+                <option value="pending">{t('admin.jobs.filterStatus.pending')}</option>
+                <option value="active">{t('admin.jobs.filterStatus.active')}</option>
+                <option value="rejected">{t('admin.jobs.filterStatus.rejected')}</option>
+                <option value="inactive">{t('admin.jobs.filterStatus.inactive')}</option>
               </select>
               {selectedJobIds.size > 0 && (
                 <button onClick={handleBulkApprove}
                   className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
                   <Zap size={14} />
-                  Схвалити {selectedJobIds.size}
+                  {t('admin.jobs.bulkApprove', { count: selectedJobIds.size })}
                 </button>
               )}
-              <span className="px-3 py-2 text-sm text-gray-500">Всього: {jobsTotal}</span>
+              <span className="px-3 py-2 text-sm text-gray-500">{t('admin.jobs.total')} {jobsTotal}</span>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -740,65 +762,23 @@ export default function AdminDashboardPage() {
                           onChange={toggleAllJobs}
                           className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
                       </th>
-                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Вакансія</th>
-                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Роботодавець</th>
-                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Статус</th>
-                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Дата</th>
-                      <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Дії</th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.jobs.table.job')}</th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.jobs.table.employer')}</th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.jobs.table.status')}</th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.jobs.table.date')}</th>
+                      <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.jobs.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {jobs.map((job) => (
-                      <tr key={job.id} className={`hover:bg-gray-50 transition-colors ${selectedJobIds.has(job.id) ? 'bg-indigo-50' : ''}`}>
-                        <td className="px-4 py-4">
-                          <input type="checkbox" checked={selectedJobIds.has(job.id)} onChange={() => toggleJobSelect(job.id)}
-                            className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
-                        </td>
-                        <td className="px-4 py-4">
-                          <p className="font-medium text-gray-900 text-sm">{job.title}</p>
-                          <p className="text-xs text-gray-400">{job.city}, {job.country}</p>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-gray-600">{job.employer?.firstName} {job.employer?.lastName}</td>
-                        <td className="px-4 py-4">
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            job.status === 'active' ? 'bg-green-100 text-green-700' :
-                            job.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                            job.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
-                          }`}>
-                            {job.status === 'active' ? 'Активна' : job.status === 'pending' ? 'На модерації' :
-                             job.status === 'rejected' ? 'Відхилено' : job.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 text-xs text-gray-400">{formatRelativeDate(job.createdAt)}</td>
-                        <td className="px-4 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {job.status === 'pending' && (
-                              <>
-                                <button onClick={() => handleModerateJob(job.id, 'active')}
-                                  className="text-xs px-3 py-1.5 rounded-lg border border-green-200 text-green-600 hover:bg-green-50 transition-colors">
-                                  <CheckCircle size={12} className="inline mr-1" />Схвалити
-                                </button>
-                                <button onClick={() => setRejectTarget(job)}
-                                  className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
-                                  <XCircle size={12} className="inline mr-1" />Відхилити
-                                </button>
-                              </>
-                            )}
-                            {job.status === 'active' && (
-                              <button onClick={() => handleModerateJob(job.id, 'inactive')}
-                                className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                                Деактивувати
-                              </button>
-                            )}
-                            {job.status === 'rejected' && (
-                              <button onClick={() => handleModerateJob(job.id, 'active')}
-                                className="text-xs px-3 py-1.5 rounded-lg border border-green-200 text-green-600 hover:bg-green-50 transition-colors">
-                                Відновити
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
+                      <AdminJobRow
+                        key={job.id}
+                        job={job}
+                        selected={selectedJobIds.has(job.id)}
+                        onSelect={() => toggleJobSelect(job.id)}
+                        onModerate={handleModerateJob}
+                        onReject={setRejectTarget}
+                      />
                     ))}
                   </tbody>
                 </table>
@@ -814,13 +794,13 @@ export default function AdminDashboardPage() {
             <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-wrap gap-3 items-center">
               <select value={companiesStatusFilter} onChange={(e) => { setCompaniesStatusFilter(e.target.value); setCompaniesPage(1); }}
                 className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="">Всі статуси</option>
-                <option value="pending">На розгляді</option>
-                <option value="active">Активні</option>
-                <option value="verified">Верифіковані</option>
-                <option value="suspended">Призупинені</option>
+                <option value="">{t('admin.companies.allStatuses')}</option>
+                <option value="pending">{t('admin.companies.filterStatus.pending')}</option>
+                <option value="active">{t('admin.companies.filterStatus.active')}</option>
+                <option value="verified">{t('admin.companies.filterStatus.verified')}</option>
+                <option value="suspended">{t('admin.companies.filterStatus.suspended')}</option>
               </select>
-              <span className="px-3 py-2 text-sm text-gray-500">Всього: {companiesTotal}</span>
+              <span className="px-3 py-2 text-sm text-gray-500">{t('admin.companies.total')} {companiesTotal}</span>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -828,11 +808,11 @@ export default function AdminDashboardPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Компанія</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Галузь</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Статус</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Вакансій</th>
-                      <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дії</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.companies.table.company')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.companies.table.industry')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.companies.table.status')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.companies.table.jobs')}</th>
+                      <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.companies.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -849,7 +829,9 @@ export default function AdminDashboardPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{company.industry || '—'}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {company.industry ? (INDUSTRY_KEY_MAP[company.industry] ? t(INDUSTRY_KEY_MAP[company.industry]) : company.industry) : '—'}
+                        </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <span className={`text-xs px-2 py-1 rounded-full font-medium ${
@@ -859,10 +841,10 @@ export default function AdminDashboardPage() {
                               company.status === 'suspended' ? 'bg-red-100 text-red-700' :
                               'bg-gray-100 text-gray-700'
                             }`}>
-                              {company.status === 'verified' ? 'Верифіковано' :
-                               company.status === 'active' ? 'Активна' :
-                               company.status === 'pending' ? 'На розгляді' :
-                               company.status === 'suspended' ? 'Призупинено' : company.status}
+                              {company.status === 'verified' ? t('admin.companies.companyStatus.verified') :
+                               company.status === 'active' ? t('admin.companies.companyStatus.active') :
+                               company.status === 'pending' ? t('admin.companies.companyStatus.pending') :
+                               company.status === 'suspended' ? t('admin.companies.companyStatus.suspended') : company.status}
                             </span>
                             {company.isVerified && <CheckCircle size={14} className="text-green-500" />}
                           </div>
@@ -873,17 +855,17 @@ export default function AdminDashboardPage() {
                             {!company.isVerified && company.status !== 'suspended' && (
                               <button onClick={() => handleVerifyCompany(company.id)}
                                 className="text-xs px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors">
-                                <CheckCircle size={12} className="inline mr-1" />Верифікувати
+                                <CheckCircle size={12} className="inline mr-1" />{t('admin.companies.verify')}
                               </button>
                             )}
                             {company.status !== 'suspended' && (
                               <button onClick={() => handleSuspendCompany(company.id)}
                                 className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
-                                <Ban size={12} className="inline mr-1" />Призупинити
+                                <Ban size={12} className="inline mr-1" />{t('admin.companies.suspend')}
                               </button>
                             )}
                             {company.status === 'suspended' && (
-                              <span className="text-xs text-red-500 font-medium">Призупинено</span>
+                              <span className="text-xs text-red-500 font-medium">{t('admin.companies.suspendedLabel')}</span>
                             )}
                           </div>
                         </td>
@@ -901,12 +883,12 @@ export default function AdminDashboardPage() {
         {activeTab === 'analytics' && (
           <div className="space-y-6">
             {isLoading ? <LoadingSpinner tall /> : !analyticsData ? (
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-400">Немає даних</div>
+              <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-400">{t('admin.noData')}</div>
             ) : (
               <>
                 {/* Row 1: Growth charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title="Реєстрації користувачів" icon={<Users size={16} className="text-indigo-500" />}>
+                  <ChartCard title={t('admin.analytics.registrations')} icon={<Users size={16} className="text-indigo-500" />}>
                     {analyticsData.userGrowth.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={220}>
                         <LineChart data={analyticsData.userGrowth}>
@@ -914,13 +896,13 @@ export default function AdminDashboardPage() {
                           <XAxis dataKey="date" tick={{ fontSize: 10 }} />
                           <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                           <Tooltip />
-                          <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={false} name="Реєстрацій" />
+                          <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={false} name={t('admin.analytics.registrationsCount')} />
                         </LineChart>
                       </ResponsiveContainer>
                     )}
                   </ChartCard>
 
-                  <ChartCard title="Публікації вакансій" icon={<Briefcase size={16} className="text-purple-500" />}>
+                  <ChartCard title={t('admin.analytics.jobPostings')} icon={<Briefcase size={16} className="text-purple-500" />}>
                     {analyticsData.jobPostings.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={220}>
                         <LineChart data={analyticsData.jobPostings}>
@@ -928,7 +910,7 @@ export default function AdminDashboardPage() {
                           <XAxis dataKey="date" tick={{ fontSize: 10 }} />
                           <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                           <Tooltip />
-                          <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Вакансій" />
+                          <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} dot={false} name={t('admin.analytics.jobs')} />
                         </LineChart>
                       </ResponsiveContainer>
                     )}
@@ -937,7 +919,7 @@ export default function AdminDashboardPage() {
 
                 {/* Row 2: Top skills + Applications by status */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title="Затребувані навички" icon={<Award size={16} className="text-green-500" />}>
+                  <ChartCard title={t('admin.analytics.topSkills')} icon={<Award size={16} className="text-green-500" />}>
                     {analyticsData.topSkills.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={260}>
                         <BarChart data={analyticsData.topSkills} layout="vertical">
@@ -945,13 +927,13 @@ export default function AdminDashboardPage() {
                           <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
                           <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
                           <Tooltip />
-                          <Bar dataKey="value" fill="#10b981" radius={[0, 4, 4, 0]} name="Вакансій" />
+                          <Bar dataKey="value" fill="#10b981" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
                         </BarChart>
                       </ResponsiveContainer>
                     )}
                   </ChartCard>
 
-                  <ChartCard title="Заявки за статусами" icon={<Activity size={16} className="text-orange-500" />}>
+                  <ChartCard title={t('admin.analytics.appsByStatus')} icon={<Activity size={16} className="text-orange-500" />}>
                     {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={260}>
                         <BarChart data={analyticsData.appsByStatus}>
@@ -959,7 +941,7 @@ export default function AdminDashboardPage() {
                           <XAxis dataKey="name" tick={{ fontSize: 10 }} />
                           <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                           <Tooltip />
-                          <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name="Заявок" />
+                          <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name={t('admin.analytics.applicationsCount')} />
                         </BarChart>
                       </ResponsiveContainer>
                     )}
@@ -968,7 +950,7 @@ export default function AdminDashboardPage() {
 
                 {/* Row 3: Top countries + Top industries */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title="Топ країн за вакансіями" icon={<Globe size={16} className="text-blue-500" />}>
+                  <ChartCard title={t('admin.analytics.topCountries')} icon={<Globe size={16} className="text-blue-500" />}>
                     {analyticsData.topCountries.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={240}>
                         <BarChart data={analyticsData.topCountries} layout="vertical">
@@ -976,7 +958,7 @@ export default function AdminDashboardPage() {
                           <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
                           <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={80} />
                           <Tooltip />
-                          <Bar dataKey="value" radius={[0, 4, 4, 0]} name="Вакансій">
+                          <Bar dataKey="value" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')}>
                             {analyticsData.topCountries.map((_: any, i: number) => (
                               <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                             ))}
@@ -986,7 +968,7 @@ export default function AdminDashboardPage() {
                     )}
                   </ChartCard>
 
-                  <ChartCard title="Вакансії за категоріями" icon={<BarChart3 size={16} className="text-indigo-500" />}>
+                  <ChartCard title={t('admin.analytics.byIndustry')} icon={<BarChart3 size={16} className="text-indigo-500" />}>
                     {analyticsData.topIndustries.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={240}>
                         <BarChart data={analyticsData.topIndustries} layout="vertical">
@@ -994,7 +976,7 @@ export default function AdminDashboardPage() {
                           <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
                           <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
                           <Tooltip />
-                          <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} name="Вакансій" />
+                          <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
                         </BarChart>
                       </ResponsiveContainer>
                     )}
@@ -1003,10 +985,10 @@ export default function AdminDashboardPage() {
 
                 {/* Row 4: Status pie + Roles pie */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title="Типи зайнятості" icon={<Briefcase size={16} className="text-purple-500" />}>
+                  <ChartCard title={t('admin.analytics.jobTypes')} icon={<Briefcase size={16} className="text-purple-500" />}>
                     <PieFromAnalytics data={analyticsData.topIndustries.slice(0, 5)} />
                   </ChartCard>
-                  <ChartCard title="Заявки: розподіл статусів" icon={<TrendingUp size={16} className="text-green-500" />}>
+                  <ChartCard title={t('admin.analytics.appDistribution')} icon={<TrendingUp size={16} className="text-green-500" />}>
                     {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
                       <ResponsiveContainer width="100%" height={220}>
                         <PieChart>
@@ -1032,24 +1014,23 @@ export default function AdminDashboardPage() {
         {activeTab === 'logs' && (
           <div className="space-y-4">
             <div className="bg-white rounded-2xl border border-gray-200 p-4 flex justify-between items-center">
-              <span className="text-sm text-gray-500">Всього записів: {logsTotal}</span>
+              <span className="text-sm text-gray-500">{t('admin.logs.total')} {logsTotal}</span>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               {isLoading ? <LoadingSpinner /> : auditLogs.length === 0 ? (
                 <div className="py-12 text-center text-gray-400">
                   <Activity size={32} className="mx-auto mb-3 text-gray-300" />
-                  <p>Логів ще немає</p>
+                  <p>{t('admin.logs.empty')}</p>
                 </div>
               ) : (
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дія</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Користувач</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Ресурс</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">IP</th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Час</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.logs.table.action')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.logs.table.user')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.logs.table.resource')}</th>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">{t('admin.logs.table.time')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -1065,16 +1046,15 @@ export default function AdminDashboardPage() {
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-gray-100 text-gray-700'
                           }`}>
-                            {log.action || '—'}
+                            {log.action ? (t(`admin.logs.actions.${log.action}`) || log.action) : '—'}
                           </span>
                         </td>
                         <td className="px-6 py-3 text-sm text-gray-600">
                           {log.user?.firstName} {log.user?.lastName}
                         </td>
                         <td className="px-6 py-3 text-sm text-gray-500">
-                          {log.entityType ? `${log.entityType} #${log.entityId?.slice(0, 8)}` : '—'}
+                          {log.entityType ? `${t(`admin.logs.entityTypes.${log.entityType}`) || log.entityType} #${log.entityId?.slice(0, 8)}` : '—'}
                         </td>
-                        <td className="px-6 py-3 text-xs text-gray-400 font-mono">{log.ipAddress || '—'}</td>
                         <td className="px-6 py-3 text-xs text-gray-400">{formatRelativeDate(log.createdAt)}</td>
                       </tr>
                     ))}
@@ -1100,7 +1080,71 @@ function LoadingSpinner({ tall }: { tall?: boolean }) {
 }
 
 function NoData() {
-  return <p className="text-gray-400 text-sm text-center py-8">Немає даних</p>;
+  const { t } = useI18n();
+  return <p className="text-gray-400 text-sm text-center py-8">{t('admin.noData')}</p>;
+}
+
+function AdminJobRow({ job, selected, onSelect, onModerate, onReject }: {
+  job: Job; selected: boolean; onSelect: () => void;
+  onModerate: (id: string, status: string) => void; onReject: (job: Job) => void;
+}) {
+  const { t } = useI18n();
+  const title   = useAutoTranslate(job.title);
+  const city    = useAutoTranslate(job.city);
+  const country = useAutoTranslate(job.country);
+  return (
+    <tr className={`hover:bg-gray-50 transition-colors ${selected ? 'bg-indigo-50' : ''}`}>
+      <td className="px-4 py-4">
+        <input type="checkbox" checked={selected} onChange={onSelect}
+          className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+      </td>
+      <td className="px-4 py-4">
+        <p className="font-medium text-gray-900 text-sm">{title || job.title}</p>
+        <p className="text-xs text-gray-400">{city || job.city}, {country || job.country}</p>
+      </td>
+      <td className="px-4 py-4 text-sm text-gray-600">{job.employer?.firstName} {job.employer?.lastName}</td>
+      <td className="px-4 py-4">
+        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+          job.status === 'active' ? 'bg-green-100 text-green-700' :
+          job.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+          job.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+        }`}>
+          {job.status === 'active' ? t('admin.jobs.jobStatus.active') :
+           job.status === 'pending' ? t('admin.jobs.jobStatus.pending') :
+           job.status === 'rejected' ? t('admin.jobs.jobStatus.rejected') : job.status}
+        </span>
+      </td>
+      <td className="px-4 py-4 text-xs text-gray-400">{formatRelativeDate(job.createdAt)}</td>
+      <td className="px-4 py-4 text-right">
+        <div className="flex items-center justify-end gap-2">
+          {job.status === 'pending' && (
+            <>
+              <button onClick={() => onModerate(job.id, 'active')}
+                className="text-xs px-3 py-1.5 rounded-lg border border-green-200 text-green-600 hover:bg-green-50 transition-colors">
+                <CheckCircle size={12} className="inline mr-1" />{t('admin.jobs.approve')}
+              </button>
+              <button onClick={() => onReject(job)}
+                className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+                <XCircle size={12} className="inline mr-1" />{t('admin.jobs.reject')}
+              </button>
+            </>
+          )}
+          {job.status === 'active' && (
+            <button onClick={() => onModerate(job.id, 'inactive')}
+              className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+              {t('admin.jobs.deactivate')}
+            </button>
+          )}
+          {job.status === 'rejected' && (
+            <button onClick={() => onModerate(job.id, 'active')}
+              className="text-xs px-3 py-1.5 rounded-lg border border-green-200 text-green-600 hover:bg-green-50 transition-colors">
+              {t('admin.jobs.restore')}
+            </button>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 }
 
 function ChartCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
