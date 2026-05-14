@@ -35,7 +35,7 @@ function SimilarJobItem({ sj }: { sj: Job }) {
         <p className="font-medium text-sm text-gray-900 mb-0.5 line-clamp-1">{title || sj.title}</p>
         <p className="text-xs text-gray-400 mb-2">{employerName || `${sj.employer?.firstName} ${sj.employer?.lastName}`}</p>
         <span className="text-xs font-semibold text-indigo-600">
-          {formatSalary(sj.salaryMin, sj.salaryMax, sj.salaryCurrency, t)}
+          {formatSalary(sj.salaryMin, sj.salaryMax, sj.salaryCurrency)}
         </span>
       </div>
     </Link>
