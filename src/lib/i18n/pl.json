@@ -174,8 +174,18 @@
       "jobSeekers": "Poszukujący pracy",
       "employers": "Pracodawcy",
       "contacts": "Kontakt",
-      "copyright": "© 2026 StartWay. Wszelkie prawa zastrzeżone."
+      "copyright": "© 2026 StartWay. Wszelkie prawa zastrzeżone.",
+      "country": "Ukraina"
     }
+  },
+  "utils": {
+    "justNow": "właśnie",
+    "secAgo": "{{n}} s temu",
+    "minAgo": "{{n}} min temu",
+    "hourAgo": "{{n}} godz. temu",
+    "salaryNotSet": "Wynagrodzenie nieokreślone",
+    "salaryFrom": "od",
+    "salaryTo": "do"
   },
   "jobTypes": {
     "full_time": "Pełny etat",
@@ -406,7 +416,8 @@
       },
       "updated": "CV przesłane!",
       "deleted": "CV usunięte",
-      "avatarUpdated": "Avatar zaktualizowany!"
+      "avatarUpdated": "Avatar zaktualizowany!",
+      "generate": "Generuj PDF"
     },
     "education": {
       "title": "Wykształcenie",
@@ -920,7 +931,8 @@
         "today": "+{{count}} dzisiaj",
         "activeJobs": "{{count}} aktywnych",
         "verified": "{{count}} zweryfikowanych",
-        "pendingJobs": "ofert czeka"
+        "pendingJobs": "ofert czeka",
+        "new": "nowy"
       },
       "quickActions": {
         "title": "Szybkie akcje",

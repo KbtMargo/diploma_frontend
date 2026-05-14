@@ -3,6 +3,7 @@
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Loader2, Download } from 'lucide-react';
 import ResumePDF from './ResumePDF';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface Props {
   user: any;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function PDFDownloadButton({ user, skills, education, workExperience, portfolio }: Props) {
+  const { t, locale } = useI18n();
   return (
     <PDFDownloadLink
       document={
@@ -22,6 +24,7 @@ export default function PDFDownloadButton({ user, skills, education, workExperie
           education={education}
           workExperience={workExperience}
           portfolio={portfolio}
+          locale={locale}
         />
       }
       fileName={`resume-${user.firstName}-${user.lastName}.pdf`.toLowerCase().replace(/\s+/g, '-')}
@@ -32,7 +35,7 @@ export default function PDFDownloadButton({ user, skills, education, workExperie
           disabled={loading}
         >
           {loading ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
-          Згенерувати PDF
+          {t('profile.resume.generate')}
         </button>
       )}
     </PDFDownloadLink>

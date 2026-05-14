@@ -65,7 +65,7 @@ function ReviewItem({ review, t }: { review: any; t: (k: string) => string }) {
         </div>
       </div>
       <p className="text-sm text-gray-600 leading-relaxed">{content || review.content}</p>
-      <p className="text-xs text-gray-400 mt-2">{formatRelativeDate(review.createdAt)}</p>
+      <p className="text-xs text-gray-400 mt-2">{formatRelativeDate(review.createdAt, t)}</p>
     </div>
   );
 }
@@ -92,8 +92,8 @@ function CompanyJobItem({ job, t }: { job: Job; t: (k: string) => string }) {
             </div>
           </div>
           <div className="shrink-0 text-right">
-            <p className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{formatRelativeDate(job.createdAt)}</p>
+            <p className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{formatRelativeDate(job.createdAt, t)}</p>
           </div>
         </div>
       </div>

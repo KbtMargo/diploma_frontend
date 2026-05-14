@@ -174,8 +174,18 @@
       "jobSeekers": "Job Seekers",
       "employers": "Employers",
       "contacts": "Contacts",
-      "copyright": "© 2026 StartWay. All rights reserved."
+      "copyright": "© 2026 StartWay. All rights reserved.",
+      "country": "Ukraine"
     }
+  },
+  "utils": {
+    "justNow": "just now",
+    "secAgo": "{{n}}s ago",
+    "minAgo": "{{n}} min ago",
+    "hourAgo": "{{n}}h ago",
+    "salaryNotSet": "Salary not specified",
+    "salaryFrom": "from",
+    "salaryTo": "up to"
   },
   "jobTypes": {
     "full_time": "Full-time",
@@ -406,7 +416,8 @@
       },
       "updated": "Resume uploaded!",
       "deleted": "Resume deleted",
-      "avatarUpdated": "Avatar updated!"
+      "avatarUpdated": "Avatar updated!",
+      "generate": "Generate PDF"
     },
     "education": {
       "title": "Education",
@@ -920,7 +931,8 @@
         "today": "+{{count}} today",
         "activeJobs": "{{count}} active",
         "verified": "{{count}} verified",
-        "pendingJobs": "jobs waiting"
+        "pendingJobs": "jobs waiting",
+        "new": "new"
       },
       "quickActions": {
         "title": "Quick Actions",

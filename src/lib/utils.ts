@@ -1,40 +1,55 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { formatDistanceToNow, format } from 'date-fns';
-import { uk } from 'date-fns/locale';
+import { format } from 'date-fns';
+
+type TFn = (key: string, values?: Record<string, string | number>) => string;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatRelativeDate(date: string | Date): string {
+export function formatRelativeDate(date: string | Date, t?: TFn): string {
   if (!date) return '—';
   const d = new Date(date);
   if (isNaN(d.getTime())) return '—';
-  
+
   const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  
-  if (diffSec < 0) return 'щойно'; // ← додати для від'ємних значень
-  if (diffSec < 10) return 'щойно';
-  if (diffSec < 60) return `${diffSec} сек тому`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} хв тому`;
-  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} год тому`;
-  
-  return format(d, 'dd.MM.yyyy HH:mm', { locale: uk });
+  const diffSec = Math.floor((now.getTime() - d.getTime()) / 1000);
+
+  const tr = (key: string, values?: Record<string, string | number>) =>
+    t ? t(`utils.${key}`, values) : fallbackRelative(key, values);
+
+  if (diffSec < 10) return tr('justNow');
+  if (diffSec < 60) return tr('secAgo', { n: diffSec });
+  if (diffSec < 3600) return tr('minAgo', { n: Math.floor(diffSec / 60) });
+  if (diffSec < 86400) return tr('hourAgo', { n: Math.floor(diffSec / 3600) });
+
+  return format(d, 'dd.MM.yyyy HH:mm');
+}
+
+function fallbackRelative(key: string, values?: Record<string, string | number>): string {
+  const n = values?.n ?? '';
+  switch (key) {
+    case 'justNow': return 'щойно';
+    case 'secAgo':  return `${n} сек тому`;
+    case 'minAgo':  return `${n} хв тому`;
+    case 'hourAgo': return `${n} год тому`;
+    default: return '';
+  }
 }
 
 export function formatDate(date: string | Date): string {
-  return format(new Date(date), 'dd.MM.yyyy', { locale: uk });
+  return format(new Date(date), 'dd.MM.yyyy');
 }
 
-export function formatSalary(min?: number, max?: number, currency?: string): string {
-  if (!min && !max) return 'Зарплата не вказана';
+export function formatSalary(min?: number, max?: number, currency?: string, t?: TFn): string {
+  if (!min && !max) return t ? t('utils.salaryNotSet') : 'Зарплата не вказана';
   const curr = currency || 'USD';
+  const from = t ? t('utils.salaryFrom') : 'від';
+  const to   = t ? t('utils.salaryTo')   : 'до';
   if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} ${curr}`;
-  if (min) return `від ${min.toLocaleString()} ${curr}`;
-  return `до ${max!.toLocaleString()} ${curr}`;
+  if (min) return `${from} ${min.toLocaleString()} ${curr}`;
+  return `${to} ${max!.toLocaleString()} ${curr}`;
 }
 
 export function getInitials(firstName: string, lastName: string): string {

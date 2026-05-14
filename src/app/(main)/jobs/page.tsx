@@ -96,8 +96,8 @@ function ListJobCard({ job, savedIds, toggleSave, matchScore, t }: { job: Job; s
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
             <button onClick={(e) => toggleSave(job.id, e)} className={`p-2 rounded-lg transition-colors ${savedIds.has(job.id) ? 'text-red-500 hover:text-red-600' : 'text-gray-300 hover:text-red-400'}`} title={savedIds.has(job.id) ? t('jobs.unsave') : t('jobs.save')}><Heart size={18} fill={savedIds.has(job.id) ? 'currentColor' : 'none'} /></button>
-            <p className="font-semibold text-indigo-600">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}</p>
-            <p className="text-xs text-gray-400">{formatRelativeDate(job.createdAt)}</p>
+            <p className="font-semibold text-indigo-600">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</p>
+            <p className="text-xs text-gray-400">{formatRelativeDate(job.createdAt, t)}</p>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@ function GridJobCard({ job, savedIds, toggleSave, matchScore, t }: { job: Job; s
           </div>
         )}
         <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
-          <span className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}</span>
+          <span className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</span>
           <span className="text-xs text-gray-400">{t(`jobTypes.${job.jobType}`)}</span>
         </div>
       </div>

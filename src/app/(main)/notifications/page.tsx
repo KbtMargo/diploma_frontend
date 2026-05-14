@@ -53,7 +53,7 @@ function NotificationItem({ notification, t, onMarkRead, onDelete }: {
             {!notification.isRead && <div className="w-2 h-2 bg-indigo-600 rounded-full shrink-0 mt-1.5" />}
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-400">{formatRelativeDate(notification.createdAt)}</span>
+            <span className="text-xs text-gray-400">{formatRelativeDate(notification.createdAt, t)}</span>
             <div className="flex gap-1">
               {!notification.isRead && (
                 <button onClick={() => onMarkRead(notification.id)} className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title={t('notifications.markRead')}>

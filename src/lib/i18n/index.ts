@@ -1,5 +1,12 @@
 export type Locale = 'uk' | 'en' | 'de' | 'pl';
 
+export const LOCALE_TO_BCP47: Record<Locale, string> = {
+  uk: 'uk-UA',
+  en: 'en-US',
+  de: 'de-DE',
+  pl: 'pl-PL',
+};
+
 export const LOCALES: Locale[] = ['uk', 'en', 'de', 'pl'];
 export const DEFAULT_LOCALE: Locale = 'uk';
 export const LOCALE_STORAGE_KEY = 'startway-locale';

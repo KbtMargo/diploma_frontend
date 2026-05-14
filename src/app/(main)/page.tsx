@@ -56,7 +56,7 @@ function FeaturedJobCard({ job, savedIds, toggleSave, t }: {
         </div>
         <div className="flex items-center justify-between mt-auto">
           <span className="font-semibold text-indigo-600 text-sm">
-            {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}
+            {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}
           </span>
           <span className="text-xs text-gray-400">
             {t(`jobTypes.${job.jobType}`)}
@@ -318,7 +318,7 @@ export default function HomePage() {
               <h4 className="font-medium text-white mb-3">{t('home.footer.contacts')}</h4>
               <div className="space-y-2 text-sm">
                 <p>info@startway.ua</p>
-                <p>Ukraine</p>
+                <p>{t('home.footer.country')}</p>
               </div>
             </div>
           </div>

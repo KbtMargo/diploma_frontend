@@ -174,8 +174,18 @@
       "jobSeekers": "Bewerber",
       "employers": "Arbeitgeber",
       "contacts": "Kontakt",
-      "copyright": "© 2026 StartWay. Alle Rechte vorbehalten."
+      "copyright": "© 2026 StartWay. Alle Rechte vorbehalten.",
+      "country": "Ukraine"
     }
+  },
+  "utils": {
+    "justNow": "gerade eben",
+    "secAgo": "vor {{n}} Sek.",
+    "minAgo": "vor {{n}} Min.",
+    "hourAgo": "vor {{n}} Std.",
+    "salaryNotSet": "Gehalt nicht angegeben",
+    "salaryFrom": "ab",
+    "salaryTo": "bis"
   },
   "jobTypes": {
     "full_time": "Vollzeit",
@@ -406,7 +416,8 @@
       },
       "updated": "Lebenslauf hochgeladen!",
       "deleted": "Lebenslauf gelöscht",
-      "avatarUpdated": "Avatar aktualisiert!"
+      "avatarUpdated": "Avatar aktualisiert!",
+      "generate": "PDF erstellen"
     },
     "education": {
       "title": "Ausbildung",
@@ -920,7 +931,8 @@
         "today": "+{{count}} heute",
         "activeJobs": "{{count}} aktiv",
         "verified": "{{count}} verifiziert",
-        "pendingJobs": "Stellen warten"
+        "pendingJobs": "Stellen warten",
+        "new": "neu"
       },
       "quickActions": {
         "title": "Schnellaktionen",

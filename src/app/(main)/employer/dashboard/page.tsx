@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/contexts/I18nContext';
+import { LOCALE_TO_BCP47 } from '@/lib/i18n';
 import { Job, Application, AiAnalysis, Company, Skill, User } from '@/types';
 import {
   ROUTES, JOB_TYPES, EXPERIENCE_LEVELS, WORK_FORMATS,
@@ -59,7 +60,7 @@ function MatchBadge({ score }: { score: number }) {
 export default function EmployerDashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const KANBAN_COLS = useMemo(() => [
     { status: 'pending',             label: t('employer.kanban.pending'),              hdr: 'bg-gray-100 text-gray-700',     col: 'bg-gray-50'    },
@@ -509,13 +510,13 @@ export default function EmployerDashboardPage() {
                         </div>
                         <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
                           <span>{job.city}, {job.country}</span>
-                          <span>{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}</span>
+                          <span>{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</span>
                           <span>{job.applicationsCount || 0} {t('employer.jobs.applications')}</span>
                           <span>{job.views || 0} {t('employer.jobs.views')}</span>
-                          <span>{formatRelativeDate(job.createdAt)}</span>
+                          <span>{formatRelativeDate(job.createdAt, t)}</span>
                           {job.applicationDeadline && (
                             <span className={new Date(job.applicationDeadline) < new Date() ? 'text-red-500' : 'text-orange-500'}>
-                              {t('employer.jobs.deadline')} {new Date(job.applicationDeadline).toLocaleDateString('uk-UA')}
+                              {t('employer.jobs.deadline')} {new Date(job.applicationDeadline).toLocaleDateString(LOCALE_TO_BCP47[locale])}
                             </span>
                           )}
                         </div>
@@ -696,7 +697,7 @@ export default function EmployerDashboardPage() {
                           )}
 
                           {/* Date */}
-                          <p className="text-xs text-gray-400 mt-1">{formatRelativeDate(app.createdAt)}</p>
+                          <p className="text-xs text-gray-400 mt-1">{formatRelativeDate(app.createdAt, t)}</p>
 
                           {/* Existing note */}
                           {app.employerNotes && !isEditNote && (
@@ -829,7 +830,7 @@ export default function EmployerDashboardPage() {
                               {t('employer.applications.expectedSalary')} {app.expectedSalary} {app.expectedSalaryCurrency}
                             </p>
                           )}
-                          <p className="text-xs text-gray-400 mt-1.5">{formatRelativeDate(app.createdAt)}</p>
+                          <p className="text-xs text-gray-400 mt-1.5">{formatRelativeDate(app.createdAt, t)}</p>
 
                           {/* Note */}
                           {app.employerNotes && !isEditNote && (
@@ -1410,7 +1411,7 @@ export default function EmployerDashboardPage() {
                           )}
                           {analysis && (
                             <p className="text-xs text-gray-400 mt-0.5">
-                              {t('employer.ai.analyzedAt')} {app.aiAnalyzedAt ? new Date(app.aiAnalyzedAt).toLocaleDateString('uk-UA') : ''}
+                              {t('employer.ai.analyzedAt')} {app.aiAnalyzedAt ? new Date(app.aiAnalyzedAt).toLocaleDateString(LOCALE_TO_BCP47[locale]) : ''}
                             </p>
                           )}
                         </div>
@@ -1881,9 +1882,9 @@ export default function EmployerDashboardPage() {
                           <p className="font-medium text-sm text-gray-900">{exp.position}</p>
                           <p className="text-sm text-gray-500">{exp.company}</p>
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {exp.startDate ? new Date(exp.startDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
+                            {exp.startDate ? new Date(exp.startDate).toLocaleDateString(LOCALE_TO_BCP47[locale], { year: 'numeric', month: 'short' }) : ''}
                             {' – '}
-                            {exp.current ? t('employer.candidatePreview.current') : exp.endDate ? new Date(exp.endDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
+                            {exp.current ? t('employer.candidatePreview.current') : exp.endDate ? new Date(exp.endDate).toLocaleDateString(LOCALE_TO_BCP47[locale], { year: 'numeric', month: 'short' }) : ''}
                           </p>
                           {exp.description && (
                             <p className="text-xs text-gray-500 mt-1 line-clamp-2">{exp.description}</p>
@@ -1906,8 +1907,8 @@ export default function EmployerDashboardPage() {
                           <p className="font-medium text-sm text-gray-900">{edu.degree} — {edu.field}</p>
                           <p className="text-sm text-gray-500">{edu.institution}</p>
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {edu.startDate ? new Date(edu.startDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' }) : ''}
-                            {edu.endDate ? ` – ${new Date(edu.endDate).toLocaleDateString('uk-UA', { year: 'numeric', month: 'short' })}` : ''}
+                            {edu.startDate ? new Date(edu.startDate).toLocaleDateString(LOCALE_TO_BCP47[locale], { year: 'numeric', month: 'short' }) : ''}
+                            {edu.endDate ? ` – ${new Date(edu.endDate).toLocaleDateString(LOCALE_TO_BCP47[locale], { year: 'numeric', month: 'short' })}` : ''}
                           </p>
                         </div>
                       ))}

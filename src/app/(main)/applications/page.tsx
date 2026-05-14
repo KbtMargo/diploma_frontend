@@ -49,8 +49,8 @@ function ApplicationItem({ app, t, handleWithdraw }: {
           </div>
           <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-500">
             {app.job?.city && <span>{jobCity || app.job.city}, {jobCountry || app.job.country}</span>}
-            {app.job?.salaryMin && <span>{formatSalary(app.job.salaryMin, app.job.salaryMax, app.job.salaryCurrency)}</span>}
-            <span className="flex items-center gap-1"><Clock size={14} />{formatRelativeDate(app.createdAt)}</span>
+            {app.job?.salaryMin && <span>{formatSalary(app.job.salaryMin, app.job.salaryMax, app.job.salaryCurrency, t)}</span>}
+            <span className="flex items-center gap-1"><Clock size={14} />{formatRelativeDate(app.createdAt, t)}</span>
           </div>
           {app.coverLetter && <p className="text-sm text-gray-600 mt-3 line-clamp-2">{app.coverLetter}</p>}
           {app.employerNotes && (

@@ -13,6 +13,7 @@ import {
 import api from '@/lib/axios';
 import { User, Job, Company, PaginatedResponse } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
+import { LOCALE_TO_BCP47 } from '@/lib/i18n';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
 import { translateToUk } from '@/lib/translate';
 import toast from 'react-hot-toast';
@@ -38,17 +39,17 @@ const INDUSTRY_KEY_MAP: Record<string, string> = {
 };
 
 const COUNTRY_KEY_MAP: Record<string, string> = {
-  'Україна': 'countries.ukraine',
-  'Ukraine': 'countries.ukraine',
-  'Польща': 'countries.poland',
-  'Poland': 'countries.poland',
-  'Польша': 'countries.poland',
-  'Німеччина': 'countries.germany',
-  'Germany': 'countries.germany',
-  'США': 'countries.usa',
-  'USA': 'countries.usa',
-  'Велика Британія': 'countries.uk',
-  'United Kingdom': 'countries.uk',
+  'Україна': 'admin.countries.ukraine',
+  'Ukraine': 'admin.countries.ukraine',
+  'Польща': 'admin.countries.poland',
+  'Poland': 'admin.countries.poland',
+  'Польша': 'admin.countries.poland',
+  'Німеччина': 'admin.countries.germany',
+  'Germany': 'admin.countries.germany',
+  'США': 'admin.countries.usa',
+  'USA': 'admin.countries.usa',
+  'Велика Британія': 'admin.countries.uk',
+  'United Kingdom': 'admin.countries.uk',
 };
 
 // ─── Rejection modal ──────────────────────────────────────────────────────────
@@ -142,7 +143,7 @@ function UserSlideOver({ user, onClose }: { user: User; onClose: () => void }) {
             {/* Info rows */}
             <div className="space-y-3">
               <InfoRow icon={<Mail size={14} />} label={t('admin.users.slideOver.labels.email')} value={user.email} />
-              <InfoRow icon={<Calendar size={14} />} label={t('admin.users.slideOver.labels.registered')} value={formatRelativeDate(user.createdAt)} />
+              <InfoRow icon={<Calendar size={14} />} label={t('admin.users.slideOver.labels.registered')} value={formatRelativeDate(user.createdAt, t)} />
               {user.country && <InfoRow icon={<MapPin size={14} />} label={t('admin.users.slideOver.labels.city')} value={`${user.city || ''}, ${user.country}`} />}
               <InfoRow
                 icon={user.isActive ? <CheckCircle size={14} className="text-green-500" /> : <XCircle size={14} className="text-red-500" />}
@@ -392,12 +393,12 @@ export default function AdminDashboardPage() {
       const a = analyticsRes.data;
 
       const userGrowth = (a.userGrowth ?? []).map((r: any) => ({
-        date: new Date(r.date).toLocaleDateString('uk-UA', { day: '2-digit', month: 'short' }),
+        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { day: '2-digit', month: 'short' }),
         value: Number(r.count),
       }));
 
       const jobPostings = (a.jobPostings ?? []).map((r: any) => ({
-        date: new Date(r.date).toLocaleDateString('uk-UA', { day: '2-digit', month: 'short' }),
+        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { day: '2-digit', month: 'short' }),
         value: Number(r.count),
       }));
 
@@ -544,7 +545,7 @@ export default function AdminDashboardPage() {
           {lastRefreshed && activeTab === 'dashboard' && (
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <RefreshCw size={12} />
-              {t('admin.updated')} {lastRefreshed.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+              {t('admin.updated')} {lastRefreshed.toLocaleTimeString(LOCALE_TO_BCP47[locale], { hour: '2-digit', minute: '2-digit' })}
             </div>
           )}
         </div>
@@ -589,7 +590,7 @@ export default function AdminDashboardPage() {
               ].map((card) => (
                 <div key={card.label} className="bg-white rounded-2xl p-6 border border-gray-200 relative overflow-hidden">
                   {card.badge && card.badge > 0 && (
-                    <span className="absolute top-3 right-3 bg-green-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">new</span>
+                    <span className="absolute top-3 right-3 bg-green-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{t('admin.dashboard.cards.new')}</span>
                   )}
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
                     card.color === 'blue' ? 'bg-blue-100' : card.color === 'indigo' ? 'bg-indigo-100' :
@@ -705,7 +706,7 @@ export default function AdminDashboardPage() {
                             {user.isActive ? <><CheckCircle size={10} />{t('admin.users.status.active')}</> : <><XCircle size={10} />{t('admin.users.status.blocked')}</>}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-xs text-gray-400">{formatRelativeDate(user.createdAt)}</td>
+                        <td className="px-6 py-4 text-xs text-gray-400">{formatRelativeDate(user.createdAt, t)}</td>
                         <td className="px-6 py-4 text-right">
                           <button onClick={() => handleBlockUser(user.id, user.isActive)}
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
@@ -1055,7 +1056,7 @@ export default function AdminDashboardPage() {
                         <td className="px-6 py-3 text-sm text-gray-500">
                           {log.entityType ? `${t(`admin.logs.entityTypes.${log.entityType}`) || log.entityType} #${log.entityId?.slice(0, 8)}` : '—'}
                         </td>
-                        <td className="px-6 py-3 text-xs text-gray-400">{formatRelativeDate(log.createdAt)}</td>
+                        <td className="px-6 py-3 text-xs text-gray-400">{formatRelativeDate(log.createdAt, t)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1114,7 +1115,7 @@ function AdminJobRow({ job, selected, onSelect, onModerate, onReject }: {
            job.status === 'rejected' ? t('admin.jobs.jobStatus.rejected') : job.status}
         </span>
       </td>
-      <td className="px-4 py-4 text-xs text-gray-400">{formatRelativeDate(job.createdAt)}</td>
+      <td className="px-4 py-4 text-xs text-gray-400">{formatRelativeDate(job.createdAt, t)}</td>
       <td className="px-4 py-4 text-right">
         <div className="flex items-center justify-end gap-2">
           {job.status === 'pending' && (

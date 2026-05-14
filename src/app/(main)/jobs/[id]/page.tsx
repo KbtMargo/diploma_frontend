@@ -35,7 +35,7 @@ function SimilarJobItem({ sj }: { sj: Job }) {
         <p className="font-medium text-sm text-gray-900 mb-0.5 line-clamp-1">{title || sj.title}</p>
         <p className="text-xs text-gray-400 mb-2">{employerName || `${sj.employer?.firstName} ${sj.employer?.lastName}`}</p>
         <span className="text-xs font-semibold text-indigo-600">
-          {formatSalary(sj.salaryMin, sj.salaryMax, sj.salaryCurrency)}
+          {formatSalary(sj.salaryMin, sj.salaryMax, sj.salaryCurrency, t)}
         </span>
       </div>
     </Link>
@@ -219,11 +219,11 @@ export default function JobDetailsPage() {
               <div className="flex items-center gap-5 text-sm">
                 <span className="flex items-center gap-1.5 font-semibold text-indigo-600">
                   <DollarSign size={15} />
-                  {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency)}
+                  {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}
                 </span>
                 <span className="flex items-center gap-1.5 text-gray-400">
                   <Clock size={15} />
-                  {formatRelativeDate(job.createdAt)}
+                  {formatRelativeDate(job.createdAt, t)}
                 </span>
                 {(user?.role === USER_ROLES.EMPLOYER || user?.role === USER_ROLES.ADMIN) && (
                   <span className="flex items-center gap-1.5 text-gray-400">

@@ -54,9 +54,18 @@ const s = StyleSheet.create({
   summary:     { fontSize: 10, color: c.body, lineHeight: 1.5 },
 });
 
-const fmt = (d?: string | null) => {
+const LOCALE_BCP47: Record<string, string> = { uk: 'uk-UA', en: 'en-US', de: 'de-DE', pl: 'pl-PL' };
+
+const PDF_LABELS: Record<string, Record<string, string>> = {
+  uk: { role: 'Шукач роботи', tel: 'Тел', summary: 'Про себе', work: 'Досвід роботи', present: 'по теперішній час', education: 'Освіта', grade: 'Оцінка', skills: 'Навички', languages: 'Мови', portfolio: 'Портфоліо' },
+  en: { role: 'Job Seeker',   tel: 'Tel', summary: 'About Me',  work: 'Work Experience', present: 'present',            education: 'Education', grade: 'Grade',  skills: 'Skills',   languages: 'Languages', portfolio: 'Portfolio'  },
+  de: { role: 'Stellensuchender', tel: 'Tel', summary: 'Über mich', work: 'Berufserfahrung', present: 'bis heute',      education: 'Ausbildung', grade: 'Note',   skills: 'Kenntnisse', languages: 'Sprachen',  portfolio: 'Portfolio'  },
+  pl: { role: 'Szukający pracy',  tel: 'Tel', summary: 'O mnie',   work: 'Doświadczenie',   present: 'obecnie',          education: 'Wykształcenie', grade: 'Ocena', skills: 'Umiejętności', languages: 'Języki', portfolio: 'Portfolio'  },
+};
+
+const fmt = (d?: string | null, bcp47 = 'uk-UA') => {
   if (!d) return '';
-  try { return new Date(d).toLocaleDateString('uk-UA', { month: 'short', year: 'numeric' }); }
+  try { return new Date(d).toLocaleDateString(bcp47, { month: 'short', year: 'numeric' }); }
   catch { return ''; }
 };
 
@@ -75,12 +84,16 @@ interface Props {
   education: any[];
   workExperience: any[];
   portfolio: any[];
+  locale?: string;
 }
 
-export default function ResumePDF({ user, skills, education, workExperience, portfolio }: Props) {
+export default function ResumePDF({ user, skills, education, workExperience, portfolio, locale = 'uk' }: Props) {
+  const bcp47 = LOCALE_BCP47[locale] ?? 'uk-UA';
+  const L = PDF_LABELS[locale] ?? PDF_LABELS.uk;
+
   const contacts: string[] = [];
   if (user.email)       contacts.push(`Email: ${user.email}`);
-  if (user.phoneNumber) contacts.push(`Тел: ${user.phoneNumber}`);
+  if (user.phoneNumber) contacts.push(`${L.tel}: ${user.phoneNumber}`);
   if (user.city)        contacts.push(`${user.city}${user.country ? `, ${user.country}` : ''}`);
 
   return (
@@ -90,16 +103,16 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Header ── */}
         <View style={s.header}>
           <Text style={s.name}>{user.firstName} {user.lastName}</Text>
-          <Text style={s.role}>Шукач роботи</Text>
+          <Text style={s.role}>{L.role}</Text>
           <View style={s.contactRow}>
-            {contacts.map((t, i) => <Text key={i} style={s.contactItem}>{t}</Text>)}
+            {contacts.map((ct, i) => <Text key={i} style={s.contactItem}>{ct}</Text>)}
           </View>
         </View>
 
         {/* ── Summary ── */}
         {user.summary && (
           <View style={s.section}>
-            <SectionHeader title="Про себе" />
+            <SectionHeader title={L.summary} />
             <Text style={s.summary}>{user.summary}</Text>
           </View>
         )}
@@ -107,13 +120,13 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Work experience ── */}
         {workExperience?.length > 0 && (
           <View style={s.section}>
-            <SectionHeader title="Досвід роботи" />
+            <SectionHeader title={L.work} />
             {workExperience.map((w, i) => (
               <View key={i} style={s.item}>
                 <View style={s.row}>
                   <Text style={s.itemTitle}>{w.position}</Text>
                   <Text style={s.itemDate}>
-                    {fmt(w.startDate)} — {w.current ? 'по теперішній час' : fmt(w.endDate)}
+                    {fmt(w.startDate, bcp47)} — {w.current ? L.present : fmt(w.endDate, bcp47)}
                   </Text>
                 </View>
                 <Text style={s.itemSub}>{w.company}</Text>
@@ -129,15 +142,15 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Education ── */}
         {education?.length > 0 && (
           <View style={s.section}>
-            <SectionHeader title="Освіта" />
+            <SectionHeader title={L.education} />
             {education.map((e, i) => (
               <View key={i} style={s.item}>
                 <View style={s.row}>
                   <Text style={s.itemTitle}>{e.institution}</Text>
-                  <Text style={s.itemDate}>{fmt(e.startDate)} — {fmt(e.endDate)}</Text>
+                  <Text style={s.itemDate}>{fmt(e.startDate, bcp47)} — {fmt(e.endDate, bcp47)}</Text>
                 </View>
                 <Text style={s.itemSub}>{e.degree}{e.field ? ` · ${e.field}` : ''}</Text>
-                {e.grade       && <Text style={s.itemDesc}>Оцінка: {e.grade}</Text>}
+                {e.grade       && <Text style={s.itemDesc}>{L.grade}: {e.grade}</Text>}
                 {e.description && <Text style={s.itemDesc}>{e.description}</Text>}
               </View>
             ))}
@@ -147,7 +160,7 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Skills ── */}
         {skills?.length > 0 && (
           <View style={s.section}>
-            <SectionHeader title="Навички" />
+            <SectionHeader title={L.skills} />
             <View style={s.tagsRow}>
               {skills.map((sk, i) => <Text key={i} style={s.tagSkill}>{sk.name}</Text>)}
             </View>
@@ -157,7 +170,7 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Languages ── */}
         {(user.languages || []).length > 0 && (
           <View style={s.section}>
-            <SectionHeader title="Мови" />
+            <SectionHeader title={L.languages} />
             <View style={s.tagsRow}>
               {user.languages.map((l: string, i: number) => <Text key={i} style={s.tagLang}>{l}</Text>)}
             </View>
@@ -167,7 +180,7 @@ export default function ResumePDF({ user, skills, education, workExperience, por
         {/* ── Portfolio ── */}
         {portfolio?.length > 0 && (
           <View style={s.section}>
-            <SectionHeader title="Портфоліо" />
+            <SectionHeader title={L.portfolio} />
             {portfolio.map((p, i) => (
               <View key={i} style={s.item}>
                 <Text style={s.itemTitle}>{p.title}</Text>

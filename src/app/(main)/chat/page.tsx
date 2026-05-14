@@ -184,7 +184,7 @@ export default function ChatPage() {
                       {conv.otherUser.firstName} {conv.otherUser.lastName}
                     </p>
                     <span className="text-xs text-gray-400 shrink-0 ml-2">
-                      {formatRelativeDate(conv.lastMessage.createdAt)}
+                      {formatRelativeDate(conv.lastMessage.createdAt, t)}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 truncate mt-0.5">
@@ -266,7 +266,7 @@ export default function ChatPage() {
                           {msg.content}
                         </div>
                         <span className="text-xs text-gray-400 px-1">
-                          {msg.createdAt ? formatRelativeDate(msg.createdAt) : t('chat.justNow')}
+                          {msg.createdAt ? formatRelativeDate(msg.createdAt, t) : t('chat.justNow')}
                         </span>
                       </div>
                     </div>

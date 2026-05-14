@@ -174,8 +174,18 @@
       "jobSeekers": "Пошукачам",
       "employers": "Роботодавцям",
       "contacts": "Контакти",
-      "copyright": "© 2026 StartWay. Всі права захищені."
+      "copyright": "© 2026 StartWay. Всі права захищені.",
+      "country": "Україна"
     }
+  },
+  "utils": {
+    "justNow": "щойно",
+    "secAgo": "{{n}} сек тому",
+    "minAgo": "{{n}} хв тому",
+    "hourAgo": "{{n}} год тому",
+    "salaryNotSet": "Зарплата не вказана",
+    "salaryFrom": "від",
+    "salaryTo": "до"
   },
   "jobTypes": {
     "full_time": "Повна зайнятість",
@@ -406,7 +416,8 @@
       },
       "updated": "Резюме завантажено!",
       "deleted": "Резюме видалено",
-      "avatarUpdated": "Аватар оновлено!"
+      "avatarUpdated": "Аватар оновлено!",
+      "generate": "Згенерувати PDF"
     },
     "education": {
       "title": "Освіта",
@@ -920,7 +931,8 @@
         "today": "+{{count}} сьогодні",
         "activeJobs": "{{count}} активних",
         "verified": "{{count}} верифіковано",
-        "pendingJobs": "вакансій чекають"
+        "pendingJobs": "вакансій чекають",
+        "new": "нов"
       },
       "quickActions": {
         "title": "Швидкі дії",
