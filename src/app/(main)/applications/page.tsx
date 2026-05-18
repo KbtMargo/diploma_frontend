@@ -7,7 +7,8 @@ import { useAuthStore } from '@/store/authStore';
 import { Application } from '@/types';
 import { ROUTES } from '@/lib/constants';
 import { useI18n } from '@/contexts/I18nContext';
-import { formatRelativeDate, formatSalary } from '@/lib/utils';
+import { formatRelativeDate } from '@/lib/utils';
+import { SalaryDisplay } from '@/components/SalaryDisplay';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { applicationsService } from '@/services/applications.service';
@@ -49,7 +50,7 @@ function ApplicationItem({ app, t, handleWithdraw }: {
           </div>
           <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-500">
             {app.job?.city && <span>{jobCity || app.job.city}, {jobCountry || app.job.country}</span>}
-            {app.job?.salaryMin && <span>{formatSalary(app.job.salaryMin, app.job.salaryMax, app.job.salaryCurrency, t)}</span>}
+            {app.job?.salaryMin && <SalaryDisplay min={app.job.salaryMin} max={app.job.salaryMax} currency={app.job.salaryCurrency} t={t} size="sm" />}
             <span className="flex items-center gap-1"><Clock size={14} />{formatRelativeDate(app.createdAt, t)}</span>
           </div>
           {app.coverLetter && <p className="text-sm text-gray-600 mt-3 line-clamp-2">{app.coverLetter}</p>}

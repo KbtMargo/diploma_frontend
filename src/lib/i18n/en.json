@@ -264,6 +264,12 @@
       "subtitle": "Try changing your search parameters",
       "reset": "Reset filters"
     },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "salaryHigh": "Salary: high → low",
+      "salaryLow": "Salary: low → high"
+    },
     "match": "{{score}}% match",
     "save": "Save",
     "unsave": "Remove from saved",
@@ -762,6 +768,8 @@
     "company": {
       "verified": "Verified",
       "pendingVerification": "Awaiting admin verification",
+      "addLogo": "Add logo",
+      "changeLogo": "Change logo",
       "edit": "Edit",
       "info": {
         "industry": "Industry",
@@ -890,6 +898,7 @@
       "noteError": "Failed to save note",
       "companyCreated": "Company created! Awaiting admin verification.",
       "companyUpdated": "Company data updated",
+      "logoUpdated": "Company logo updated!",
       "jobCreated": "Job created!",
       "jobUpdated": "Job updated!",
       "jobDeleted": "Job deleted",

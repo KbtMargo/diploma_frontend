@@ -8,7 +8,7 @@ import { Job } from '@/types';
 import { ROUTES } from '@/lib/constants';
 import { useI18n } from '@/contexts/I18nContext';
 import api from '@/lib/axios';
-import { formatSalary } from '@/lib/utils';
+import { SalaryDisplay } from '@/components/SalaryDisplay';
 import { useSavedJobs } from '@/lib/hooks/useSavedJobs';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
 
@@ -55,9 +55,7 @@ function FeaturedJobCard({ job, savedIds, toggleSave, t }: {
           <span>{(city || job.city) || t('common.remote')}, {country || job.country}</span>
         </div>
         <div className="flex items-center justify-between mt-auto">
-          <span className="font-semibold text-indigo-600 text-sm">
-            {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}
-          </span>
+          <SalaryDisplay min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} t={t} size="sm" />
           <span className="text-xs text-gray-400">
             {t(`jobTypes.${job.jobType}`)}
           </span>

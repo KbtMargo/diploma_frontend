@@ -12,7 +12,8 @@ import { COMPANY_SIZES } from '@/lib/constants';
 import { companiesService } from '@/services/companies.service';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
-import { formatRelativeDate, formatSalary } from '@/lib/utils';
+import { formatRelativeDate } from '@/lib/utils';
+import { SalaryDisplay } from '@/components/SalaryDisplay';
 import { useI18n } from '@/contexts/I18nContext';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
 import toast from 'react-hot-toast';
@@ -92,7 +93,7 @@ function CompanyJobItem({ job, t }: { job: Job; t: (k: string) => string }) {
             </div>
           </div>
           <div className="shrink-0 text-right">
-            <p className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</p>
+            <SalaryDisplay min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} t={t} size="sm" />
             <p className="text-xs text-gray-400 mt-0.5">{formatRelativeDate(job.createdAt, t)}</p>
           </div>
         </div>
@@ -259,7 +260,7 @@ export default function CompanyDetailPage() {
             {company.rating !== undefined && company.rating > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                {company.rating.toFixed(1)} ({t('companyDetail.reviews', { count: String(company.reviewsCount) })})
+                {Number(company.rating).toFixed(1)} ({t('companyDetail.reviews', { count: String(company.reviewsCount) })})
               </div>
             )}
           </div>

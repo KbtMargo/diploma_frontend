@@ -264,6 +264,12 @@
       "subtitle": "Versuchen Sie, die Suchparameter zu ändern",
       "reset": "Filter zurücksetzen"
     },
+    "sort": {
+      "newest": "Neueste",
+      "oldest": "Älteste",
+      "salaryHigh": "Gehalt: hoch → niedrig",
+      "salaryLow": "Gehalt: niedrig → hoch"
+    },
     "match": "{{score}}% Übereinstimmung",
     "save": "Speichern",
     "unsave": "Aus Gespeicherten entfernen",
@@ -762,6 +768,8 @@
     "company": {
       "verified": "Verifiziert",
       "pendingVerification": "Wartet auf Admin-Verifizierung",
+      "addLogo": "Logo hinzufügen",
+      "changeLogo": "Logo ändern",
       "edit": "Bearbeiten",
       "info": {
         "industry": "Branche",
@@ -890,6 +898,7 @@
       "noteError": "Notiz konnte nicht gespeichert werden",
       "companyCreated": "Unternehmen erstellt! Warten auf Admin-Verifizierung.",
       "companyUpdated": "Unternehmensdaten aktualisiert",
+      "logoUpdated": "Unternehmenslogo aktualisiert!",
       "jobCreated": "Stelle erstellt!",
       "jobUpdated": "Stelle aktualisiert!",
       "jobDeleted": "Stelle gelöscht",

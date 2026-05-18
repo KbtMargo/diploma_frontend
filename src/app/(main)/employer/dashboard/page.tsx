@@ -8,7 +8,7 @@ import {
   MessageCircle, UserCircle, Building, Copy,
   StickyNote, BarChart3, GraduationCap, MapPin,
   LayoutList, Kanban, Sparkles, ChevronDown, ChevronUp,
-  ThumbsUp, ThumbsDown, AlertCircle, Trophy, Zap,
+  ThumbsUp, ThumbsDown, AlertCircle, Trophy, Zap, Upload,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/contexts/I18nContext';
@@ -95,6 +95,7 @@ export default function EmployerDashboardPage() {
   const [myCompany, setMyCompany] = useState<Company | null>(null);
   const [companyLoading, setCompanyLoading] = useState(false);
   const [showCompanyForm, setShowCompanyForm] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
   const [companyForm, setCompanyForm] = useState({
     name: '', shortDescription: '', description: '', website: '', industry: '', foundedYear: '', size: '',
   });
@@ -342,6 +343,24 @@ export default function EmployerDashboardPage() {
   };
 
   // ─── Company handlers ─────────────────────────────────────────────────────────
+
+  const handleLogoUpload = async (file: File) => {
+    if (!myCompany) return;
+    setLogoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('logo', file);
+      const res = await api.post(`/companies/${myCompany.id}/logo`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setMyCompany(res.data);
+      toast.success(t('employer.toast.logoUpdated') || 'Лого оновлено');
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || t('employer.toast.error'));
+    } finally {
+      setLogoUploading(false);
+    }
+  };
 
   const handleCreateCompany = async () => {
     try {
@@ -937,8 +956,45 @@ export default function EmployerDashboardPage() {
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                    <Building size={24} className="text-indigo-600" />
+                  <div className="flex flex-col items-center gap-1.5">
+                    <label className="relative group cursor-pointer block">
+                      <div className={`w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center transition-all ${
+                        myCompany.logoUrl
+                          ? 'bg-indigo-50 border border-gray-200'
+                          : 'bg-indigo-50 border-2 border-dashed border-indigo-300 hover:border-indigo-500 hover:bg-indigo-100'
+                      }`}>
+                        {myCompany.logoUrl ? (
+                          <img
+                            src={`${process.env.NEXT_PUBLIC_API_URL}${myCompany.logoUrl}`}
+                            alt="Лого компанії"
+                            className="w-full h-full object-contain"
+                          />
+                        ) : logoUploading ? (
+                          <Loader2 size={24} className="animate-spin text-indigo-400" />
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <Upload size={20} className="text-indigo-400" />
+                            <span className="text-[10px] text-indigo-400 font-medium">Лого</span>
+                          </div>
+                        )}
+                        {myCompany.logoUrl && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+                            {logoUploading
+                              ? <Loader2 size={20} className="animate-spin text-white" />
+                              : <Upload size={20} className="text-white" />}
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                        className="hidden"
+                        onChange={e => { if (e.target.files?.[0]) handleLogoUpload(e.target.files[0]); }}
+                      />
+                    </label>
+                    <span className="text-[10px] text-gray-400">
+                      {myCompany.logoUrl ? t('employer.company.changeLogo') : t('employer.company.addLogo')}
+                    </span>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

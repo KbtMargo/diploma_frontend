@@ -14,6 +14,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Job } from '@/types';
 import { ROUTES, USER_ROLES } from '@/lib/constants';
 import { formatSalary, formatRelativeDate } from '@/lib/utils';
+import { SalaryDisplay } from '@/components/SalaryDisplay';
 import { useI18n } from '@/contexts/I18nContext';
 import { useAutoTranslate, useAutoTranslateLines } from '@/hooks/useAutoTranslate';
 
@@ -217,9 +218,9 @@ export default function JobDetailsPage() {
 
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-5 text-sm">
-                <span className="flex items-center gap-1.5 font-semibold text-indigo-600">
-                  <DollarSign size={15} />
-                  {formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}
+                <span className="flex items-start gap-1.5">
+                  <DollarSign size={15} className="text-indigo-600 mt-0.5 shrink-0" />
+                  <SalaryDisplay min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} t={t} size="sm" />
                 </span>
                 <span className="flex items-center gap-1.5 text-gray-400">
                   <Clock size={15} />

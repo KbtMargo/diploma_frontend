@@ -68,7 +68,7 @@ function CompanyCard({ company, t }: { company: Company; t: (k: string, v?: any)
           {company.rating !== undefined && company.rating > 0 && (
             <span className="flex items-center gap-1.5 text-xs text-gray-500">
               <Star size={12} className="text-yellow-500" />
-              {company.rating.toFixed(1)}
+              {Number(company.rating).toFixed(1)}
             </span>
           )}
         </div>

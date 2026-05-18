@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { format } from 'date-fns';
+import { formatAmount } from './currency';
 
 type TFn = (key: string, values?: Record<string, string | number>) => string;
 
@@ -47,9 +48,9 @@ export function formatSalary(min?: number, max?: number, currency?: string, t?: 
   const curr = currency || 'USD';
   const from = t ? t('utils.salaryFrom') : 'від';
   const to   = t ? t('utils.salaryTo')   : 'до';
-  if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} ${curr}`;
-  if (min) return `${from} ${min.toLocaleString()} ${curr}`;
-  return `${to} ${max!.toLocaleString()} ${curr}`;
+  if (min && max) return `${formatAmount(min, curr)} – ${formatAmount(max, curr)}`;
+  if (min) return `${from} ${formatAmount(min, curr)}`;
+  return `${to} ${formatAmount(max!, curr)}`;
 }
 
 export function getInitials(firstName: string, lastName: string): string {

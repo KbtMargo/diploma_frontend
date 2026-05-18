@@ -393,12 +393,12 @@ export default function AdminDashboardPage() {
       const a = analyticsRes.data;
 
       const userGrowth = (a.userGrowth ?? []).map((r: any) => ({
-        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { day: '2-digit', month: 'short' }),
+        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { month: 'short', year: '2-digit' }),
         value: Number(r.count),
       }));
 
       const jobPostings = (a.jobPostings ?? []).map((r: any) => ({
-        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { day: '2-digit', month: 'short' }),
+        date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { month: 'short', year: '2-digit' }),
         value: Number(r.count),
       }));
 

@@ -264,6 +264,12 @@
       "subtitle": "Spróbuj zmienić parametry wyszukiwania",
       "reset": "Resetuj filtry"
     },
+    "sort": {
+      "newest": "Najnowsze",
+      "oldest": "Najstarsze",
+      "salaryHigh": "Wynagrodzenie: wysokie → niskie",
+      "salaryLow": "Wynagrodzenie: niskie → wysokie"
+    },
     "match": "{{score}}% dopasowanie",
     "save": "Zapisz",
     "unsave": "Usuń z zapisanych",
@@ -762,6 +768,8 @@
     "company": {
       "verified": "Zweryfikowano",
       "pendingVerification": "Oczekuje weryfikacji administratora",
+      "addLogo": "Dodaj logo",
+      "changeLogo": "Zmień logo",
       "edit": "Edytuj",
       "info": {
         "industry": "Branża",
@@ -890,6 +898,7 @@
       "noteError": "Błąd zapisywania notatki",
       "companyCreated": "Firma utworzona! Oczekuj weryfikacji administratora.",
       "companyUpdated": "Dane firmy zaktualizowane",
+      "logoUpdated": "Logo firmy zaktualizowane!",
       "jobCreated": "Oferta utworzona!",
       "jobUpdated": "Oferta zaktualizowana!",
       "jobDeleted": "Oferta usunięta",

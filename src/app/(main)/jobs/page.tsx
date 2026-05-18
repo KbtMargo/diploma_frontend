@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { Search, MapPin, Briefcase, X, LayoutGrid, List, Heart, SlidersHorizontal } from 'lucide-react';
 import { Job, PaginatedResponse } from '@/types';
 import { JOB_TYPES, EXPERIENCE_LEVELS, WORK_FORMATS, JOB_CATEGORIES, JOB_LANGUAGES } from '@/lib/constants';
-import { formatSalary, formatRelativeDate } from '@/lib/utils';
+import { formatRelativeDate } from '@/lib/utils';
+import { SalaryDisplay } from '@/components/SalaryDisplay';
 import { useSavedJobs } from '@/lib/hooks/useSavedJobs';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/contexts/I18nContext';
@@ -23,9 +24,11 @@ function FilterGroup({
 }: {
   title: string;
   options: { value: string; label: string }[];
-  value: string;
-  onChange: (v: string) => void;
+  value: string[];
+  onChange: (v: string[]) => void;
 }) {
+  const toggle = (v: string) =>
+    onChange(value.includes(v) ? value.filter(x => x !== v) : [...value, v]);
   return (
     <div className="pb-4 mb-4 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0">
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{title}</p>
@@ -34,8 +37,8 @@ function FilterGroup({
           <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
             <input
               type="checkbox"
-              checked={value === opt.value}
-              onChange={() => onChange(value === opt.value ? '' : opt.value)}
+              checked={value.includes(opt.value)}
+              onChange={() => toggle(opt.value)}
               className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
             />
             <span className="text-sm text-gray-700 group-hover:text-indigo-600 transition-colors">
@@ -96,7 +99,7 @@ function ListJobCard({ job, savedIds, toggleSave, matchScore, t }: { job: Job; s
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
             <button onClick={(e) => toggleSave(job.id, e)} className={`p-2 rounded-lg transition-colors ${savedIds.has(job.id) ? 'text-red-500 hover:text-red-600' : 'text-gray-300 hover:text-red-400'}`} title={savedIds.has(job.id) ? t('jobs.unsave') : t('jobs.save')}><Heart size={18} fill={savedIds.has(job.id) ? 'currentColor' : 'none'} /></button>
-            <p className="font-semibold text-indigo-600">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</p>
+            <SalaryDisplay min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} t={t} />
             <p className="text-xs text-gray-400">{formatRelativeDate(job.createdAt, t)}</p>
           </div>
         </div>
@@ -142,7 +145,7 @@ function GridJobCard({ job, savedIds, toggleSave, matchScore, t }: { job: Job; s
           </div>
         )}
         <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
-          <span className="font-semibold text-indigo-600 text-sm">{formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency, t)}</span>
+          <SalaryDisplay min={job.salaryMin} max={job.salaryMax} currency={job.salaryCurrency} t={t} size="sm" />
           <span className="text-xs text-gray-400">{t(`jobTypes.${job.jobType}`)}</span>
         </div>
       </div>
@@ -168,8 +171,15 @@ export default function JobsPage() {
   });
 
   const [filters, setFilters] = useState({
-    search: '', country: '', city: '', jobType: '', experienceLevel: '',
-    workFormat: '', salaryMin: '', salaryMax: '', category: '', language: '', isPaid: '',
+    search: '', country: '', city: '',
+    jobType: [] as string[],
+    experienceLevel: [] as string[],
+    workFormat: [] as string[],
+    salaryMin: '', salaryMax: '',
+    category: [] as string[],
+    language: [] as string[],
+    isPaid: '',
+    sortBy: 'createdAt', sortOrder: 'DESC',
   });
 
   useEffect(() => {
@@ -177,16 +187,27 @@ export default function JobsPage() {
     const run = async () => {
       setIsLoading(true);
       const [search, city, country] = await Promise.all([
-        filters.search ? translateToUk(filters.search, locale) : Promise.resolve(''),
-        filters.city   ? translateToUk(filters.city,   locale) : Promise.resolve(''),
-        filters.country? translateToUk(filters.country,locale) : Promise.resolve(''),
+        filters.search  ? translateToUk(filters.search,  locale) : Promise.resolve(''),
+        filters.city    ? translateToUk(filters.city,    locale) : Promise.resolve(''),
+        filters.country ? translateToUk(filters.country, locale) : Promise.resolve(''),
       ]);
       if (cancelled) return;
       const params = new URLSearchParams();
       params.append('page', page.toString());
       params.append('limit', '12');
-      const translated = { ...filters, search, city, country };
-      Object.entries(translated).forEach(([key, value]) => { if (value) params.append(key, value); });
+      if (search)            params.append('search',      search);
+      if (city)              params.append('city',        city);
+      if (country)           params.append('country',     country);
+      if (filters.salaryMin) params.append('salaryMin',   filters.salaryMin);
+      if (filters.salaryMax) params.append('salaryMax',   filters.salaryMax);
+      if (filters.isPaid)    params.append('isPaid',      filters.isPaid);
+      if (filters.sortBy)    params.append('sortBy',      filters.sortBy);
+      if (filters.sortOrder) params.append('sortOrder',   filters.sortOrder);
+      filters.jobType.forEach(v        => params.append('jobType',        v));
+      filters.experienceLevel.forEach(v => params.append('experienceLevel', v));
+      filters.workFormat.forEach(v     => params.append('workFormat',     v));
+      filters.category.forEach(v       => params.append('category',       v));
+      filters.language.forEach(v       => params.append('language',       v));
       api.get<PaginatedResponse<Job>>(`/jobs?${params}`)
         .then(r => { if (!cancelled) { setJobs(r.data.data); setTotal(r.data.meta.total); } })
         .catch(console.error)
@@ -197,11 +218,11 @@ export default function JobsPage() {
   }, [page, filters, locale]);
 
   const clearFilters = () => {
-    setFilters({ search: '', country: '', city: '', jobType: '', experienceLevel: '', workFormat: '', salaryMin: '', salaryMax: '', category: '', language: '', isPaid: '' });
+    setFilters({ search: '', country: '', city: '', jobType: [], experienceLevel: [], workFormat: [], salaryMin: '', salaryMax: '', category: [], language: [], isPaid: '', sortBy: 'createdAt', sortOrder: 'DESC' });
     setPage(1);
   };
 
-  const hasActiveFilters = Object.values(filters).some(v => v !== '');
+  const hasActiveFilters = Object.entries(filters).some(([, v]) => Array.isArray(v) ? v.length > 0 : v !== '');
   const totalPages = Math.ceil(total / 12);
 
   const translatedJobTypes      = JOB_TYPES.map(o => ({ value: o.value, label: t(`jobTypes.${o.value}`) }));
@@ -221,11 +242,11 @@ export default function JobsPage() {
         )}
       </div>
 
-      <FilterGroup title={t('jobs.filters.industry')}   options={translatedCategories}   value={filters.category}         onChange={(v) => { setFilters(f => ({ ...f, category: v }));         setPage(1); }} />
-      <FilterGroup title={t('jobs.filters.jobType')}    options={translatedJobTypes}      value={filters.jobType}          onChange={(v) => { setFilters(f => ({ ...f, jobType: v }));          setPage(1); }} />
-      <FilterGroup title={t('jobs.filters.workFormat')} options={translatedWorkFormats}   value={filters.workFormat}       onChange={(v) => { setFilters(f => ({ ...f, workFormat: v }));       setPage(1); }} />
-      <FilterGroup title={t('jobs.filters.language')}   options={translatedJobLanguages}  value={filters.language}         onChange={(v) => { setFilters(f => ({ ...f, language: v }));         setPage(1); }} />
-      <FilterGroup title={t('jobs.filters.experience')} options={translatedExpLevels}     value={filters.experienceLevel}  onChange={(v) => { setFilters(f => ({ ...f, experienceLevel: v }));  setPage(1); }} />
+      <FilterGroup title={t('jobs.filters.industry')}   options={translatedCategories}   value={filters.category}        onChange={(v) => { setFilters(f => ({ ...f, category: v }));        setPage(1); }} />
+      <FilterGroup title={t('jobs.filters.jobType')}    options={translatedJobTypes}      value={filters.jobType}         onChange={(v) => { setFilters(f => ({ ...f, jobType: v }));         setPage(1); }} />
+      <FilterGroup title={t('jobs.filters.workFormat')} options={translatedWorkFormats}   value={filters.workFormat}      onChange={(v) => { setFilters(f => ({ ...f, workFormat: v }));      setPage(1); }} />
+      <FilterGroup title={t('jobs.filters.language')}   options={translatedJobLanguages}  value={filters.language}        onChange={(v) => { setFilters(f => ({ ...f, language: v }));        setPage(1); }} />
+      <FilterGroup title={t('jobs.filters.experience')} options={translatedExpLevels}     value={filters.experienceLevel} onChange={(v) => { setFilters(f => ({ ...f, experienceLevel: v })); setPage(1); }} />
 
       {/* Country */}
       <div className="pb-4 mb-4 border-b border-gray-100">
@@ -301,7 +322,24 @@ export default function JobsPage() {
             {hasActiveFilters && <span className="w-2 h-2 bg-red-500 rounded-full" />}
           </button>
 
-          <div className="ml-auto flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center gap-2">
+            <select
+              value={`${filters.sortBy}_${filters.sortOrder}`}
+              onChange={e => {
+                const [sortBy, sortOrder] = e.target.value.split('_');
+                setFilters(f => ({ ...f, sortBy, sortOrder }));
+                setPage(1);
+              }}
+              className="px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            >
+              <option value="createdAt_DESC">{t('jobs.sort.newest')}</option>
+              <option value="createdAt_ASC">{t('jobs.sort.oldest')}</option>
+              <option value="salary_DESC">{t('jobs.sort.salaryHigh')}</option>
+              <option value="salary_ASC">{t('jobs.sort.salaryLow')}</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
             <button onClick={() => { setView('list'); localStorage.setItem('jobs-view', 'list'); }} className={`p-2 rounded-md transition-colors ${view === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}><List size={18} /></button>
             <button onClick={() => { setView('grid'); localStorage.setItem('jobs-view', 'grid'); }} className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}><LayoutGrid size={18} /></button>
           </div>
