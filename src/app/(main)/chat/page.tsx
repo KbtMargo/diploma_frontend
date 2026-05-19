@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, SetStateAction } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Send, Search, MessageSquare, Circle,
-  Loader2, ArrowLeft,
+  Loader2, ArrowLeft, Check, CheckCheck,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { ROUTES } from '@/lib/constants';
@@ -38,9 +38,10 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { isConnected, messages, typingUsers, sendMessage, sendTyping, markRead } = useChat(
+  const { isConnected, messages, typingUsers, readMessageIds, pendingIds, sendMessage, sendTyping, markRead } = useChat(
     selectedUser?.id,
     () => setTimeout(() => fetchConversations(), 500),
+    user?.id,
   );
 
   useEffect(() => {
@@ -265,9 +266,18 @@ export default function ChatPage() {
                         }`}>
                           {msg.content}
                         </div>
-                        <span className="text-xs text-gray-400 px-1">
-                          {msg.createdAt ? formatRelativeDate(msg.createdAt, t) : t('chat.justNow')}
-                        </span>
+                        <div className={`flex items-center gap-1 px-1 ${own ? 'justify-end' : 'justify-start'}`}>
+                          <span className="text-xs text-gray-400">
+                            {msg.createdAt ? formatRelativeDate(msg.createdAt, t) : t('chat.justNow')}
+                          </span>
+                          {own && (
+                            pendingIds.has(msg.id)
+                              ? <Loader2 size={11} className="text-gray-300 animate-spin" />
+                              : readMessageIds.has(msg.id)
+                                ? <CheckCheck size={11} className="text-indigo-400" />
+                                : <Check size={11} className="text-gray-400" />
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
