@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Bell, Menu, X, Briefcase, User, LogOut, ChevronDown, MessageSquare } from 'lucide-react';
+import { Bell, Menu, X, Briefcase, User, LogOut, ChevronDown, MessageSquare, Heart, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useSocketContext } from '@/contexts/SocketContext';
 import { ROUTES } from '@/lib/constants';
@@ -105,7 +105,7 @@ export default function Header() {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
                       <Link
                         href={ROUTES.PROFILE}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -121,6 +121,15 @@ export default function Header() {
                       >
                         <Briefcase size={16} />
                         {t('nav.myApplications')}
+                      </Link>
+
+                      <Link
+                        href={ROUTES.PRICING}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <Zap size={16} />
+                        {t('Підписка')}
                       </Link>
                       <hr className="my-1" />
                       <button

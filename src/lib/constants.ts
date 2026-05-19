@@ -27,6 +27,7 @@ export const ROUTES = {
     JOBS: '/admin/jobs',
     COMPANIES: '/admin/companies',
   },
+  PRICING: '/pricing',
 };
 
 export const JOB_TYPES = [
