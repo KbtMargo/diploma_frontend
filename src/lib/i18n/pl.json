@@ -425,6 +425,32 @@
       "avatarUpdated": "Avatar zaktualizowany!",
       "generate": "Generuj PDF"
     },
+    "import": {
+      "button": "Wypełnij profil z PDF",
+      "parsing": "Analizowanie CV...",
+      "title": "Import z CV",
+      "subtitle": "Wybierz, które dane zaimportować z CV",
+      "sections": {
+        "personal": "Dane osobowe",
+        "summary": "O mnie",
+        "work": "Doświadczenie zawodowe",
+        "education": "Wykształcenie",
+        "skills": "Umiejętności",
+        "languages": "Języki"
+      },
+      "notFound": "nie znaleziono",
+      "entries": "wpisów",
+      "more": "więcej",
+      "unmatchedSkills": "Nie znaleziono w systemie",
+      "replaceWarning": "Wybrane sekcje zastąpią aktualne dane profilu",
+      "applying": "Stosowanie...",
+      "apply": "Zastosuj do profilu",
+      "success": "Profil został wypełniony!",
+      "error": {
+        "parse": "Nie udało się przeanalizować CV",
+        "apply": "Błąd przy wypełnianiu profilu"
+      }
+    },
     "education": {
       "title": "Wykształcenie",
       "add": "Dodaj",

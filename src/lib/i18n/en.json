@@ -425,6 +425,32 @@
       "avatarUpdated": "Avatar updated!",
       "generate": "Generate PDF"
     },
+    "import": {
+      "button": "Fill Profile from PDF",
+      "parsing": "Analyzing resume...",
+      "title": "Import from Resume",
+      "subtitle": "Select which data to import from the resume",
+      "sections": {
+        "personal": "Personal Info",
+        "summary": "About Me",
+        "work": "Work Experience",
+        "education": "Education",
+        "skills": "Skills",
+        "languages": "Languages"
+      },
+      "notFound": "not found",
+      "entries": "entries",
+      "more": "more",
+      "unmatchedSkills": "Not found in system",
+      "replaceWarning": "Selected sections will replace your current profile data",
+      "applying": "Applying...",
+      "apply": "Apply to Profile",
+      "success": "Profile successfully filled!",
+      "error": {
+        "parse": "Failed to analyze resume",
+        "apply": "Error filling profile"
+      }
+    },
     "education": {
       "title": "Education",
       "add": "Add",

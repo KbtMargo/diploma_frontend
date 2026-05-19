@@ -26,7 +26,7 @@ export const usersService = {
     const formData = new FormData();
     formData.append('avatar', file);
     const response = await api.post('/users/avatar', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
     });
     return response.data;
   },
@@ -35,7 +35,7 @@ export const usersService = {
     const formData = new FormData();
     formData.append('resume', file);
     const response = await api.post('/users/resume-file', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
     });
     return response.data;
   },

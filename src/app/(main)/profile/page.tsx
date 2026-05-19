@@ -34,6 +34,7 @@ const EMPTY_PORT: PortForm = { title: '', description: '', url: '', fileUrl: '',
 
 import dynamic from 'next/dynamic';
 const PDFDownloadButton = dynamic(() => import('@/components/PDFDownloadButton'), { ssr: false, loading: () => null });
+import ResumeImportModal, { type ExtractedResumeData } from '@/components/ResumeImportModal';
 
 function SavedJobItem({ job, onUnsave, t }: {
   job: any;
@@ -164,6 +165,11 @@ export default function ProfilePage() {
   const [showPortForm, setShowPortForm] = useState(false);
   const [portForm, setPortForm] = useState<PortForm>(EMPTY_PORT);
 
+  const importResumeRef = useRef<HTMLInputElement>(null);
+  const [importData, setImportData] = useState<ExtractedResumeData | null>(null);
+  const [isParsingResume, setIsParsingResume] = useState(false);
+  const [isApplyingImport, setIsApplyingImport] = useState(false);
+
   useEffect(() => {
     if (!isAuthenticated) { router.push(ROUTES.LOGIN); return; }
     if (user) {
@@ -269,6 +275,76 @@ export default function ProfilePage() {
       updateUser({ resumeUrl: undefined });
       toast.success(t('profile.resume.deleted'));
     } catch { toast.error(t('profile.resume.error.delete')); }
+  };
+
+  const handleImportResumePDF = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsParsingResume(true);
+    try {
+      const formData = new FormData();
+      formData.append('resume', file);
+      const res = await api.post('/users/parse-resume', formData, {
+        headers: { 'Content-Type': undefined },
+      });
+      setImportData(res.data);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || t('profile.import.error.parse'));
+    } finally {
+      setIsParsingResume(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleApplyImport = async (sections: Set<string>) => {
+    if (!importData) return;
+    setIsApplyingImport(true);
+    try {
+      const profilePayload: Record<string, any> = {};
+      const resumePayload: Record<string, any> = {};
+
+      if (sections.has('personal')) {
+        if (importData.firstName) profilePayload.firstName = importData.firstName;
+        if (importData.lastName) profilePayload.lastName = importData.lastName;
+        if (importData.phoneNumber) profilePayload.phoneNumber = importData.phoneNumber;
+        if (importData.country) profilePayload.country = importData.country;
+        if (importData.city) profilePayload.city = importData.city;
+      }
+      if (sections.has('summary') && importData.summary) {
+        profilePayload.summary = importData.summary;
+      }
+      if (sections.has('skills') && importData.matchedSkills?.length) {
+        profilePayload.skillIds = importData.matchedSkills.map(s => s.id);
+      }
+      if (sections.has('languages') && importData.languages?.length) {
+        profilePayload.languages = importData.languages;
+      }
+      if (sections.has('work') && importData.workExperience?.length) {
+        resumePayload.workExperience = importData.workExperience;
+      }
+      if (sections.has('education') && importData.education?.length) {
+        resumePayload.education = importData.education;
+      }
+
+      const calls: Promise<any>[] = [];
+      if (Object.keys(profilePayload).length > 0) {
+        calls.push(api.put('/users/profile', profilePayload).then(res => updateUser(res.data)));
+      }
+      if (Object.keys(resumePayload).length > 0) {
+        calls.push(api.put('/users/resume', resumePayload).then(res => {
+          if (res.data.workExperience) setWorkExperience(res.data.workExperience);
+          if (res.data.education) setEducation(res.data.education);
+        }));
+      }
+      await Promise.all(calls);
+
+      toast.success(t('profile.import.success'));
+      setImportData(null);
+    } catch {
+      toast.error(t('profile.import.error.apply'));
+    } finally {
+      setIsApplyingImport(false);
+    }
   };
 
   const handleChangePassword = async () => {
@@ -416,6 +492,7 @@ export default function ProfilePage() {
   const labelCls = 'block text-sm font-medium text-gray-700 mb-1';
 
   return (
+    <>
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Header card */}
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
@@ -677,6 +754,16 @@ export default function ProfilePage() {
                 {resumeFileUploading ? <><Loader2 size={15} className="animate-spin" /> {t('profile.resume.uploading')}</> : <><Upload size={15} /> {user.resumeUrl ? t('profile.resume.replace') : t('profile.resume.upload')}</>}
               </button>
               <input ref={resumeFileRef} type="file" accept=".pdf" onChange={handleResumeFileUpload} className="hidden" />
+              <button
+                onClick={() => importResumeRef.current?.click()}
+                disabled={isParsingResume}
+                className="flex items-center gap-2 px-4 py-2 border border-indigo-300 text-indigo-600 rounded-lg text-sm hover:bg-indigo-50 transition-colors disabled:opacity-50"
+              >
+                {isParsingResume
+                  ? <><Loader2 size={15} className="animate-spin" /> {t('profile.import.parsing')}</>
+                  : <><Upload size={15} /> {t('profile.import.button')}</>}
+              </button>
+              <input ref={importResumeRef} type="file" accept=".pdf" onChange={handleImportResumePDF} className="hidden" />
               {!user.resumeUrl && <span className="text-xs text-gray-400">{t('profile.resume.pdfOnly')}</span>}
             </div>
           </div>
@@ -945,5 +1032,16 @@ export default function ProfilePage() {
         </div>
       )}
     </div>
+
+    {importData && (
+      <ResumeImportModal
+        data={importData}
+        onConfirm={handleApplyImport}
+        onClose={() => setImportData(null)}
+        isApplying={isApplyingImport}
+        t={t}
+      />
+    )}
+    </>
   );
 }

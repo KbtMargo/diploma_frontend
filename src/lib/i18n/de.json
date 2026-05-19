@@ -425,6 +425,32 @@
       "avatarUpdated": "Avatar aktualisiert!",
       "generate": "PDF erstellen"
     },
+    "import": {
+      "button": "Profil aus PDF ausfüllen",
+      "parsing": "Lebenslauf wird analysiert...",
+      "title": "Import aus Lebenslauf",
+      "subtitle": "Wählen Sie aus, welche Daten importiert werden sollen",
+      "sections": {
+        "personal": "Persönliche Daten",
+        "summary": "Über mich",
+        "work": "Berufserfahrung",
+        "education": "Ausbildung",
+        "skills": "Fähigkeiten",
+        "languages": "Sprachen"
+      },
+      "notFound": "nicht gefunden",
+      "entries": "Einträge",
+      "more": "weitere",
+      "unmatchedSkills": "Nicht im System gefunden",
+      "replaceWarning": "Ausgewählte Abschnitte ersetzen Ihre aktuellen Profildaten",
+      "applying": "Wird angewendet...",
+      "apply": "Auf Profil anwenden",
+      "success": "Profil erfolgreich ausgefüllt!",
+      "error": {
+        "parse": "Lebenslauf konnte nicht analysiert werden",
+        "apply": "Fehler beim Ausfüllen des Profils"
+      }
+    },
     "education": {
       "title": "Ausbildung",
       "add": "Hinzufügen",
