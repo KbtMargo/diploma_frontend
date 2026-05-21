@@ -8,7 +8,7 @@ import {
   ArrowLeft, Check, Loader2, ExternalLink, MessageSquare, Plus, X, MapPin,
 } from 'lucide-react';
 import { Company, Job } from '@/types';
-import { COMPANY_SIZES } from '@/lib/constants';
+import { COMPANY_SIZES, getFileUrl } from '@/lib/constants';
 import { companiesService } from '@/services/companies.service';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
@@ -195,7 +195,7 @@ export default function CompanyDetailPage() {
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         {company.coverImageUrl ? (
           <div className="h-48 bg-indigo-50 overflow-hidden">
-            <img src={`${process.env.NEXT_PUBLIC_API_URL}${company.coverImageUrl}`} alt="" className="w-full h-full object-cover" />
+            <img src={getFileUrl(company.coverImageUrl)} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
           <div className="h-32 bg-linear-to-r from-indigo-50 to-purple-50" />
@@ -205,7 +205,7 @@ export default function CompanyDetailPage() {
           <div className="flex items-start gap-5 -mt-16 mb-6">
             {company.logoUrl ? (
               <img
-                src={`${process.env.NEXT_PUBLIC_API_URL}${company.logoUrl}`}
+                src={getFileUrl(company.logoUrl)}
                 alt={company.name}
                 className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-md bg-white"
               />

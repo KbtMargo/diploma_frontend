@@ -1,5 +1,13 @@
 export const API_URL = typeof window !== 'undefined' ? '/api-proxy' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
 
+export const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+export function getFileUrl(path: string | null | undefined): string {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `${BACKEND_ORIGIN}${path}`;
+}
+
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/auth/login',

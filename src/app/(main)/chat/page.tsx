@@ -7,7 +7,7 @@ import {
   Loader2, ArrowLeft, Check, CheckCheck,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES, getFileUrl } from '@/lib/constants';
 import { chatService } from '@/services/chat.service';
 import { useChat } from '@/hooks/useChat';
 import { getInitials, formatRelativeDate } from '@/lib/utils';
@@ -163,7 +163,7 @@ export default function ChatPage() {
                 <div className="relative shrink-0">
                   {conv.otherUser.avatarUrl ? (
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${conv.otherUser.avatarUrl}`}
+                      src={getFileUrl(conv.otherUser.avatarUrl)}
                       alt=""
                       className="w-12 h-12 rounded-full object-cover"
                     />
@@ -220,7 +220,7 @@ export default function ChatPage() {
 
               {selectedUser.avatarUrl ? (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${selectedUser.avatarUrl}`}
+                  src={getFileUrl(selectedUser.avatarUrl)}
                   alt=""
                   className="w-10 h-10 rounded-full object-cover"
                 />

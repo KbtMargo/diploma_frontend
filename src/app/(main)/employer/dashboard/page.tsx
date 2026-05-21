@@ -16,7 +16,7 @@ import { LOCALE_TO_BCP47 } from '@/lib/i18n';
 import { Job, Application, AiAnalysis, Company, Skill, User } from '@/types';
 import {
   ROUTES, JOB_TYPES, EXPERIENCE_LEVELS, WORK_FORMATS,
-  COMPANY_SIZES, JOB_LANGUAGES, JOB_CATEGORIES,
+  COMPANY_SIZES, JOB_LANGUAGES, JOB_CATEGORIES, getFileUrl,
 } from '@/lib/constants';
 import { formatRelativeDate, formatSalary } from '@/lib/utils';
 import Link from 'next/link';
@@ -965,7 +965,7 @@ export default function EmployerDashboardPage() {
                       }`}>
                         {myCompany.logoUrl ? (
                           <img
-                            src={`${process.env.NEXT_PUBLIC_API_URL}${myCompany.logoUrl}`}
+                            src={getFileUrl(myCompany.logoUrl)}
                             alt="Лого компанії"
                             className="w-full h-full object-contain"
                           />
@@ -1152,7 +1152,7 @@ export default function EmployerDashboardPage() {
                         <div className="flex items-center gap-3">
                           {candidate.avatarUrl ? (
                             <img
-                              src={`${process.env.NEXT_PUBLIC_API_URL}${candidate.avatarUrl}`}
+                              src={getFileUrl(candidate.avatarUrl)}
                               alt=""
                               className="w-10 h-10 rounded-full object-cover"
                             />
@@ -1332,7 +1332,7 @@ export default function EmployerDashboardPage() {
                               </span>
                               <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 overflow-hidden">
                                 {c.avatarUrl
-                                  ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${c.avatarUrl}`} alt="" className="w-full h-full object-cover" />
+                                  ? <img src={getFileUrl(c.avatarUrl)} alt="" className="w-full h-full object-cover" />
                                   : <span className="text-xs font-semibold text-indigo-600">{c.firstName[0]}{c.lastName[0]}</span>
                                 }
                               </div>
@@ -1437,7 +1437,7 @@ export default function EmployerDashboardPage() {
                         {/* Avatar */}
                         <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 overflow-hidden">
                           {candidate.avatarUrl
-                            ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${candidate.avatarUrl}`} alt="" className="w-full h-full object-cover" />
+                            ? <img src={getFileUrl(candidate.avatarUrl)} alt="" className="w-full h-full object-cover" />
                             : <span className="text-sm font-semibold text-indigo-600">
                                 {candidate.firstName[0]}{candidate.lastName[0]}
                               </span>
@@ -1856,7 +1856,7 @@ export default function EmployerDashboardPage() {
                   <div className="flex items-center gap-4 mb-3">
                     {previewUser.avatarUrl ? (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${previewUser.avatarUrl}`}
+                        src={getFileUrl(previewUser.avatarUrl)}
                         alt=""
                         className="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-100"
                       />

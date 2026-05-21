@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, XCircle, Loader2, Mail } from 'lucide-react';
@@ -16,9 +16,11 @@ export default function VerifyEmailPage() {
   const token = searchParams.get('token');
   const [status, setStatus] = useState<Status>(token ? 'loading' : 'no-token');
   const [errorMsg, setErrorMsg] = useState('');
+  const hasCalledRef = useRef(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || hasCalledRef.current) return;
+    hasCalledRef.current = true;
     api.get(`/auth/verify-email?token=${token}`)
       .then(() => setStatus('success'))
       .catch(e => {

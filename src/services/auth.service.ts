@@ -42,4 +42,9 @@ export const authService = {
     const response = await api.get(`/auth/verify-email?token=${token}`);
     return response.data;
   },
+
+  async resendVerification(email: string) {
+    const response = await api.post('/auth/resend-verification', { email });
+    return response.data;
+  },
 };

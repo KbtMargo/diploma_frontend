@@ -19,6 +19,8 @@ export default function LoginPage() {
   const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const loginSchema = z.object({
     email: z.string().email(t('auth.validation.emailInvalid')),
@@ -32,6 +34,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
+    setUnverifiedEmail(null);
     try {
       const response = await authService.login(data);
       setAuth(response.user, response.accessToken, response.refreshToken);
@@ -45,9 +48,27 @@ export default function LoginPage() {
         router.push(ROUTES.JOBS);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || t('auth.login.error'));
+      const message: string = error.response?.data?.message || '';
+      if (message.toLowerCase().includes('verify your email')) {
+        setUnverifiedEmail(data.email);
+      } else {
+        toast.error(message || t('auth.login.error'));
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail) return;
+    setResendLoading(true);
+    try {
+      await authService.resendVerification(unverifiedEmail);
+      toast.success('Лист верифікації надіслано. Перевірте пошту.');
+    } catch {
+      toast.error('Не вдалося надіслати лист. Спробуйте пізніше.');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -58,6 +79,21 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-gray-900">{t('auth.login.title')}</h1>
           <p className="text-gray-500 mt-2">{t('auth.login.subtitle')}</p>
         </div>
+
+        {unverifiedEmail && (
+          <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+            <p className="font-medium mb-1">Підтвердьте свою електронну адресу</p>
+            <p className="mb-3">Лист верифікації було надіслано на <strong>{unverifiedEmail}</strong>. Перевірте папку "Спам", якщо не знайдете листа.</p>
+            <button
+              type="button"
+              onClick={handleResendVerification}
+              disabled={resendLoading}
+              className="underline font-medium hover:text-amber-900 disabled:opacity-50"
+            >
+              {resendLoading ? 'Надсилання...' : 'Надіслати лист повторно'}
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>

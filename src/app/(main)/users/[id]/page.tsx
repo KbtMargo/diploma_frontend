@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/contexts/I18nContext';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
 import { getInitials, formatDate } from '@/lib/utils';
+import { getFileUrl } from '@/lib/constants';
 import Link from 'next/link';
 import api from '@/lib/axios';
 import type { User } from '@/types';
@@ -103,7 +104,7 @@ export default function PublicProfilePage() {
             <div>
               {profile.avatarUrl ? (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${profile.avatarUrl}`}
+                  src={getFileUrl(profile.avatarUrl)}
                   alt=""
                   className="w-24 h-24 rounded-2xl border-4 border-white object-cover shadow-md"
                 />

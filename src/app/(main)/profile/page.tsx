@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { usersService } from '@/services/users.service';
-import { ROUTES, JOB_TYPES } from '@/lib/constants';
+import { ROUTES, JOB_TYPES, getFileUrl } from '@/lib/constants';
 import { useI18n } from '@/contexts/I18nContext';
 import { getInitials, formatDate } from '@/lib/utils';
 import Link from 'next/link';
@@ -501,7 +501,7 @@ export default function ProfilePage() {
           <div className="flex items-end justify-between -mt-12 mb-4">
             <div className="relative">
               {user.avatarUrl ? (
-                <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatarUrl}`} alt="" className="w-24 h-24 rounded-2xl border-4 border-white object-cover shadow-md" />
+                <img src={getFileUrl(user.avatarUrl)} alt="" className="w-24 h-24 rounded-2xl border-4 border-white object-cover shadow-md" />
               ) : (
                 <div className="w-24 h-24 rounded-2xl border-4 border-white bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-md">
                   {getInitials(user.firstName, user.lastName)}
@@ -743,7 +743,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3 flex-wrap">
               {user.resumeUrl && (
                 <div className="flex items-center gap-1 border border-gray-200 rounded-lg overflow-hidden">
-                  <a href={`${process.env.NEXT_PUBLIC_API_URL}${user.resumeUrl}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                  <a href={getFileUrl(user.resumeUrl)} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
                     <Download size={15} /> {t('profile.resume.view')}
                   </a>
                   <button onClick={handleResumeFileDelete} className="px-2 py-2 text-gray-400 hover:text-red-500 hover:bg-gray-50 transition-colors border-l border-gray-200"><Trash2 size={14} /></button>
@@ -1023,7 +1023,7 @@ export default function ProfilePage() {
                   <p className="text-sm text-gray-500 mt-1 leading-relaxed">{item.description}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 text-sm hover:underline"><ExternalLink size={13} /> {t('common.link')}</a>}
-                    {item.fileUrl && <a href={`${process.env.NEXT_PUBLIC_API_URL}${item.fileUrl}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-emerald-600 text-sm hover:underline"><Download size={13} /> {item.fileType === 'image' ? t('common.image') : t('common.file')}</a>}
+                    {item.fileUrl && <a href={getFileUrl(item.fileUrl)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-emerald-600 text-sm hover:underline"><Download size={13} /> {item.fileType === 'image' ? t('common.image') : t('common.file')}</a>}
                   </div>
                 </div>
               ))}

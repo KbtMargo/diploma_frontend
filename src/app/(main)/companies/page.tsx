@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Building, Users, Star, Briefcase, Loader2 } from 'lucide-react';
 import { Company } from '@/types';
-import { COMPANY_SIZES } from '@/lib/constants';
+import { COMPANY_SIZES, getFileUrl } from '@/lib/constants';
 import { companiesService } from '@/services/companies.service';
 import { useI18n } from '@/contexts/I18nContext';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
@@ -28,7 +28,7 @@ function CompanyCard({ company, t }: { company: Company; t: (k: string, v?: any)
         <div className="flex items-start justify-between mb-4">
           {company.logoUrl ? (
             <img
-              src={`${process.env.NEXT_PUBLIC_API_URL}${company.logoUrl}`}
+              src={getFileUrl(company.logoUrl)}
               alt={company.name}
               className="w-14 h-14 rounded-2xl object-cover border border-gray-100"
             />

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Bell, Menu, X, Briefcase, User, LogOut, ChevronDown, MessageSquare, Heart, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useSocketContext } from '@/contexts/SocketContext';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES, getFileUrl } from '@/lib/constants';
 import { useI18n } from '@/contexts/I18nContext';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import toast from 'react-hot-toast';
@@ -92,7 +92,7 @@ export default function Header() {
                     className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     {user.avatarUrl ? (
-                      <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatarUrl}`} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <img src={getFileUrl(user.avatarUrl)} alt="" className="w-8 h-8 rounded-full object-cover" />
                     ) : (
                       <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                         {getInitials(user.firstName, user.lastName)}
