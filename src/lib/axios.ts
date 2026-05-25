@@ -27,15 +27,13 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      try {
-        const refreshToken = Cookies.get('refreshToken');
-        if (!refreshToken) {
-          Cookies.remove('accessToken');
-          Cookies.remove('refreshToken');
-          window.location.href = '/auth/login';
-          return Promise.reject(error);
-        }
+      const refreshToken = Cookies.get('refreshToken');
+      if (!refreshToken) {
+        // User is not logged in — just forward the error as-is (login page handles it)
+        return Promise.reject(error);
+      }
 
+      try {
         const response = await axios.post(`${API_URL}/auth/refresh`, {
           refreshToken,
         });

@@ -107,6 +107,7 @@
       "emailInvalid": "Invalid email format",
       "passwordMin6": "Password must be at least 6 characters",
       "passwordMin8": "Password must be at least 8 characters",
+      "passwordWeak": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
       "firstNameMin2": "First name must be at least 2 characters",
       "lastNameMin2": "Last name must be at least 2 characters",
       "passwordsMismatch": "Passwords do not match"

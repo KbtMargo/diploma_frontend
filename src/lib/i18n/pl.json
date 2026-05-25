@@ -107,6 +107,7 @@
       "emailInvalid": "Nieprawidłowy format e-mail",
       "passwordMin6": "Hasło musi mieć co najmniej 6 znaków",
       "passwordMin8": "Hasło musi mieć co najmniej 8 znaków",
+      "passwordWeak": "Hasło musi zawierać co najmniej jedną wielką literę, jedną małą literę i jedną cyfrę",
       "firstNameMin2": "Imię musi mieć co najmniej 2 znaki",
       "lastNameMin2": "Nazwisko musi mieć co najmniej 2 znaki",
       "passwordsMismatch": "Hasła nie są zgodne"

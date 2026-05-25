@@ -22,7 +22,9 @@ export default function RegisterPage() {
     firstName: z.string().min(2, t('auth.validation.firstNameMin2')),
     lastName: z.string().min(2, t('auth.validation.lastNameMin2')),
     email: z.string().email(t('auth.validation.emailInvalid')),
-    password: z.string().min(8, t('auth.validation.passwordMin8')),
+    password: z.string()
+      .min(8, t('auth.validation.passwordMin8'))
+      .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('auth.validation.passwordWeak')),
     confirmPassword: z.string(),
     role: z.enum(['job_seeker', 'employer']),
   }).refine((data) => data.password === data.confirmPassword, {
@@ -47,7 +49,8 @@ export default function RegisterPage() {
       toast.success(t('auth.register.success'));
       router.push(ROUTES.LOGIN);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || t('auth.register.error'));
+      const msg = error.response?.data?.message;
+      toast.error(Array.isArray(msg) ? msg[0] : (msg || t('auth.register.error')));
     } finally {
       setIsLoading(false);
     }
