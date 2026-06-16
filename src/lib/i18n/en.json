@@ -1101,6 +1101,28 @@
         "accepted": "Accepted",
         "rejected": "Rejected",
         "withdrawn": "Withdrawn"
+      },
+      "dateRange": {
+        "label": "Date range",
+        "reset": "Reset",
+        "filtered": "Showing {{shown}} of {{total}} months"
+      },
+      "reports": {
+        "title": "Report Generation",
+        "desc": "Download analytics in PDF or JSON format. Data matches the selected range.",
+        "summary": "Platform Summary",
+        "summaryDesc": "Key platform metrics with share analysis and growth rates",
+        "userGrowth": "User Growth",
+        "userGrowthDesc": "Monthly registrations, running total and trends",
+        "jobPostings": "Job Postings",
+        "jobPostingsDesc": "Monthly postings with cumulative totals and changes",
+        "applications": "Applications by Status",
+        "applicationsDesc": "Application distribution: counts, percentages, totals",
+        "skills": "Top Skills",
+        "skillsDesc": "In-demand skills ranking with relative weight",
+        "full": "Full Report",
+        "fullDesc": "All platform data: trends, distributions, metrics (JSON)",
+        "rangeNote": "Reports reflect the selected date range"
       }
     },
     "logs": {

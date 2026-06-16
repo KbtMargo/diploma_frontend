@@ -1101,6 +1101,28 @@
         "accepted": "Angenommen",
         "rejected": "Abgelehnt",
         "withdrawn": "Zurückgezogen"
+      },
+      "dateRange": {
+        "label": "Zeitraum",
+        "reset": "Zurücksetzen",
+        "filtered": "Zeige {{shown}} von {{total}} Monaten"
+      },
+      "reports": {
+        "title": "Berichtsgenerierung",
+        "desc": "Analysedaten als PDF oder JSON herunterladen. Daten entsprechen dem gewählten Zeitraum.",
+        "summary": "Plattformübersicht",
+        "summaryDesc": "Wichtige Kennzahlen mit Anteilsanalyse und Wachstumsraten",
+        "userGrowth": "Nutzerwachstum",
+        "userGrowthDesc": "Monatliche Registrierungen, kumulierter Gesamtwert und Trends",
+        "jobPostings": "Stellenanzeigen",
+        "jobPostingsDesc": "Monatliche Veröffentlichungen mit Kumulation und Veränderungen",
+        "applications": "Bewerbungen nach Status",
+        "applicationsDesc": "Bewerbungsverteilung: Anzahl, Prozentsätze, Gesamt",
+        "skills": "Top-Fähigkeiten",
+        "skillsDesc": "Ranking gefragter Fähigkeiten mit relativem Gewicht",
+        "full": "Vollständiger Bericht",
+        "fullDesc": "Alle Plattformdaten: Trends, Verteilungen, Metriken (JSON)",
+        "rangeNote": "Berichte berücksichtigen den gewählten Zeitraum"
       }
     },
     "logs": {

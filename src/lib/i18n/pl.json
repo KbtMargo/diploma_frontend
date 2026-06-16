@@ -1101,6 +1101,28 @@
         "accepted": "Przyjęte",
         "rejected": "Odrzucone",
         "withdrawn": "Wycofane"
+      },
+      "dateRange": {
+        "label": "Zakres dat",
+        "reset": "Resetuj",
+        "filtered": "Pokazano {{shown}} z {{total}} miesięcy"
+      },
+      "reports": {
+        "title": "Generowanie raportów",
+        "desc": "Pobierz dane analityczne w PDF lub JSON. Dane dotyczą wybranego zakresu.",
+        "summary": "Podsumowanie platformy",
+        "summaryDesc": "Kluczowe wskaźniki platformy z analizą udziałów i tempa wzrostu",
+        "userGrowth": "Wzrost rejestracji",
+        "userGrowthDesc": "Miesięczna dynamika, suma narastająca i trendy",
+        "jobPostings": "Oferty pracy",
+        "jobPostingsDesc": "Publikacje miesięczne z sumą narastającą i zmianami",
+        "applications": "Aplikacje wg statusu",
+        "applicationsDesc": "Rozkład aplikacji: liczba, procenty, podsumowanie",
+        "skills": "Najczęstsze umiejętności",
+        "skillsDesc": "Ranking poszukiwanych umiejętności z udziałem procentowym",
+        "full": "Pełny raport",
+        "fullDesc": "Wszystkie dane platformy: trendy, rozkłady, metryki (JSON)",
+        "rangeNote": "Raporty uwzględniają wybrany zakres dat"
       }
     },
     "logs": {

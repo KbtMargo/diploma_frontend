@@ -40,11 +40,6 @@ export const usersService = {
     return response.data;
   },
 
-  async getStatistics() {
-    const response = await api.get('/users/statistics');
-    return response.data;
-  },
-
   async getSavedJobs() {
     const response = await api.get('/users/saved-jobs');
     return response.data;

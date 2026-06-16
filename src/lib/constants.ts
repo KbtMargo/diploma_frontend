@@ -5,7 +5,9 @@ export const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_API_URL || 'http://localho
 export function getFileUrl(path: string | null | undefined): string {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-  return `${BACKEND_ORIGIN}${path}`;
+  // /uploads/* paths are proxied by Next.js (next.config.ts rewrite) — use as-is (same-origin).
+  // This avoids CORS/CORP issues when the frontend and backend are on different domains.
+  return path;
 }
 
 export const ROUTES = {

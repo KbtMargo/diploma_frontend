@@ -8,9 +8,11 @@ import {
   Search, Ban, UserCheck,
   ChevronLeft, ChevronRight, Loader2, Activity,
   RefreshCw, X, Mail, Calendar, MapPin, Award,
-  AlertTriangle, Globe, Zap,
+  AlertTriangle, Globe, Zap, Download, FileText,
 } from 'lucide-react';
 import api from '@/lib/axios';
+import { ProfessionalReport } from '@/lib/reportFormatter';
+import { openReportAsPDF } from '@/lib/pdfFormatter';
 import { User, Job, Company, PaginatedResponse } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
 import { LOCALE_TO_BCP47 } from '@/lib/i18n';
@@ -52,7 +54,6 @@ const COUNTRY_KEY_MAP: Record<string, string> = {
   'United Kingdom': 'admin.countries.uk',
 };
 
-// ─── Rejection modal ──────────────────────────────────────────────────────────
 function RejectModal({
   job, onClose, onConfirm,
 }: { job: Job; onClose: () => void; onConfirm: (reason: string) => void }) {
@@ -239,6 +240,104 @@ function Pagination({ page, total, limit, onChange }: {
   );
 }
 
+// ─── Report helpers ───────────────────────────────────────────────────────────
+function triggerJSONDownload(data: any, filename: string) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function filterByRange(data: any[], from: string, to: string): any[] {
+  return data.filter((d: any) => (!from || d.rawDate >= from) && (!to || d.rawDate <= to));
+}
+
+// ─── Report calculation helpers ───────────────────────────────────────────────
+function calcGrowthRate(rows: any[], field: string): string {
+  if (rows.length < 2) return 'Недостатньо даних';
+  const first = rows[0][field];
+  const last = rows[rows.length - 1][field];
+  if (first === 0) return 'Н/Д';
+  const growth = ((last - first) / first) * 100;
+  return `${growth > 0 ? '+' : ''}${growth.toFixed(1)}% за період`;
+}
+
+function generateTrendAnalysis(rows: any[], field: string): any[] {
+  return rows.slice(1).map((r, i) => {
+    const prev = rows[i][field];
+    const curr = r[field];
+    const change = prev > 0 ? ((curr - prev) / prev) * 100 : 0;
+    return {
+      період: `${rows[i].місяць} → ${r.місяць}`,
+      зміна: `${change > 0 ? '+' : ''}${change.toFixed(1)}%`,
+      динаміка: change > 10 ? '📈 Стрімке зростання'
+        : change > 0 ? '↗️ Помірне зростання'
+        : change < -10 ? '📉 Стрімке падіння'
+        : change < 0 ? '↘️ Помірне падіння'
+        : '➡️ Стабільність',
+      рекомендації: change > 20 ? '✅ Підтримуйте маркетингову активність'
+        : change > 0 ? '💡 Можливе посилення рекламної кампанії'
+        : change > -20 ? '⚠️ Проаналізуйте причини уповільнення'
+        : '🚨 Терміново перегляньте стратегію залучення',
+    };
+  });
+}
+
+function generateJobMetrics(rows: any[]): any[] {
+  const values = rows.map(r => r.нових_вакансій as number);
+  const total = values.reduce((s, v) => s + v, 0);
+  return [
+    { метрика: 'Всього вакансій', значення: total, одиниця: 'шт' },
+    { метрика: 'Середня кількість', значення: (total / rows.length).toFixed(1), одиниця: 'вакансій/міс' },
+    { метрика: 'Максимум за місяць', значення: Math.max(...values), одиниця: 'вакансій' },
+    { метрика: 'Мінімум за місяць', значення: Math.min(...values), одиниця: 'вакансій' },
+  ];
+}
+
+function getStatusWithEmoji(status: string): string {
+  const m: Record<string, string> = {
+    'Очікує': '⏳ Очікує', 'Прийнято': '✅ Прийнято',
+    'Відхилено': '❌ Відхилено', 'Переглянуто': '👁️ Переглянуто',
+  };
+  return m[status] ?? status;
+}
+
+function getStatusBadge(status: string): string {
+  const m: Record<string, string> = {
+    'Очікує': 'На розгляді', 'Прийнято': 'Схвалено',
+    'Відхилено': 'Відхилено', 'Переглянуто': 'Переглянуто',
+  };
+  return m[status] ?? status;
+}
+
+function generateProgressBar(value: number, total: number, width = 20): string {
+  const pct = total > 0 ? value / total : 0;
+  const filled = Math.round(pct * width);
+  return `[${'█'.repeat(filled)}${'░'.repeat(width - filled)}] ${(pct * 100).toFixed(0)}%`;
+}
+
+function calcConversionRate(appsByStatus: any[]): string {
+  const accepted = appsByStatus.find(a => a.name === 'Прийнято')?.value ?? 0;
+  const total = appsByStatus.reduce((s, a) => s + a.value, 0);
+  if (total === 0) return '0%';
+  return `${((accepted / total) * 100).toFixed(1)}% (${accepted} з ${total})`;
+}
+
+function generateApplicationInsights(appsByStatus: any[], totalJobs: number, totalApplications: number): any[] {
+  const total = appsByStatus.reduce((s, a) => s + a.value, 0);
+  const accepted = appsByStatus.find(a => a.name === 'Прийнято')?.value ?? 0;
+  const rejected = appsByStatus.find(a => a.name === 'Відхилено')?.value ?? 0;
+  return [
+    { показник: 'Загальна кількість заявок', значення: total, деталі: `${(total / (totalJobs || 1)).toFixed(1)} на вакансію` },
+    { показник: 'Успішні найми', значення: accepted, деталі: `${((accepted / (total || 1)) * 100).toFixed(1)}% конверсія` },
+    { показник: 'Відмови', значення: rejected, деталі: `${((rejected / (total || 1)) * 100).toFixed(1)}% від загального` },
+    { показник: 'Ефективність', значення: accepted > rejected ? '👍 Позитивна' : '⚠️ Потребує покращення', деталі: '' },
+  ];
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -285,6 +384,13 @@ export default function AdminDashboardPage() {
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [logsTotal, setLogsTotal] = useState(0);
   const [logsPage, setLogsPage] = useState(1);
+
+  // Report date range (default: last 12 months)
+  const [reportDateFrom, setReportDateFrom] = useState(() => {
+    const d = new Date(); d.setFullYear(d.getFullYear() - 1);
+    return d.toISOString().slice(0, 7);
+  });
+  const [reportDateTo, setReportDateTo] = useState(() => new Date().toISOString().slice(0, 7));
 
   // ── Auth check ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -394,11 +500,13 @@ export default function AdminDashboardPage() {
 
       const userGrowth = (a.userGrowth ?? []).map((r: any) => ({
         date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { month: 'short', year: '2-digit' }),
+        rawDate: new Date(r.date).toISOString().slice(0, 7),
         value: Number(r.count),
       }));
 
       const jobPostings = (a.jobPostings ?? []).map((r: any) => ({
         date: new Date(r.date).toLocaleDateString(LOCALE_TO_BCP47[locale], { month: 'short', year: '2-digit' }),
+        rawDate: new Date(r.date).toISOString().slice(0, 7),
         value: Number(r.count),
       }));
 
@@ -489,6 +597,266 @@ export default function AdminDashboardPage() {
     } catch { toast.error(t('admin.toast.error')); }
   };
 
+  const filteredGrowth = filterByRange(analyticsData?.userGrowth ?? [], reportDateFrom, reportDateTo);
+  const filteredJobPostings = filterByRange(analyticsData?.jobPostings ?? [], reportDateFrom, reportDateTo);
+
+  const todayStr = () => new Date().toISOString().slice(0, 10);
+
+  const handleReportSummary = () => {
+    const now = new Date();
+    const months = Math.max(analyticsData?.userGrowth?.length ?? 1, 1);
+    const approvalRate = stats.totalJobs > 0 ? ((stats.activeJobs / stats.totalJobs) * 100).toFixed(1) : '0';
+    const verifRate = stats.totalCompanies > 0 ? ((stats.verifiedCompanies / stats.totalCompanies) * 100).toFixed(1) : '0';
+    const avgApps = stats.totalJobs > 0 ? (stats.totalApplications / stats.totalJobs).toFixed(1) : '0';
+    const report: ProfessionalReport = {
+      title: '🏢 ЗВЕДЕНИЙ ЗВІТ ПЛАТФОРМИ',
+      subtitle: 'Комплексна аналітика показників платформи StartWay',
+      generatedAt: now.toLocaleString('uk-UA', { dateStyle: 'full', timeStyle: 'long' }),
+      dateRange: { from: reportDateFrom, to: reportDateTo },
+      summary: {
+        '👥 Всього користувачів': stats.totalUsers.toLocaleString('uk-UA'),
+        '🆕 Нових сьогодні': stats.newUsersToday.toLocaleString('uk-UA'),
+        '💼 Всього вакансій': stats.totalJobs.toLocaleString('uk-UA'),
+        '✅ Активних вакансій': `${stats.activeJobs.toLocaleString('uk-UA')} (${approvalRate}%)`,
+        '🏗️ Всього компаній': stats.totalCompanies.toLocaleString('uk-UA'),
+        '📋 Всього заявок': stats.totalApplications.toLocaleString('uk-UA'),
+      },
+      sections: [
+        {
+          title: '👥 користувачі',
+          rows: [
+            { показник: 'Всього зареєстровано', значення: stats.totalUsers, деталі: '' },
+            { показник: 'Нових за сьогодні', значення: stats.newUsersToday, деталі: `+${((stats.newUsersToday / (stats.totalUsers || 1)) * 100).toFixed(2)}% за добу` },
+            { показник: 'Ср. реєстрацій/місяць', значення: Math.round(stats.totalUsers / months), деталі: 'за весь час спостереження' },
+          ],
+        },
+        {
+          title: '💼 вакансії',
+          rows: [
+            { показник: 'Всього вакансій', значення: stats.totalJobs, деталі: '' },
+            { показник: 'Активних вакансій', значення: stats.activeJobs, деталі: `${approvalRate}% від всіх` },
+            { показник: 'На модерації', значення: stats.pendingJobs, деталі: `${((stats.pendingJobs / (stats.totalJobs || 1)) * 100).toFixed(1)}% від всіх` },
+          ],
+        },
+        {
+          title: '🏗️ компанії',
+          rows: [
+            { показник: 'Всього компаній', значення: stats.totalCompanies, деталі: '' },
+            { показник: 'Верифіковано', значення: stats.verifiedCompanies, деталі: `${verifRate}% від всіх` },
+            { показник: 'Очікують перевірки', значення: stats.pendingCompanies, деталі: '' },
+          ],
+        },
+        {
+          title: '📋 заявки',
+          rows: [
+            { показник: 'Всього заявок', значення: stats.totalApplications, деталі: '' },
+            { показник: 'Очікують розгляду', значення: stats.pendingApplications, деталі: `${((stats.pendingApplications / (stats.totalApplications || 1)) * 100).toFixed(1)}% від всіх` },
+            { показник: 'Ср. заявок на вакансію', значення: avgApps, деталі: '' },
+          ],
+        },
+      ],
+    };
+    openReportAsPDF(report);
+  };
+
+  const handleReportUserGrowth = () => {
+    if (!filteredGrowth.length) return toast.error(t('admin.toast.analyticsError'));
+    let cumulative = 0;
+    const rows = filteredGrowth.map((r: any, i: number) => {
+      const prev = i > 0 ? filteredGrowth[i - 1].value : null;
+      cumulative += r.value;
+      const pct = prev != null && prev > 0 ? `${(((r.value - prev) / prev) * 100).toFixed(1)}%` : '—';
+      return {
+        місяць: r.date, 'YYYY-MM': r.rawDate,
+        нових_реєстрацій: r.value,
+        наростаючий_підсумок: cumulative,
+        зміна_відн_попереднього: pct,
+        тренд: prev == null ? '—' : r.value > prev ? '📈 зростання' : r.value < prev ? '📉 спадання' : '➡️ стабільно',
+      };
+    });
+    const totalReg = cumulative;
+    const avgMonthly = Math.round(totalReg / filteredGrowth.length);
+    const bestMonth = rows.reduce((b, c) => c.нових_реєстрацій > b.нових_реєстрацій ? c : b, rows[0]);
+    const worstMonth = rows.reduce((b, c) => c.нових_реєстрацій < b.нових_реєстрацій ? c : b, rows[0]);
+    const report: ProfessionalReport = {
+      title: '📊 ЗВІТ ЗРОСТАННЯ КОРИСТУВАЧІВ',
+      subtitle: 'Динаміка реєстрацій та активності користувачів на платформі StartWay',
+      generatedAt: new Date().toLocaleString('uk-UA', { dateStyle: 'full', timeStyle: 'long' }),
+      dateRange: { from: reportDateFrom, to: reportDateTo },
+      summary: {
+        'Всього зареєстрованих': `${totalReg.toLocaleString('uk-UA')} осіб`,
+        'Середньомісячний приріст': `${avgMonthly.toLocaleString('uk-UA')} осіб/міс`,
+        'Найактивніший місяць': `${bestMonth.місяць} (${bestMonth.нових_реєстрацій} нових)`,
+        'Найменш активний місяць': `${worstMonth.місяць} (${worstMonth.нових_реєстрацій} нових)`,
+        'Темп зростання за період': calcGrowthRate(rows, 'нових_реєстрацій'),
+      },
+      sections: [
+        { title: 'користувачі', rows, metadata: { backgroundColor: '#EEF2FF', borderColor: '#6366F1' } },
+        { title: 'аналітика трендів', rows: generateTrendAnalysis(rows, 'нових_реєстрацій'), metadata: { backgroundColor: '#ECFDF5', borderColor: '#10B981' } },
+      ],
+    };
+    openReportAsPDF(report);
+  };
+
+  const handleReportJobPostings = () => {
+    if (!filteredJobPostings.length) return toast.error(t('admin.toast.analyticsError'));
+    let cumulative = 0;
+    const rows = filteredJobPostings.map((r: any, i: number) => {
+      const prev = i > 0 ? filteredJobPostings[i - 1].value : null;
+      cumulative += r.value;
+      const pct = prev != null && prev > 0 ? `${(((r.value - prev) / prev) * 100).toFixed(1)}%` : '—';
+      return {
+        місяць: r.date, 'YYYY-MM': r.rawDate,
+        нових_вакансій: r.value,
+        наростаючий_підсумок: cumulative,
+        зміна_відн_попереднього: pct,
+        тренд: prev == null ? '—' : r.value > prev ? '📈 зростання' : r.value < prev ? '📉 спадання' : '➡️ стабільно',
+      };
+    });
+    const activeRate = stats.totalJobs > 0
+      ? `${((stats.activeJobs / stats.totalJobs) * 100).toFixed(1)}%`
+      : '0%';
+    const report: ProfessionalReport = {
+      title: '💼 ЗВІТ ВАКАНСІЙ',
+      subtitle: 'Аналітика публікацій вакансій та ринку праці на платформі StartWay',
+      generatedAt: new Date().toLocaleString('uk-UA', { dateStyle: 'full', timeStyle: 'long' }),
+      dateRange: { from: reportDateFrom, to: reportDateTo },
+      summary: {
+        'Всього опубліковано': `${cumulative.toLocaleString('uk-UA')} вакансій`,
+        'Активних вакансій': `${stats.activeJobs.toLocaleString('uk-UA')} (${activeRate})`,
+        'На модерації': `${stats.pendingJobs.toLocaleString('uk-UA')} вакансій`,
+        'Середньомісячна публікація': `${Math.round(cumulative / filteredJobPostings.length).toLocaleString('uk-UA')} вакансій/міс`,
+        'Темп зростання за період': calcGrowthRate(rows, 'нових_вакансій'),
+      },
+      sections: [
+        { title: 'вакансії', rows, metadata: { backgroundColor: '#F5F3FF', borderColor: '#8B5CF6' } },
+        { title: 'метрики ефективності', rows: generateJobMetrics(rows), metadata: { backgroundColor: '#FFF7ED', borderColor: '#F97316' } },
+      ],
+    };
+    openReportAsPDF(report);
+  };
+
+  const handleReportApplications = () => {
+    if (!analyticsData?.appsByStatus?.length) return toast.error(t('admin.toast.analyticsError'));
+    const total = analyticsData.appsByStatus.reduce((s: number, r: any) => s + r.value, 0);
+    const pendingRate = stats.totalApplications > 0
+      ? `${((stats.pendingApplications / stats.totalApplications) * 100).toFixed(1)}%`
+      : '0%';
+    const statusRows = analyticsData.appsByStatus.map((r: any, i: number) => ({
+      місце: i + 1,
+      статус: getStatusWithEmoji(r.name),
+      кількість: r.value,
+      відсоток: total > 0 ? `${((r.value / total) * 100).toFixed(1)}%` : '0%',
+      візуалізація: generateProgressBar(r.value, total),
+      бейдж: getStatusBadge(r.name),
+    }));
+    const report: ProfessionalReport = {
+      title: '📋 ЗВІТ ЗАЯВОК',
+      subtitle: 'Статистика відгуків та процесів найму на платформі StartWay',
+      generatedAt: new Date().toLocaleString('uk-UA', { dateStyle: 'full', timeStyle: 'long' }),
+      dateRange: { from: reportDateFrom, to: reportDateTo },
+      summary: {
+        'Всього заявок': `${total.toLocaleString('uk-UA')}`,
+        'Очікують розгляду': `${stats.pendingApplications.toLocaleString('uk-UA')} (${pendingRate})`,
+        'Ср. заявок на вакансію': `${stats.totalJobs > 0 ? (stats.totalApplications / stats.totalJobs).toFixed(1) : '0'} заявок/вакансія`,
+        'Загальна конверсія (прийнято)': calcConversionRate(analyticsData.appsByStatus),
+      },
+      sections: [
+        { title: 'розподіл за статусами', rows: statusRows, metadata: { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' } },
+        { title: 'аналітика ефективності', rows: generateApplicationInsights(analyticsData.appsByStatus, stats.totalJobs, stats.totalApplications), metadata: { backgroundColor: '#E0F2FE', borderColor: '#0EA5E9' } },
+      ],
+    };
+    openReportAsPDF(report);
+  };
+
+  const handleReportSkills = () => {
+    if (!analyticsData?.topSkills?.length) return toast.error(t('admin.toast.analyticsError'));
+    const total = analyticsData.topSkills.reduce((s: number, r: any) => s + r.value, 0);
+    const top = analyticsData.topSkills[0]?.value || 1;
+    const rows = analyticsData.topSkills.map((r: any, i: number) => ({
+      місце: i + 1,
+      навичка: r.name,
+      кількість_вакансій: r.value,
+      відсоток: total > 0 ? `${((r.value / total) * 100).toFixed(1)}%` : '0%',
+      відносно_топу: `${((r.value / top) * 100).toFixed(0)}%`,
+      рейтинг: '★'.repeat(Math.min(5, Math.max(1, Math.round((r.value / top) * 5)))),
+    }));
+    const total2 = analyticsData.topSkills.reduce((s: number, r: any) => s + r.value, 0);
+    const report: ProfessionalReport = {
+      title: '🎯 ЗВІТ ТОП НАВИЧОК',
+      subtitle: 'Рейтинг затребуваних навичок серед вакансій платформи StartWay',
+      generatedAt: new Date().toLocaleString('uk-UA', { dateStyle: 'full', timeStyle: 'long' }),
+      dateRange: { from: reportDateFrom, to: reportDateTo },
+      summary: {
+        'Всього навичок у рейтингу': rows.length,
+        'Топ навичка': `${rows[0]?.навичка ?? '—'} (${rows[0]?.кількість_вакансій ?? 0} вакансій)`,
+        'Загальна кількість вакансій': total2.toLocaleString('uk-UA'),
+      },
+      sections: [
+        { title: '🏆 рейтинг навичок', rows },
+      ],
+    };
+    openReportAsPDF(report);
+  };
+
+  const handleReportFull = () => {
+    if (!analyticsData) return toast.error(t('admin.toast.analyticsError'));
+    const totalApps = analyticsData.appsByStatus.reduce((s: number, r: any) => s + r.value, 0);
+    const totalSkills = analyticsData.topSkills.reduce((s: number, r: any) => s + r.value, 0);
+    const report = {
+      metadata: {
+        platform: 'StartWay',
+        title: 'Повний аналітичний звіт платформи',
+        generated_at: new Date().toISOString(),
+        date_range: { from: reportDateFrom, to: reportDateTo },
+        data_points: { user_growth_months: filteredGrowth.length, job_postings_months: filteredJobPostings.length },
+        version: '2.0',
+      },
+      summary: {
+        users: {
+          total: stats.totalUsers, new_today: stats.newUsersToday,
+          daily_growth_pct: stats.totalUsers > 0 ? +((stats.newUsersToday / stats.totalUsers) * 100).toFixed(2) : 0,
+        },
+        jobs: {
+          total: stats.totalJobs, active: stats.activeJobs, pending_moderation: stats.pendingJobs,
+          active_rate_pct: stats.totalJobs > 0 ? +((stats.activeJobs / stats.totalJobs) * 100).toFixed(1) : 0,
+        },
+        companies: {
+          total: stats.totalCompanies, verified: stats.verifiedCompanies, pending: stats.pendingCompanies,
+          verification_rate_pct: stats.totalCompanies > 0 ? +((stats.verifiedCompanies / stats.totalCompanies) * 100).toFixed(1) : 0,
+        },
+        applications: {
+          total: stats.totalApplications, pending: stats.pendingApplications,
+          avg_per_job: stats.totalJobs > 0 ? +(stats.totalApplications / stats.totalJobs).toFixed(2) : 0,
+          pending_rate_pct: stats.totalApplications > 0 ? +((stats.pendingApplications / stats.totalApplications) * 100).toFixed(1) : 0,
+        },
+      },
+      trends: {
+        user_growth: filteredGrowth.map((r: any) => ({ month: r.date, period: r.rawDate, registrations: r.value })),
+        job_postings: filteredJobPostings.map((r: any) => ({ month: r.date, period: r.rawDate, postings: r.value })),
+      },
+      distributions: {
+        by_application_status: analyticsData.appsByStatus.map((r: any) => ({
+          status: r.name, count: r.value,
+          pct: totalApps > 0 ? +((r.value / totalApps) * 100).toFixed(1) : 0,
+        })),
+        by_country: analyticsData.topCountries.map((r: any) => ({ country: r.name, users: r.value })),
+        by_industry: analyticsData.topIndustries.map((r: any) => ({ industry: r.name, jobs: r.value })),
+      },
+      top_skills: analyticsData.topSkills.map((r: any, i: number) => ({
+        rank: i + 1, skill: r.name, job_count: r.value,
+        pct_of_tracked: totalSkills > 0 ? +((r.value / totalSkills) * 100).toFixed(1) : 0,
+      })),
+      computed_metrics: {
+        avg_applications_per_job: stats.totalJobs > 0 ? +(stats.totalApplications / stats.totalJobs).toFixed(2) : 0,
+        job_active_rate_pct: stats.totalJobs > 0 ? +((stats.activeJobs / stats.totalJobs) * 100).toFixed(1) : 0,
+        company_verification_rate_pct: stats.totalCompanies > 0 ? +((stats.verifiedCompanies / stats.totalCompanies) * 100).toFixed(1) : 0,
+        total_pending_review: stats.pendingJobs + stats.pendingApplications + stats.pendingCompanies,
+      },
+    };
+    triggerJSONDownload(report, `startway_full_report_${todayStr()}.json`);
+  };
+
   const toggleJobSelect = (id: string) => {
     setSelectedJobIds((prev) => {
       const next = new Set(prev);
@@ -504,6 +872,16 @@ export default function AdminDashboardPage() {
       setSelectedJobIds(new Set(jobs.map((j) => j.id)));
     }
   };
+
+  // ── Report definitions (sidebar list) ───────────────────────────────────────
+  const reportDefs = [
+    { id: 'summary', name: t('admin.analytics.reports.summary'), desc: t('admin.analytics.reports.summaryDesc'), icon: BarChart3, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600', format: 'PDF' as const, handler: handleReportSummary, disabled: false },
+    { id: 'userGrowth', name: t('admin.analytics.reports.userGrowth'), desc: t('admin.analytics.reports.userGrowthDesc'), icon: TrendingUp, iconBg: 'bg-blue-100', iconColor: 'text-blue-600', format: 'PDF' as const, handler: handleReportUserGrowth, disabled: !filteredGrowth.length },
+    { id: 'jobPostings', name: t('admin.analytics.reports.jobPostings'), desc: t('admin.analytics.reports.jobPostingsDesc'), icon: Briefcase, iconBg: 'bg-purple-100', iconColor: 'text-purple-600', format: 'PDF' as const, handler: handleReportJobPostings, disabled: !filteredJobPostings.length },
+    { id: 'applications', name: t('admin.analytics.reports.applications'), desc: t('admin.analytics.reports.applicationsDesc'), icon: Activity, iconBg: 'bg-orange-100', iconColor: 'text-orange-600', format: 'PDF' as const, handler: handleReportApplications, disabled: !analyticsData?.appsByStatus?.length },
+    { id: 'skills', name: t('admin.analytics.reports.skills'), desc: t('admin.analytics.reports.skillsDesc'), icon: Award, iconBg: 'bg-green-100', iconColor: 'text-green-600', format: 'PDF' as const, handler: handleReportSkills, disabled: !analyticsData?.topSkills?.length },
+    { id: 'full', name: t('admin.analytics.reports.full'), desc: t('admin.analytics.reports.fullDesc'), icon: Globe, iconBg: 'bg-gray-100', iconColor: 'text-gray-600', format: 'JSON' as const, handler: handleReportFull, disabled: !analyticsData },
+  ];
 
   // ── Tabs config ──────────────────────────────────────────────────────────────
   const TABS = [
@@ -882,129 +1260,202 @@ export default function AdminDashboardPage() {
 
         {/* ── ANALYTICS TAB ── */}
         {activeTab === 'analytics' && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {isLoading ? <LoadingSpinner tall /> : !analyticsData ? (
               <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-400">{t('admin.noData')}</div>
             ) : (
               <>
-                {/* Row 1: Growth charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title={t('admin.analytics.registrations')} icon={<Users size={16} className="text-indigo-500" />}>
-                    {analyticsData.userGrowth.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={220}>
-                        <LineChart data={analyticsData.userGrowth}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={false} name={t('admin.analytics.registrationsCount')} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
-
-                  <ChartCard title={t('admin.analytics.jobPostings')} icon={<Briefcase size={16} className="text-purple-500" />}>
-                    {analyticsData.jobPostings.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={220}>
-                        <LineChart data={analyticsData.jobPostings}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} dot={false} name={t('admin.analytics.jobs')} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
+                {/* Date range filter */}
+                <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-wrap items-center gap-3">
+                  <Calendar size={15} className="text-indigo-500 shrink-0" />
+                  <span className="text-sm font-medium text-gray-700">{t('admin.analytics.dateRange.label')}</span>
+                  <input
+                    type="month" value={reportDateFrom} max={reportDateTo}
+                    onChange={e => setReportDateFrom(e.target.value)}
+                    className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <span className="text-gray-400 text-sm">—</span>
+                  <input
+                    type="month" value={reportDateTo} min={reportDateFrom}
+                    onChange={e => setReportDateTo(e.target.value)}
+                    className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button
+                    onClick={() => {
+                      const d = new Date(); d.setFullYear(d.getFullYear() - 1);
+                      setReportDateFrom(d.toISOString().slice(0, 7));
+                      setReportDateTo(new Date().toISOString().slice(0, 7));
+                    }}
+                    className="text-xs text-indigo-600 hover:underline px-1"
+                  >
+                    {t('admin.analytics.dateRange.reset')}
+                  </button>
+                  {filteredGrowth.length < (analyticsData.userGrowth?.length ?? 0) && (
+                    <span className="ml-auto text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                      {t('admin.analytics.dateRange.filtered', { shown: filteredGrowth.length, total: analyticsData.userGrowth?.length ?? 0 })}
+                    </span>
+                  )}
                 </div>
 
-                {/* Row 2: Top skills + Applications by status */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title={t('admin.analytics.topSkills')} icon={<Award size={16} className="text-green-500" />}>
-                    {analyticsData.topSkills.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={260}>
-                        <BarChart data={analyticsData.topSkills} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
-                          <Tooltip />
-                          <Bar dataKey="value" fill="#10b981" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
+                <div className="flex gap-5 items-start">
+                  {/* ── Reports sidebar ── */}
+                  <div className="w-72 shrink-0">
+                    <div className="bg-white rounded-2xl border border-gray-200 p-5 sticky top-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FileText size={15} className="text-indigo-500" />
+                        <h3 className="font-semibold text-gray-900 text-sm">{t('admin.analytics.reports.title')}</h3>
+                      </div>
+                      <p className="text-xs text-gray-400 mb-4 leading-snug">{t('admin.analytics.reports.desc')}</p>
+                      <div className="space-y-1.5">
+                        {reportDefs.map(r => (
+                          <button
+                            key={r.id}
+                            onClick={r.handler}
+                            disabled={r.disabled}
+                            className="w-full flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left group disabled:opacity-40 disabled:cursor-not-allowed border border-transparent hover:border-gray-100"
+                          >
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${r.iconBg}`}>
+                              <r.icon size={14} className={r.iconColor} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-gray-800 leading-tight">{r.name}</p>
+                              <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">{r.desc}</p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1.5 shrink-0 mt-0.5">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${r.format === 'PDF' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                                {r.format}
+                              </span>
+                              <Download size={11} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-gray-300 mt-4 text-center leading-snug">{t('admin.analytics.reports.rangeNote')}</p>
+                    </div>
+                  </div>
 
-                  <ChartCard title={t('admin.analytics.appsByStatus')} icon={<Activity size={16} className="text-orange-500" />}>
-                    {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={260}>
-                        <BarChart data={analyticsData.appsByStatus}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <Tooltip />
-                          <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name={t('admin.analytics.applicationsCount')} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
-                </div>
+                  {/* ── Charts area ── */}
+                  <div className="flex-1 min-w-0 space-y-5">
+                    {/* Row 1: Growth charts */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                      <ChartCard title={t('admin.analytics.registrations')} icon={<Users size={16} className="text-indigo-500" />}>
+                        {filteredGrowth.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={220}>
+                            <LineChart data={filteredGrowth}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <Tooltip />
+                              <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={false} name={t('admin.analytics.registrationsCount')} />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
 
-                {/* Row 3: Top countries + Top industries */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title={t('admin.analytics.topCountries')} icon={<Globe size={16} className="text-blue-500" />}>
-                    {analyticsData.topCountries.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={240}>
-                        <BarChart data={analyticsData.topCountries} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={80} />
-                          <Tooltip />
-                          <Bar dataKey="value" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')}>
-                            {analyticsData.topCountries.map((_: any, i: number) => (
-                              <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
+                      <ChartCard title={t('admin.analytics.jobPostings')} icon={<Briefcase size={16} className="text-purple-500" />}>
+                        {filteredJobPostings.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={220}>
+                            <LineChart data={filteredJobPostings}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <Tooltip />
+                              <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} dot={false} name={t('admin.analytics.jobs')} />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
+                    </div>
 
-                  <ChartCard title={t('admin.analytics.byIndustry')} icon={<BarChart3 size={16} className="text-indigo-500" />}>
-                    {analyticsData.topIndustries.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={240}>
-                        <BarChart data={analyticsData.topIndustries} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
-                          <Tooltip />
-                          <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
-                </div>
+                    {/* Row 2: Top skills + Applications by status */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                      <ChartCard title={t('admin.analytics.topSkills')} icon={<Award size={16} className="text-green-500" />}>
+                        {analyticsData.topSkills.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={260}>
+                            <BarChart data={analyticsData.topSkills} layout="vertical">
+                              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                              <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
+                              <Tooltip />
+                              <Bar dataKey="value" fill="#10b981" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
 
-                {/* Row 4: Status pie + Roles pie */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ChartCard title={t('admin.analytics.jobTypes')} icon={<Briefcase size={16} className="text-purple-500" />}>
-                    <PieFromAnalytics data={analyticsData.topIndustries.slice(0, 5)} />
-                  </ChartCard>
-                  <ChartCard title={t('admin.analytics.appDistribution')} icon={<TrendingUp size={16} className="text-green-500" />}>
-                    {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
-                      <ResponsiveContainer width="100%" height={220}>
-                        <PieChart>
-                          <Pie data={analyticsData.appsByStatus} cx="50%" cy="50%" outerRadius={80} dataKey="value"
-                            label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
-                            {analyticsData.appsByStatus.map((_: any, i: number) => (
-                              <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    )}
-                  </ChartCard>
+                      <ChartCard title={t('admin.analytics.appsByStatus')} icon={<Activity size={16} className="text-orange-500" />}>
+                        {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={260}>
+                            <BarChart data={analyticsData.appsByStatus}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <Tooltip />
+                              <Bar dataKey="value" fill="#f97316" radius={[4, 4, 0, 0]} name={t('admin.analytics.applicationsCount')} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
+                    </div>
+
+                    {/* Row 3: Top countries + Top industries */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                      <ChartCard title={t('admin.analytics.topCountries')} icon={<Globe size={16} className="text-blue-500" />}>
+                        {analyticsData.topCountries.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={240}>
+                            <BarChart data={analyticsData.topCountries} layout="vertical">
+                              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                              <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={80} />
+                              <Tooltip />
+                              <Bar dataKey="value" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')}>
+                                {analyticsData.topCountries.map((_: any, i: number) => (
+                                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
+
+                      <ChartCard title={t('admin.analytics.byIndustry')} icon={<BarChart3 size={16} className="text-indigo-500" />}>
+                        {analyticsData.topIndustries.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={240}>
+                            <BarChart data={analyticsData.topIndustries} layout="vertical">
+                              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                              <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
+                              <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
+                              <Tooltip />
+                              <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} name={t('admin.analytics.jobs')} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
+                    </div>
+
+                    {/* Row 4: Status pie + App distribution pie */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                      <ChartCard title={t('admin.analytics.jobTypes')} icon={<Briefcase size={16} className="text-purple-500" />}>
+                        <PieFromAnalytics data={analyticsData.topIndustries.slice(0, 5)} />
+                      </ChartCard>
+                      <ChartCard title={t('admin.analytics.appDistribution')} icon={<TrendingUp size={16} className="text-green-500" />}>
+                        {analyticsData.appsByStatus.length === 0 ? <NoData /> : (
+                          <ResponsiveContainer width="100%" height={220}>
+                            <PieChart>
+                              <Pie data={analyticsData.appsByStatus} cx="50%" cy="50%" outerRadius={80} dataKey="value"
+                                label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
+                                {analyticsData.appsByStatus.map((_: any, i: number) => (
+                                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                                ))}
+                              </Pie>
+                              <Tooltip />
+                              <Legend />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        )}
+                      </ChartCard>
+                    </div>
+                  </div>
                 </div>
               </>
             )}
