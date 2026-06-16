@@ -126,14 +126,16 @@ export default function Header() {
                         {t('nav.myApplications')}
                       </Link>
 
-                      <Link
-                        href={ROUTES.PRICING}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <Zap size={16} />
-                        {t('Підписка')}
-                      </Link>
+                      {user.role !== 'job_seeker' && (
+                        <Link
+                          href={ROUTES.PRICING}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <Zap size={16} />
+                          {t('Підписка')}
+                        </Link>
+                      )}
                       <hr className="my-1" />
                       <button
                         onClick={handleLogout}

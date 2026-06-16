@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Briefcase, Users, ArrowRight, TrendingUp, Heart } from 'lucide-react';
+import { Search, MapPin, Briefcase, Users, ArrowRight, TrendingUp, Heart, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Job } from '@/types';
 import { ROUTES } from '@/lib/constants';
@@ -11,6 +11,7 @@ import api from '@/lib/axios';
 import { SalaryDisplay } from '@/components/SalaryDisplay';
 import { useSavedJobs } from '@/lib/hooks/useSavedJobs';
 import { useAutoTranslate } from '@/hooks/useAutoTranslate';
+import { useAuthStore } from '@/store/authStore';
 
 function FeaturedJobCard({ job, savedIds, toggleSave, t }: {
   job: Job;
@@ -69,24 +70,33 @@ export default function HomePage() {
   const router = useRouter();
   const { t } = useI18n();
   const { savedIds, toggleSave } = useSavedJobs();
+  const { user, isAuthenticated } = useAuthStore();
   const [search, setSearch] = useState('');
   const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
+  const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([]);
   const [stats, setStats] = useState({ jobs: 0, companies: 0, users: 0 });
 
-  useEffect(() => { fetchData(); }, []);
+  const isJobSeeker = isAuthenticated && user?.role === 'job_seeker';
+
+  useEffect(() => { fetchData(); }, [isAuthenticated]);
 
   const fetchData = async () => {
     try {
-      const [jobsRes, companiesRes] = await Promise.all([
+      const requests: Promise<any>[] = [
         api.get('/jobs?limit=6'),
         api.get('/companies?limit=1').catch(() => ({ data: { meta: { total: 0 } } })),
-      ]);
+      ];
+      if (isAuthenticated) {
+        requests.push(api.get('/jobs/recommendations?limit=6').catch(() => ({ data: [] })));
+      }
+      const [jobsRes, companiesRes, recRes] = await Promise.all(requests);
       setFeaturedJobs(jobsRes.data.data || []);
       setStats({
         jobs: jobsRes.data.meta?.total || 0,
         companies: companiesRes.data.meta?.total || 0,
         users: 0,
       });
+      if (recRes) setRecommendedJobs(recRes.data || []);
     } catch (error) {
       console.error(error);
     }
@@ -177,6 +187,34 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Recommended jobs — visible only for authenticated job seekers */}
+      {isJobSeeker && recommendedJobs.length > 0 && (
+        <section className="py-16 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={20} className="text-indigo-500" />
+                  <h2 className="text-2xl font-bold text-gray-900">{t('home.recommendations.title')}</h2>
+                </div>
+                <p className="text-gray-500">{t('home.recommendations.subtitle')}</p>
+              </div>
+              <Link
+                href={ROUTES.JOBS}
+                className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+              >
+                {t('home.featured.all')} <ArrowRight size={18} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recommendedJobs.map(job => (
+                <FeaturedJobCard key={job.id} job={job} savedIds={savedIds} toggleSave={toggleSave} t={t} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured jobs */}
       <section className="py-16 px-4 bg-gray-50">

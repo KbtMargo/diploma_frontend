@@ -129,6 +129,10 @@
       "jobSeekers": "Job Seekers",
       "countries": "Countries"
     },
+    "recommendations": {
+      "title": "Recommended for You",
+      "subtitle": "Based on your profile and skills"
+    },
     "featured": {
       "title": "Featured Jobs",
       "subtitle": "The best opportunities for you",

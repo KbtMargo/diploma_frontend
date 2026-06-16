@@ -129,6 +129,10 @@
       "jobSeekers": "Poszukujących pracy",
       "countries": "Krajów"
     },
+    "recommendations": {
+      "title": "Polecane dla Ciebie",
+      "subtitle": "Na podstawie Twojego profilu i umiejętności"
+    },
     "featured": {
       "title": "Aktualne oferty",
       "subtitle": "Najlepsze oferty dla Ciebie",

@@ -222,7 +222,10 @@ export default function JobsPage() {
     setPage(1);
   };
 
-  const hasActiveFilters = Object.entries(filters).some(([, v]) => Array.isArray(v) ? v.length > 0 : v !== '');
+  const hasActiveFilters = Object.entries(filters).some(([k, v]) => {
+    if (k === 'sortBy' || k === 'sortOrder') return false;
+    return Array.isArray(v) ? v.length > 0 : v !== '';
+  });
   const totalPages = Math.ceil(total / 12);
 
   const translatedJobTypes      = JOB_TYPES.map(o => ({ value: o.value, label: t(`jobTypes.${o.value}`) }));

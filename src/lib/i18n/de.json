@@ -129,6 +129,10 @@
       "jobSeekers": "Bewerber",
       "countries": "Länder"
     },
+    "recommendations": {
+      "title": "Für Sie empfohlen",
+      "subtitle": "Basierend auf Ihrem Profil und Ihren Fähigkeiten"
+    },
     "featured": {
       "title": "Aktuelle Stellen",
       "subtitle": "Die besten Angebote für Sie",
