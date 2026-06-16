@@ -47,6 +47,9 @@ export default function Header() {
             <Link href={ROUTES.COMPANIES} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
               {t('nav.companies')}
             </Link>
+            <Link href={ROUTES.EDUCATION} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
+              Освіта
+            </Link>
             {user?.role === 'employer' && (
               <Link href={ROUTES.EMPLOYER.DASHBOARD} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">
                 {t('nav.dashboard')}

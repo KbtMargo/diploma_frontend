@@ -37,6 +37,7 @@ export const ROUTES = {
     JOBS: '/admin/jobs',
     COMPANIES: '/admin/companies',
   },
+  EDUCATION: '/education',
   PRICING: '/pricing',
 };
 

@@ -11,6 +11,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { ROUTES } from '@/lib/constants';
 import { useI18n } from '@/contexts/I18nContext';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -58,7 +59,10 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 relative">
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher />
+        </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{t('auth.register.title')}</h1>
           <p className="text-gray-500 mt-2">{t('auth.register.subtitle')}</p>

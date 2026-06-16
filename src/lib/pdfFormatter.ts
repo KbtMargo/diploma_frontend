@@ -334,10 +334,7 @@ export function generateReportHTML(report: ProfessionalReport): string {
 
 </div>
 <script>
-  // Auto-open print dialog after fonts load
-  window.addEventListener('load', function() {
-    setTimeout(function() { window.print(); }, 600);
-  });
+  document.querySelector('.btn-print').addEventListener('click', function() { window.print(); });
 </script>
 </body>
 </html>`;
@@ -347,14 +344,11 @@ export function openReportAsPDF(report: ProfessionalReport): void {
   const html = generateReportHTML(report);
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const win = window.open(url, '_blank');
-  if (!win) {
-    // Fallback: direct download if popup blocked
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${report.title.toLowerCase().replace(/\s+/g, '_')}.html`;
-    a.click();
-  }
-  // Revoke after enough time for the new window to load
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${report.title.toLowerCase().replace(/\s+/g, '_')}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
